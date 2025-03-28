@@ -27,7 +27,6 @@ export class ChatComponent implements OnInit, OnChanges {
 
   mensajesPorConversacion: Map<string, Message[]> = new Map();
   notificacionesPendientes: Set<string> = new Set();
-  ultimosMensajesLeidos: Map<string, number> = new Map();
   ultimosLeidos: Map<string, number> = new Map();
 
   constructor(
@@ -66,11 +65,14 @@ export class ChatComponent implements OnInit, OnChanges {
           }
           this.mensajesPorConversacion.get(clave)!.push(msg);
 
-          const yaLeido = this.ultimosMensajesLeidos.get(clave) ?? 0;
-          if (msg.remitenteId !== this.currentUser!.id && (msg.id ?? 0) > yaLeido) {
+          const yaLeido = this.ultimosLeidos.get(clave) ?? 0;
+          const esPropio = msg.remitenteId === this.currentUser!.id;
+
+          if (!esPropio && (msg.id ?? 0) > yaLeido) {
             this.notificacionesPendientes.add(clave);
           }
         });
+
         this.refreshVistaActual();
       },
       error: (err) => console.error("Error al precargar mensajes:", err)
@@ -81,6 +83,7 @@ export class ChatComponent implements OnInit, OnChanges {
       if (!this.mensajesPorConversacion.has(clave)) {
         this.mensajesPorConversacion.set(clave, []);
       }
+
       const mensajes = this.mensajesPorConversacion.get(clave)!;
       if (!mensajes.some(m => m.id === message.id)) {
         mensajes.push(message);
@@ -118,6 +121,7 @@ export class ChatComponent implements OnInit, OnChanges {
     this.selectedUserId = usuarioId;
     this.selectedGroupId = null;
     this.contactoSeleccionado = this.usuarios.find(u => u.id === usuarioId) || null;
+    this.grupoSeleccionado = null;
     this.loadMessages();
   }
 
@@ -125,6 +129,7 @@ export class ChatComponent implements OnInit, OnChanges {
     this.selectedGroupId = grupoId;
     this.selectedUserId = null;
     this.grupoSeleccionado = this.gruposUsuario.find(g => g.id === grupoId) || null;
+    this.contactoSeleccionado = null;
     this.loadMessages();
   }
 
@@ -173,7 +178,7 @@ export class ChatComponent implements OnInit, OnChanges {
   }
 
   private markAsRead(clave: string, ultimoId: number): void {
-    this.ultimosMensajesLeidos.set(clave, ultimoId);
+    this.ultimosLeidos.set(clave, ultimoId);
     this.notificacionesPendientes.delete(clave);
   }
 }

@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../services/usuario.service';
 import { JugadorService } from '../services/jugador.service';
 import { Jugador } from '../models/jugador.model';
-import { Usuario } from '../models/usuario.model';
 import { AuthService } from '../auth/services/auth.service';
+import { Usuario } from '../models/usuario.model';
 
 @Component({
   selector: 'app-mercado',
@@ -32,11 +32,6 @@ export class MercadoComponent implements OnInit {
     this.username = user.username;
     this.obtenerDatosUsuario();
     this.cargarJugadores();
-
-    // ✅ Suscripción global al dinero del usuario (actualización instantánea)
-    this.usuarioService.dineroUsuario$.subscribe(dinero => {
-      this.usuarioDinero = dinero;
-    });
   }
 
   obtenerDatosUsuario() {
@@ -51,7 +46,7 @@ export class MercadoComponent implements OnInit {
 
   cargarJugadores(): void {
     this.jugadorService.obtenerJugadoresDisponibles().subscribe(jugadores => {
-      this.jugadores = jugadores;
+      this.jugadores = jugadores; // ✅ Solo muestra jugadores disponibles en el mercado
       console.log("🔄 Jugadores disponibles en el mercado:", this.jugadores);
     });
   }
@@ -72,22 +67,29 @@ export class MercadoComponent implements OnInit {
       if (response && response.status === "success") {
         console.log('✅ Jugador comprado con éxito:', jugador);
 
-        // ✅ Actualización local y global del dinero tras la compra
+        // ✅ Actualizas dinero localmente:
         this.usuarioDinero = response.dinero;
+
+        // ✅ Emite cambio global del dinero del usuario en el servicio:
         this.usuarioService.setDinero(response.dinero);
 
         this.cargarJugadores();
 
-        // ✅ Emitir datos actualizados del usuario
-        this.usuarioService.obtenerUsuario(this.username, token)
-          .subscribe((usuarioActualizado: Usuario) => {
-            this.usuarioService.datosUsuarioSubject.next(usuarioActualizado);
-          });
+        // ✅ Obtienes datos actualizados del usuario con método correcto:
+        const token = this.authService.getToken();
+        if (!token) {
+          console.error('❌ No se encontró el token');
+          return;
+        }
+
+        this.usuarioService.obtenerUsuario(this.username, token).subscribe((usuarioActualizado: Usuario) => {
+          console.log("ℹ Usuario actualizado:", usuarioActualizado);
+        });
+
 
       } else {
         alert(response.mensaje || '⚠ Error al comprar el jugador.');
       }
     });
   }
-
 }

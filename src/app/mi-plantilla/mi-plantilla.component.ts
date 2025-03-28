@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Jugador } from '../models/jugador.model';
 import { UsuarioService } from '../services/usuario.service';
 import { AuthService } from '../auth/services/auth.service';
-import { JugadorService } from '../services/jugador.service';
+import { JugadorService } from '../services/jugador.service'; // Asegúrate de importar el servicio de jugadores
 
 @Component({
   selector: 'app-mi-plantilla',
@@ -23,7 +23,7 @@ export class MiPlantillaComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private jugadorService: JugadorService
+    private jugadorService: JugadorService // Asegúrate de inyectar el servicio
   ) { }
 
   ngOnInit() {
@@ -34,7 +34,15 @@ export class MiPlantillaComponent implements OnInit {
     }
 
     this.username = user.username;
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('⚠ No hay token disponible.');
+      return;
+    }
+
+    // Llamar a cargar jugadores al inicio para obtener los datos correctos
     this.obtenerDatosUsuario();
+    this.cargarJugadores(); // Asegúrate de cargar los jugadores
   }
 
   obtenerDatosUsuario() {
@@ -44,16 +52,12 @@ export class MiPlantillaComponent implements OnInit {
     this.usuarioService.obtenerUsuario(this.username, token).subscribe(usuario => {
       if (usuario) {
         this.usuarioDinero = usuario.dinero;
+        this.jugadoresTitulares = usuario.titulares || [];  // ✅ Cargar solo titulares
+        this.jugadoresBanquillo = usuario.suplentes || [];  // ✅ Cargar solo suplentes
 
-        this.jugadorService.obtenerJugadores().subscribe(todosJugadores => {
-          this.todosLosJugadores = todosJugadores;
-          this.jugadoresTitulares = todosJugadores.filter(j => usuario.titulares.includes(j.id));
-          this.jugadoresBanquillo = todosJugadores.filter(j => usuario.suplentes.includes(j.id));
-
-          console.log("✅ Plantilla recuperada correctamente:");
-          console.log("Titulares:", this.jugadoresTitulares);
-          console.log("Suplentes:", this.jugadoresBanquillo);
-        });
+        console.log("✅ Plantilla recuperada correctamente:");
+        console.log("Titulares:", this.jugadoresTitulares);
+        console.log("Suplentes:", this.jugadoresBanquillo);
       }
     });
   }
@@ -66,8 +70,21 @@ export class MiPlantillaComponent implements OnInit {
   }
 
   cargarEstadisticas(): void {
-    this.obtenerDatosUsuario();
+    this.usuarioService.obtenerUsuario(this.username, this.authService.getToken()!).subscribe(usuario => {
+      if (usuario) {
+        this.usuarioDinero = usuario.dinero;
+        this.jugadoresTitulares = usuario.titulares || [];
+        this.jugadoresBanquillo = usuario.suplentes || [];
+
+        console.log("🔄 Estadísticas actualizadas:");
+        console.log("Titulares:", this.jugadoresTitulares);
+        console.log("Suplentes:", this.jugadoresBanquillo);
+      }
+    }, error => {
+      console.error("❌ Error obteniendo estadísticas del usuario:", error);
+    });
   }
+
 
   verEstadisticas(jugador: Jugador) {
     this.jugadorSeleccionado = jugador;
@@ -84,11 +101,19 @@ export class MiPlantillaComponent implements OnInit {
   }
 
   moverJugador(evento: { jugador: Jugador; tipo: string }) {
-    if (evento.tipo === 'titular' && this.jugadoresTitulares.length < 5) {
+    if (evento.tipo === 'titular') {
+      if (this.jugadoresTitulares.length >= 5) {
+        alert('❌ Solo puedes tener 5 titulares.');
+        return;
+      }
       evento.jugador.esTitular = true;
       this.jugadoresTitulares.push(evento.jugador);
       this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== evento.jugador.id);
-    } else if (evento.tipo === 'suplente' && this.jugadoresBanquillo.length < 5) {
+    } else {
+      if (this.jugadoresBanquillo.length >= 5) {
+        alert('❌ Solo puedes tener 5 jugadores en el banquillo.');
+        return;
+      }
       evento.jugador.esTitular = false;
       this.jugadoresBanquillo.push(evento.jugador);
       this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== evento.jugador.id);
@@ -97,43 +122,104 @@ export class MiPlantillaComponent implements OnInit {
 
   venderJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
-    if (!token) return;
+    if (!token) {
+      console.error("⚠ No hay token disponible.");
+      return;
+    }
+
+    console.log('💸 Enviando venta del jugador:', jugador);
 
     this.usuarioService.venderJugador(this.username, jugador, token).subscribe(response => {
-      if (response.status === "success") {
-        this.obtenerDatosUsuario();
+      if (response && response.status === "success") {
+        console.log('✅ Jugador vendido con éxito:', jugador);
+
+        this.usuarioService.actualizarDineroDesdeBackend(this.username, token).subscribe();
+
+        this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
+        this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
+
         this.cargarJugadores();
+        this.cargarEstadisticas();
+
+      } else {
+        console.warn('⚠ No se pudo vender el jugador.');
+        alert(response.mensaje || '⚠ Error al vender el jugador.');
       }
+    }, error => {
+      console.error('❌ Error al vender jugador:', error);
     });
   }
 
   comprarJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
-    if (!token || this.jugadoresBanquillo.length >= 5) return;
+    if (!token) {
+      console.error("⚠ No hay token disponible.");
+      return;
+    }
+
+    console.log('🎯 Datos enviados para comprar el jugador:', jugador);
+
+    if (this.jugadoresBanquillo.length >= 5) {
+      alert("❌ No puedes comprar más jugadores. El banquillo ya está lleno.");
+      console.warn("⚠ Banquillo lleno: No se puede comprar más jugadores.");
+      return;
+    }
 
     this.usuarioService.comprarJugador(this.username, jugador, token).subscribe(response => {
-      if (response.status === "success") {
+      if (response && response.status === "success") {
+        console.log('✅ Jugador comprado con éxito:', jugador);
+
+        // Actualizar el dinero del usuario
         this.usuarioDinero -= jugador.precioVenta;
+
+        // **Agregar el jugador al banquillo**
         jugador.esTitular = false;
         this.jugadoresBanquillo.push(jugador);
+        console.log("✅ Jugador añadido al banquillo.");
+
         this.cargarJugadores();
+        console.log("🔄 Mercado actualizado después de la compra.");
+      } else {
+        console.warn('⚠ No se pudo comprar el jugador.');
+        alert(response.mensaje || '⚠ Error al comprar el jugador.');
       }
+    }, error => {
+      console.error('❌ Error al comprar jugador:', error);
     });
   }
 
   guardarPlantilla(): void {
     const token = this.authService.getToken();
-    if (!token || this.jugadoresTitulares.length !== 5) return;
+    if (!token) {
+      console.error("⚠ No hay token disponible.");
+      return;
+    }
+
+    if (this.jugadoresTitulares.length !== 5) {
+      alert("❌ Debes seleccionar exactamente 5 jugadores titulares antes de guardar.");
+      return;
+    }
 
     const plantillaData = {
       titulares: this.jugadoresTitulares.map(j => j.id),
       suplentes: this.jugadoresBanquillo.map(j => j.id)
     };
 
-    this.usuarioService.guardarPlantilla(this.username, plantillaData, token).subscribe();
+    this.usuarioService.guardarPlantilla(this.username, plantillaData, token).subscribe(response => {
+      if (response && response.status === "success") {
+        alert("✅ Plantilla guardada correctamente.");
+        console.log("📤 Plantilla enviada y guardada:", plantillaData);
+      } else {
+        alert("❌ Hubo un error al guardar la plantilla.");
+      }
+    }, error => {
+      console.error('❌ Error al guardar plantilla:', error);
+      alert("❌ Error en la petición al guardar la plantilla.");
+    });
   }
 
   mostrarInformacion(jugador: Jugador): void {
+    console.log("📌 Mostrando información del jugador:", jugador);
     this.jugadorSeleccionado = jugador;
     this.mostrarModalInformacion = true;
   }
