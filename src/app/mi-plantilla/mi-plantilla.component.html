@@ -1,0 +1,83 @@
+<div class="mi-plantilla p-4">
+  <!-- Encabezado con dinero del usuario -->
+  <div class="header text-center pb-4">
+    <h2 class="text-2xl font-bold">🏀 Mi plantilla</h2>
+    <p class="text-gray-600">📅 Fecha: sáb 8 mar 00:30</p>
+    <h3 class="text-green-600">💰 Dinero disponible: {{ usuarioDinero | currency:'USD' }}</h3>
+  </div>
+
+  <!-- Botones para alternar vista -->
+  <div class="view-toggle flex justify-center gap-2 mb-4">
+    <button pButton label="Ver cancha" (click)="cambiarVista('cancha')" [class.active]="vistaActual === 'cancha'"
+      class="p-button p-button-outlined">
+      🏟️ Ver cancha
+    </button>
+    <button pButton label="Ver lista" (click)="cambiarVista('lista')" [class.active]="vistaActual === 'lista'"
+      class="p-button p-button-outlined">
+      📋 Ver lista
+    </button>
+  </div>
+
+  <div class="grid">
+    <!-- Sección de jugadores -->
+    <div class="col-9">
+      <!-- Vista de tarjetas -->
+      <div *ngIf="vistaActual === 'cancha'" class="fade-in">
+        <!-- ✅ Mostrar el componente TarjetaInformacion cuando se seleccione un jugador -->
+        <app-tarjeta-informacion *ngIf="mostrarModalInformacion" [jugador]="jugadorSeleccionado!"
+          (cerrar)="cerrarInformacion()">
+        </app-tarjeta-informacion>
+
+        <app-alineacion [jugadores]="jugadoresTitulares" [banquillo]="jugadoresBanquillo"
+          (cambiarJugador)="moverJugador($event)" (vender)="venderJugador($event)"
+          (mostrarInfo)="mostrarInformacion($event)">
+        </app-alineacion>
+
+      </div>
+
+      <!-- Botón para guardar la plantilla -->
+      <div class="text-center pb-4">
+        <button class="guardar-plantilla-btn p-button p-button-success" (click)="guardarPlantilla()">
+          💾 Guardar Plantilla
+        </button>
+      </div>
+
+      <!-- Vista en tabla -->
+      <div *ngIf="vistaActual === 'lista'" class="fade-in">
+        <table class="jugadores-table">
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>Posición</th>
+              <th>Precio</th>
+              <th>Rendimiento</th>
+              <th>Puntos Totales</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let jugador of jugadoresTitulares">
+              <td class="jugador-info">
+                <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}">
+                {{ jugador.nombre }}
+              </td>
+              <td>{{ jugador.posicion }}</td>
+              <td>{{ jugador.precioVenta | currency }}</td>
+              <td>{{ jugador.rendimiento }}</td>
+              <td>{{ jugador.puntosTotales }}</td>
+              <td>
+                <button class="vender-jugador" (click)="venderJugador(jugador)">
+                  💸 Vender
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Barra lateral -->
+    <div class="col-3">
+      <app-sidebar></app-sidebar>
+    </div>
+  </div>
+</div>

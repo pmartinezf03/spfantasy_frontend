@@ -1,0 +1,106 @@
+<div class="ofertas-container">
+  <h2>💰 Ofertas Recibidas</h2>
+
+  <p-table [value]="ofertasRecibidas">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Jugador</th>
+        <th>Oferta (€)</th>
+        <th>Ofertante</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-oferta>
+      <tr>
+        <td>{{ oferta.jugador?.nombre }}</td>
+        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.comprador?.username }}</td>
+        <td class="acciones">
+          <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
+            (click)="aceptarOferta(oferta)" title="Aceptar oferta">
+          </button>
+          <button pButton icon="pi pi-times" class="p-button-danger p-button-sm"
+            (click)="rechazarOferta(oferta)" title="Rechazar oferta">
+          </button>
+          <button pButton icon="pi pi-refresh" class="p-button-warning p-button-sm"
+            (click)="abrirDialogoContraoferta(oferta)" title="Hacer contraoferta">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <h2>📨 Ofertas Enviadas</h2>
+  <p-table [value]="ofertasEnviadas">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Jugador</th>
+        <th>Oferta (€)</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-oferta>
+      <tr>
+        <td>{{ oferta.jugador?.nombre }}</td>
+        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.estado }}</td>
+        <td class="acciones">
+          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"
+            (click)="retirarOferta(oferta)" title="Retirar oferta">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <h2>🔄 Contraofertas</h2>
+  <p-table [value]="contraofertasRecibidas">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Jugador</th>
+        <th>Oferta (€)</th>
+        <th>Ofertante</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-oferta>
+      <tr>
+        <td>{{ oferta.jugador?.nombre }}</td>
+        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.comprador?.username }}</td>
+        <td class="acciones">
+          <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
+            (click)="aceptarContraoferta(oferta)" title="Aceptar contraoferta">
+          </button>
+          <button pButton icon="pi pi-times" class="p-button-danger p-button-sm"
+            (click)="rechazarOferta(oferta)" title="Rechazar contraoferta">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- ✅ Diálogo para hacer una oferta -->
+<!-- ✅ Diálogo para hacer una contraoferta -->
+<app-oferta-dialogo
+  [mostrarDialogo]="mostrarDialogoContraoferta"
+  [jugadorSeleccionado]="ofertaSeleccionada?.jugador"
+  [usuarioId]="usuarioId"
+  [usuarioDinero]="usuarioDinero"
+  (cerrar)="mostrarDialogoContraoferta = false"
+  (enviarOferta)="enviarContraoferta($event.monto)">
+</app-oferta-dialogo>
+
+
+  <!-- ✅ Diálogo para hacer una contraoferta -->
+  <app-oferta-dialogo
+    [mostrarDialogo]="mostrarDialogoContraoferta"
+    [jugadorSeleccionado]="ofertaSeleccionada?.jugador"
+    [usuarioId]="usuarioId"
+    [usuarioDinero]="usuarioDinero"
+    (cerrar)="mostrarDialogoContraoferta = false"
+    (enviarOferta)="enviarContraoferta($event.monto)">
+  </app-oferta-dialogo>
+
+</div>

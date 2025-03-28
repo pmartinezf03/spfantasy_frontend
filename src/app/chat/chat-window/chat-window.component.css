@@ -1,0 +1,130 @@
+.chat-window-whatsapp {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  max-height: 100vh;
+  background: #ece5dd;
+  overflow: hidden;
+}
+
+/* 🧾 Contenedor de mensajes con scroll */
+.mensajes-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #d9fdd3;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+/* 📩 Lista de mensajes */
+.mensajes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* 💬 Burbuja de mensaje */
+.mensaje {
+  max-width: 75%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  word-wrap: break-word;
+  position: relative;
+  animation: fadeIn 0.2s ease-in-out;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.mensaje.propio {
+  align-self: flex-end;
+  background: #dcf8c6;
+  border-radius: 8px 8px 0 8px;
+}
+
+.mensaje.otro {
+  align-self: flex-start;
+  background: #fff;
+  border-radius: 8px 8px 8px 0;
+}
+
+/* 👤 Nombre del remitente en grupos */
+.remitente {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #075e54;
+  margin-bottom: 2px;
+}
+
+/* 🕐 Hora del mensaje */
+.timestamp {
+  font-size: 0.7rem;
+  text-align: right;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+/* 📝 Input de mensaje (pegado abajo) */
+.input-contenedor {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f0f0f0;
+  border-top: 1px solid #ccc;
+  height: 65px;
+  flex-shrink: 0;
+}
+
+/* 🖊️ Campo de texto */
+.input-mensaje {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 999px;
+  outline: none;
+  font-size: 1rem;
+  background: white;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 📤 Botón enviar */
+.boton-enviar {
+  margin-left: 0.5rem;
+  background-color: #128c7e;
+  border: none;
+  color: white;
+  padding: 0.5rem 0.9rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s ease;
+}
+
+.boton-enviar:hover {
+  background-color: #075e54;
+}
+
+/* ✨ Animación de aparición */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🎨 Colores por usuario en grupos */
+.mensaje.grupo.rojo { background-color: #f28b82; color: #000; }
+.mensaje.grupo.azul { background-color: #aecbfa; color: #000; }
+.mensaje.grupo.verde { background-color: #ccff90; color: #000; }
+.mensaje.grupo.morado { background-color: #d7aefb; color: #000; }
+.mensaje.grupo.naranja { background-color: #ffd6a5; color: #000; }
+.mensaje.grupo.rosa { background-color: #fbbcdd; color: #000; }
+.mensaje.grupo.cyan { background-color: #a7ffeb; color: #000; }
+.mensaje.grupo.amarillo { background-color: #fff475; color: #000; }

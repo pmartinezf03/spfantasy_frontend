@@ -1,0 +1,31 @@
+<div class="panel-whatsapp grupos-panel">
+
+  <div class="flex justify-between items-center mb-2">
+    <h2 class="titulo">📢 Grupos</h2>
+
+  </div>
+
+  <ul class="grupo-lista">
+    <li *ngFor="let grupo of grupos" class="grupo-item" (click)="emitirGrupoSeleccionado(grupo.id)">
+      <strong>{{ grupo.nombre }}</strong>
+      <p class="descripcion">{{ grupo.descripcion }}</p>
+    </li>
+  </ul>
+
+  <!-- SOLO PARA ADMINISTRADORES -->
+  <div class="crear-grupo" *ngIf="esAdmin">
+    <h3 class="subtitulo">➕ Nuevo Grupo</h3>
+
+    <input type="text" [(ngModel)]="nuevoGrupo.nombre" placeholder="Nombre" class="input" />
+    <input type="text" [(ngModel)]="nuevoGrupo.descripcion" placeholder="Descripción" class="input" />
+    <input type="password" [(ngModel)]="nuevoGrupo.passwordGrupo" placeholder="Contraseña (opcional)" class="input" />
+
+    <label class="text-sm font-medium block mb-1">Participantes</label>
+    <select multiple [(ngModel)]="nuevoGrupo.participantesIds" class="input h-24">
+      <option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.username }}</option>
+    </select>
+
+    <button (click)="crearGrupo()" class="boton">Crear</button>
+  </div>
+
+</div>

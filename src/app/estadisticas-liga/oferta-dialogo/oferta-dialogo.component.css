@@ -1,0 +1,18 @@
+.oferta-dialogo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.error-msg {
+  color: #e53935;
+  font-size: 0.85rem;
+  font-weight: bold;
+}

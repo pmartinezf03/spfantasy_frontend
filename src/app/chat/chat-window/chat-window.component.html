@@ -1,0 +1,38 @@
+<div class="chat-window-whatsapp">
+
+  <!-- 🧾 CONTENEDOR SCROLL -->
+  <div class="mensajes-container" #scrollContainer>
+    <div class="mensajes">
+      <div *ngFor="let mensaje of mensajesOrdenados"
+           [ngClass]="[
+             'mensaje',
+             mensaje.remitenteId === usuarioActual.id || mensaje.remitente?.id === usuarioActual.id ? 'propio' : 'otro',
+             mensaje.grupoId ? 'grupo' : '',
+             mensaje.grupoId ? getColorClase(mensaje.remitenteId!) : ''
+           ]">
+
+        <!-- Nombre si es grupo o no soy yo -->
+        <div class="remitente" *ngIf="mensaje.remitenteId !== usuarioActual.id || mensaje.grupoId">
+          {{ mensaje.remitenteNombre }}
+        </div>
+
+        <div class="contenido">{{ mensaje.contenido }}</div>
+        <div class="timestamp">{{ mensaje.timestamp | date: 'HH:mm' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📝 INPUT -->
+  <div class="input-contenedor">
+    <input
+      type="text"
+      [(ngModel)]="nuevoMensaje"
+      placeholder="Escribe un mensaje"
+      (keydown.enter)="enviar()"
+      class="input-mensaje"
+    />
+    <button (click)="enviar()" class="boton-enviar">
+      <i class="pi pi-send"></i>
+    </button>
+  </div>
+</div>

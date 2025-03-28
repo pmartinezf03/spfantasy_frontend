@@ -1,0 +1,12 @@
+<div class="modal-overlay">
+  <div class="tarjeta-info">
+    <h2>{{ jugador.nombre }}</h2>
+    <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}">
+    <p><strong>Posición:</strong> {{ jugador.posicion }}</p>
+    <p><strong>Precio:</strong> {{ jugador.precioVenta | currency }}</p>
+    <p><strong>Rendimiento:</strong> {{ jugador.rendimiento }}</p>
+    <p><strong>Puntos Totales:</strong> {{ jugador.puntosTotales }}</p>
+    <p><strong>Equipo:</strong> {{ jugador.equipo.nombre }}</p>
+    <button (click)="cerrarInformacion()">❌ Cerrar</button>
+  </div>
+</div>

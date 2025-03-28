@@ -1,0 +1,12 @@
+<p-menubar [model]="items">
+  <ng-template pTemplate="start">
+    <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" height="40" style="margin-right: 1rem;" />
+  </ng-template>
+
+  <ng-template pTemplate="end" *ngIf="isUserLoggedIn">
+    <div class="user-info">
+      <span>👤 {{ usuarioLogueado }}</span>
+      <span style="margin-left: 1rem;">💰 {{ usuarioDinero | currency: 'EUR' }}</span>
+    </div>
+  </ng-template>
+</p-menubar>

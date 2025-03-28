@@ -1,0 +1,46 @@
+<div class="chat-wrapper-whatsapp">
+
+  <!-- 📋 PANEL IZQUIERDO -->
+  <div class="sidebar-whatsapp">
+
+    <!-- 👥 Lista de Contactos -->
+    <app-contact-list
+      *ngIf="currentUser"
+      [usuarioActual]="currentUser"
+      [notificacionesPendientes]="notificacionesPendientes"
+      [mensajesPorConversacion]="mensajesPorConversacion"
+      [ultimosLeidos]="ultimosLeidos"
+      (usuarioSeleccionado)="onUsuarioSeleccionado($event)">
+    </app-contact-list>
+
+    <!-- 📂 Lista de Grupos -->
+    <app-grupos
+      *ngIf="currentUser"
+      [usuarioActual]="currentUser"
+      [notificacionesPendientes]="notificacionesPendientes"
+      [mensajesPorConversacion]="mensajesPorConversacion"
+      [ultimosLeidos]="ultimosLeidos"
+      (grupoSeleccionado)="onGrupoSeleccionado($event)">
+    </app-grupos>
+
+  </div>
+
+  <!-- 💬 PANEL DERECHO -->
+  <div class="main-chat-whatsapp" *ngIf="currentUser">
+
+    <!-- 🧠 Cabecera del Chat -->
+    <div class="chat-header-whatsapp">
+      <div class="chat-nombre">
+        {{ contactoSeleccionado?.username || grupoSeleccionado?.nombre || 'Selecciona un chat' }}
+      </div>
+    </div>
+
+    <!-- 💬 Ventana de Conversación -->
+    <app-chat-window
+      [mensajes]="messages"
+      [usuarioActual]="currentUser"
+      (enviarMensaje)="sendMessage($event)">
+    </app-chat-window>
+
+  </div>
+</div>

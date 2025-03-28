@@ -1,0 +1,24 @@
+<div class="jugador-card" (click)="toggleMenu($event)" [ngStyle]="{'background-image': 'url(' + jugador.fotoUrl + ')'}">
+  <div class="jugador-info">
+    <h3>{{ jugador.nombre }}</h3>
+    <p>Posición: {{ jugador.posicion }}</p>
+    <p>Precio: ${{ jugador.precioVenta }}</p>
+    <p>Rendimiento: {{ jugador.rendimiento }}</p>
+    <p>Puntos Totales: {{ jugador.puntosTotales }}</p>
+  </div>
+
+
+  <!-- ✅ Menú flotante dentro de la tarjeta -->
+  <div class="jugador-menu-overlay" *ngIf="menuVisible">
+    <div class="jugador-menu">
+      <h3>{{ jugador.nombre }}</h3>
+      <button (click)="moverJugador($event)">
+        🔄 {{ tipo === 'titular' ? 'Mover al banquillo' : 'Subir a titulares' }}
+      </button>
+      <button (click)="verInformacion($event)">📌 Ver Información</button>
+      <button (click)="venderJugador($event)">💸 Vender Jugador</button>
+      <button class="cerrar-menu" (click)="toggleMenu($event)">❌ Cerrar</button>
+    </div>
+  </div>
+
+</div>

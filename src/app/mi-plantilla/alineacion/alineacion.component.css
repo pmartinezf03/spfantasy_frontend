@@ -1,0 +1,52 @@
+.alineacion-container {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.descripcion {
+  font-size: 1.1rem;
+  color: #555;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Grilla de jugadores */
+.jugadores-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+app-jugador-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+app-jugador-card:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos específicos de PrimeNG si se requiere override */
+::ng-deep .p-panel-header {
+  font-size: 1.3rem;
+  font-weight: bold;
+  background-color: #f8f9fa;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+}
+
+::ng-deep .p-tag.p-tag-primary {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+::ng-deep .p-tag.p-tag-warning {
+  background-color: #ffc107;
+  color: black;
+  font-weight: 600;
+}

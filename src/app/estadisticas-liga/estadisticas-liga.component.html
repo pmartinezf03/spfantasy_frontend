@@ -1,0 +1,70 @@
+<div class="estadisticas-liga">
+  <h2 class="titulo-liga">📊 Estadísticas de la Liga</h2>
+
+  <!-- Tabla PrimeNG -->
+  <p-table [value]="jugadores" [scrollable]="true" scrollHeight="500px" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Foto</th>
+        <th>Nombre</th>
+        <th>Posición</th>
+        <th>Pts</th>
+        <th>Min</th>
+        <th>TL</th>
+        <th>T2</th>
+        <th>T3</th>
+        <th>Fp</th>
+        <th>Propietario</th>
+        <th>Acción</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-jugador>
+      <tr>
+        <td>
+          <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" class="jugador-foto">
+        </td>
+        <td>{{ jugador.nombre }}</td>
+        <td>{{ jugador.posicion }}</td>
+        <td>{{ jugador.pts }}</td>
+        <td>{{ jugador.min }}</td>
+        <td>{{ jugador.tl }}</td>
+        <td>{{ jugador.t2 }}</td>
+        <td>{{ jugador.t3 }}</td>
+        <td>{{ jugador.fp }}</td>
+        <td>
+          <span *ngIf="jugador.propietarioUsername; else libre" class="propietario-tag">
+            {{ jugador.propietarioUsername }}
+          </span>
+          <ng-template #libre>
+            <p-tag value="Libre" severity="success"></p-tag>
+          </ng-template>
+        </td>
+        <td>
+          <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                  pButton type="button" icon="pi pi-dollar" label="Hacer Oferta"
+                  class="p-button-sm p-button-success"
+                  (click)="abrirDialogoOferta(jugador)">
+          </button>
+
+          <button *ngIf="ofertasEnCurso[jugador.id]"
+                  pButton type="button" icon="pi pi-times" label="Cancelar"
+                  class="p-button-sm p-button-danger"
+                  (click)="cancelarOferta(jugador.id)">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Cuadro de diálogo de oferta -->
+  <app-oferta-dialogo
+    [mostrarDialogo]="mostrarDialogo"
+    [jugadorSeleccionado]="jugadorSeleccionado"
+    [usuarioId]="usuarioId"
+    [usuarioDinero]="usuarioDinero"
+    [totalOfertasEnCurso]="totalOfertasEnCurso"
+    (cerrar)="cerrarDialogoOferta()"
+    (enviarOferta)="enviarOferta($event)">
+  </app-oferta-dialogo>
+</div>

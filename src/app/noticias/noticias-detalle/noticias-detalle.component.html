@@ -1,0 +1,24 @@
+<p-card class="noticia-detalle" [header]="noticia.titulo" [subheader]="noticia.fecha">
+  <!-- Imagen -->
+  <ng-container *ngIf="noticia.imagenUrl">
+    <img [src]="noticia.imagenUrl" alt="Imagen de la noticia" class="noticia-imagen" />
+  </ng-container>
+
+  <!-- Contenido -->
+  <div class="noticia-contenido">
+    {{ noticia.contenido }}
+  </div>
+
+  <!-- Categoría -->
+  <p-tag *ngIf="noticia.categoria" [value]="noticia.categoria" severity="info" class="mb-3"></p-tag>
+
+  <!-- Divider -->
+  <p-divider></p-divider>
+
+  <!-- Acciones -->
+  <div class="acciones">
+    <button pButton icon="pi pi-thumbs-up" label="Me gusta" (click)="likeNoticia()" class="p-button-text"></button>
+    <button pButton icon="pi pi-star" label="Guardar" (click)="guardarNoticia()" class="p-button-text"></button>
+    <button pButton icon="pi pi-share-alt" label="Compartir" (click)="compartirNoticia()" class="p-button-text"></button>
+  </div>
+</p-card>

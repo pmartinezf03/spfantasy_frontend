@@ -1,0 +1,38 @@
+<div class="sidebar-container">
+  <!-- 🧑 Info del usuario -->
+  <p-card class="mb-3" header="👤 Mi Perfil">
+    <div class="flex align-items-center gap-3">
+      <p-avatar label="{{ usuario.nombre[0] }}" styleClass="bg-primary text-white" shape="circle"></p-avatar>
+      <div>
+        <p class="font-bold text-lg">{{ usuario.nombre }}</p>
+        <p class="text-sm text-gray-500">📈 Liga: {{ usuario.liga }}</p>
+      </div>
+    </div>
+
+    <p-tag severity="success" value="🏆 {{ usuario.puntos }} pts" class="mt-2"></p-tag>
+  </p-card>
+
+  <!-- 📅 Próximos Partidos -->
+  <p-card header="📅 Próximos Partidos">
+    <ul class="p-0 m-0 list-none">
+      <li *ngFor="let partido of proximosPartidos" class="mb-3 border-bottom pb-2">
+        <div class="flex justify-content-between align-items-center">
+          <span><strong>{{ partido.equipo1 }}</strong> vs <strong>{{ partido.equipo2 }}</strong></span>
+          <span class="text-sm text-gray-600">{{ partido.fecha }}</span>
+        </div>
+      </li>
+    </ul>
+  </p-card>
+
+  <!-- 🔥 Estado del Equipo -->
+  <p-card header="🔥 Forma Reciente">
+    <div class="estado-equipo">
+      <p-badge severity="success" value="W"></p-badge>
+      <p-badge severity="success" value="W"></p-badge>
+      <p-badge severity="danger" value="L"></p-badge>
+      <p-badge severity="success" value="W"></p-badge>
+      <p-badge severity="warning" value="OT"></p-badge>
+    </div>
+    <p class="text-sm text-gray-500 mt-2 text-center">Últimos 5 partidos</p>
+  </p-card>
+</div>

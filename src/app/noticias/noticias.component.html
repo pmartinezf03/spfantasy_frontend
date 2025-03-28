@@ -1,0 +1,38 @@
+<div class="noticias-container">
+
+  <!-- Carrusel de titulares destacados -->
+  <p-carousel *ngIf="noticias.length > 0"
+              [value]="noticias"
+              [numVisible]="1"
+              [numScroll]="1"
+              [circular]="true"
+              [autoplayInterval]="6000">
+    <ng-template pTemplate="item" let-noticia>
+      <p-card class="carousel-card" [header]="noticia.title">
+        <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
+        <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
+        <a pButton label="Leer más" icon="pi pi-external-link" class="p-button-text p-button-sm"
+           [href]="noticia.url" target="_blank"></a>
+      </p-card>
+    </ng-template>
+  </p-carousel>
+
+  <!-- Grid de noticias -->
+  <div class="noticias-grid">
+    <p-card *ngFor="let noticia of noticias" class="noticia-card-grid" [header]="noticia.title">
+      <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="grid-img" />
+      <div class="noticia-info">
+        <p class="fecha">{{ noticia.publishedAt | date:'medium' }}</p>
+        <p class="fuente">📰 {{ noticia.source.name }}</p>
+        <p>{{ noticia.description }}</p>
+      </div>
+      <div class="acciones">
+        <a pButton label="Ver Noticia" icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-info"
+           [href]="noticia.url" target="_blank"></a>
+        <button pButton icon="pi pi-thumbs-up" class="p-button-sm p-button-rounded p-button-secondary"
+                (click)="darLike(noticia.title)"></button>
+      </div>
+    </p-card>
+  </div>
+
+</div>

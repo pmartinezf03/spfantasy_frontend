@@ -1,0 +1,39 @@
+<!-- mercado.component.html -->
+<div class="mercado-container">
+  <h1>Mercado de Jugadores</h1>
+
+  <!-- Dinero del usuario -->
+  <div class="usuario-dinero">
+    <h3>Dinero disponible: {{ usuarioDinero | currency:'USD' }}</h3>
+  </div>
+
+  <!-- Tabla de jugadores en venta -->
+  <table mat-table [dataSource]="jugadores" class="mat-elevation-z8">
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef> Nombre </th>
+      <td mat-cell *matCellDef="let jugador"> {{ jugador.nombre }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="foto">
+      <th mat-header-cell *matHeaderCellDef> Foto </th>
+      <td mat-cell *matCellDef="let jugador">
+        <img [src]="jugador.fotoUrl" alt="{{jugador.nombre}}" class="jugador-img" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="precio">
+      <th mat-header-cell *matHeaderCellDef> Precio </th>
+      <td mat-cell *matCellDef="let jugador"> {{ jugador.precioVenta | currency:'USD' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="accion">
+      <th mat-header-cell *matHeaderCellDef> Acción </th>
+      <td mat-cell *matCellDef="let jugador">
+        <button mat-button color="primary" (click)="comprarJugador(jugador)">Comprar</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['nombre', 'foto', 'precio', 'accion']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['nombre', 'foto', 'precio', 'accion'];"></tr>
+  </table>
+</div>

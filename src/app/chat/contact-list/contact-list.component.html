@@ -1,0 +1,28 @@
+<div class="panel-whatsapp contactos-panel">
+
+  <h2 class="seccion-titulo flex justify-between items-center">
+    👥 Contactos
+
+  </h2>
+
+  <div class="add-contact">
+    <input type="text" [(ngModel)]="nuevoContactoUsername" placeholder="Nombre de usuario..." class="input" />
+    <button (click)="agregarContacto()" class="boton">➕ Añadir</button>
+    <p class="mensaje-info">{{ mensaje }}</p>
+  </div>
+
+  <ul class="lista-contactos">
+    <li *ngFor="let usuario of usuarios; trackBy: trackByUsuarioId"
+        (click)="seleccionarContacto(usuario.id)"
+        [ngClass]="{ 'activo': usuario.id === usuarioActual.id }"
+        class="contacto-item">
+      <div class="avatar">
+        {{ usuario.username.charAt(0).toUpperCase() }}
+      </div>
+      <div class="datos">
+        <div class="nombre">{{ usuario.username }}</div>
+        <div class="email">{{ usuario.email }}</div>
+      </div>
+    </li>
+  </ul>
+</div>

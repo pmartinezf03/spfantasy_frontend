@@ -1,0 +1,29 @@
+.ofertas-container {
+  max-width: 800px;
+  margin: auto;
+  text-align: center;
+}
+
+.p-button {
+  margin-right: 5px;
+}
+
+.pendiente {
+  color: orange;
+  font-weight: bold;
+}
+
+.aceptada {
+  color: green;
+  font-weight: bold;
+}
+
+.rechazada {
+  color: red;
+  font-weight: bold;
+}
+
+.contraoferta {
+  color: blue;
+  font-weight: bold;
+}

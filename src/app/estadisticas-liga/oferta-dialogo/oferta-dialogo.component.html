@@ -1,0 +1,29 @@
+<p-dialog header="🏀 Hacer Oferta" [(visible)]="mostrarDialogo" [modal]="true" [closable]="true" [style]="{width: '450px'}">
+  <div class="oferta-dialogo-body">
+    <p><b>Jugador:</b> {{ jugadorSeleccionado?.nombre }}</p>
+    <p><b>💰 Tu saldo:</b> {{ usuarioDinero | currency:'EUR' }}</p>
+    <p><b>📈 Ofertas activas:</b> {{ totalOfertasEnCurso | currency:'EUR' }}</p>
+
+    <div class="form-group">
+      <label for="montoOferta">💸 Monto de la oferta</label>
+      <p-inputNumber
+        inputId="montoOferta"
+        [(ngModel)]="montoOferta"
+        [min]="1"
+        [showButtons]="true"
+        mode="currency"
+        currency="EUR"
+        [step]="100000"
+        [maxFractionDigits]="0"
+        class="w-full">
+      </p-inputNumber>
+    </div>
+
+    <p *ngIf="mensajeError" class="error-msg">{{ mensajeError }}</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Enviar Oferta" icon="pi pi-check" class="p-button-success" (click)="confirmarOferta()"></button>
+    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="cerrarDialogo()"></button>
+  </ng-template>
+</p-dialog>

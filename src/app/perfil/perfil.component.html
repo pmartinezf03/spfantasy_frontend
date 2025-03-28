@@ -1,0 +1,12 @@
+<div class="perfil-container">
+  <h2>📋 Mi Perfil</h2>
+
+  <div class="perfil-info" *ngIf="usuarioLogueado">
+    <img [src]="'assets/img/default-avatar.png'" alt="Foto de perfil" class="perfil-foto">
+    <p><strong>👤 Nombre de usuario:</strong> {{ usuarioLogueado.username }}</p>
+    <p><strong>📧 Email:</strong> {{ usuarioLogueado.email }}</p>
+    <p><strong>💰 Dinero disponible:</strong> {{ usuarioDinero | currency:'EUR' }}</p> <!-- ✅ actualizado aquí -->
+  </div>
+
+  <p *ngIf="!usuarioLogueado">No has iniciado sesión.</p>
+</div>
