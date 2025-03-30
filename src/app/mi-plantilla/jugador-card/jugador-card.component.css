@@ -1,3 +1,4 @@
+/* Estilos base (web) */
 .jugador-card {
   width: 250px;
   height: 350px;
@@ -35,7 +36,7 @@
   padding: 10px;
 }
 
-/* ✅ Estilos del menú emergente dentro de la tarjeta */
+/* Menú flotante */
 .jugador-menu {
   position: absolute;
   bottom: 10px;
@@ -72,4 +73,38 @@
   background: red;
   color: white;
   font-weight: bold;
+}
+
+/* 🎯 Estilos responsivos para móviles */
+@media screen and (max-width: 768px) {
+  .jugador-card {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .jugador-info {
+    padding: 8px;
+  }
+
+  .jugador-info h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .jugador-info p {
+    font-size: 0.85rem;
+    margin: 2px 0;
+  }
+
+  .jugador-menu {
+    width: 95%;
+    bottom: 5px;
+  }
+
+  .jugador-menu button {
+    font-size: 0.85rem;
+    padding: 5px;
+  }
 }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Fantasy</string>
+    <string name="title_activity_main">Fantasy</string>
+    <string name="package_name">com.pmartinezf.fantasy</string>
+    <string name="custom_url_scheme">com.pmartinezf.fantasy</string>
+</resources>

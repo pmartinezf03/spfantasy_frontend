@@ -50,3 +50,81 @@ app-jugador-card:hover {
   color: black;
   font-weight: 600;
 }
+
+@media screen and (max-width: 768px) {
+  .mi-plantilla {
+    padding: 10px;
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-9, .col-3 {
+    width: 100%;
+  }
+
+  .jugadores-table {
+    display: none; /* Oculta tabla en móviles */
+  }
+
+  /* ✅ Reemplaza tabla por fichas */
+  .jugador-ficha {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .jugador-ficha img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+  }
+
+  .jugador-ficha .nombre {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .jugador-ficha .detalle {
+    font-size: 0.85rem;
+    margin: 2px 0;
+  }
+
+  .jugador-ficha button {
+    margin-top: 0.5rem;
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+  }
+
+  /* ✅ Alineación adaptada */
+  .jugadores-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  app-jugador-card {
+    width: 100%;
+    max-width: 90vw;
+  }
+
+  /* ✅ Modal info (si se muestra) puede usar toda la pantalla */
+  app-tarjeta-informacion {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+

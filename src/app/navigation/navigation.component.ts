@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from '../auth/services/auth.service';
 import { UsuarioService } from '../services/usuario.service';
 import { Router } from '@angular/router';
+import { OfertasService } from '../services/ofertas.service';
 
 @Component({
   selector: 'app-navigation',
@@ -14,13 +15,17 @@ export class NavigationComponent implements OnInit {
   isUserLoggedIn = false;
   usuarioLogueado: string | null = null;
   usuarioDinero = 0;
+  tieneOfertasNuevas: boolean = false;
+
 
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private ofertasService: OfertasService,
 
+  ) { }
+  usuarioId: number = 0;
   ngOnInit(): void {
     this.authService.getUserObservable().subscribe(user => {
       this.isUserLoggedIn = !!user;
@@ -30,11 +35,26 @@ export class NavigationComponent implements OnInit {
         this.usuarioService.obtenerDineroUsuario(user.id).subscribe(dinero => {
           this.usuarioDinero = dinero;
         });
-      }
 
-      this.construirMenu();
+        this.ofertasService.tieneOfertasNuevas(user.id).subscribe(resp => {
+          this.tieneOfertasNuevas = resp.tieneOfertasNuevas;
+          this.construirMenu();
+        });
+
+        // ✅ Escuchamos cuando el usuario entra a la pestaña y las ofertas se marcan como leídas
+        this.ofertasService.ofertasLeidas$.subscribe(leidas => {
+          if (leidas) {
+            console.log("🔴 Ofertas leídas, ocultando punto rojo");
+            this.tieneOfertasNuevas = false;
+            this.construirMenu();
+          }
+        });
+      } else {
+        this.construirMenu();
+      }
     });
   }
+
 
   construirMenu(): void {
     this.items = [
@@ -52,11 +72,14 @@ export class NavigationComponent implements OnInit {
       },
       ...(this.isUserLoggedIn
         ? [
-            { label: '🛒 Mercado', routerLink: '/mercado' },
-            { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
-            { label: '💬 Chat', routerLink: '/chat' },
-            { label: '💰 Ofertas', routerLink: '/ofertas' }
-          ]
+          { label: '🛒 Mercado', routerLink: '/mercado' },
+          { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
+          { label: '💬 Chat', routerLink: '/chat' },
+          {
+            label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas',
+            routerLink: '/ofertas'
+          }
+        ]
         : []),
       {
         label: this.isUserLoggedIn ? '🚪 Cerrar Sesión' : '🔑 Iniciar sesión',

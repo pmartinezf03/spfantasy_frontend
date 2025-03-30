@@ -4,12 +4,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Oferta } from '../models/oferta.model';
 import { AuthService } from '../auth/services/auth.service';  // ✅ Importamos AuthService
 import { Usuario } from '../models/usuario.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfertasService {
-  private apiUrl = 'http://localhost:8080/api/ofertas';
+  private apiUrl = `${environment.apiUrl}/api/ofertas`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -66,8 +67,28 @@ export class OfertasService {
     return this.http.post<Oferta>(url, payload, this.getAuthHeaders()); // ✅ Importante incluir headers aquí
   }
 
+  tieneOfertasNuevas(vendedorId: number): Observable<{ tieneOfertasNuevas: boolean }> {
+    const url = `${this.apiUrl}/nuevas/${vendedorId}`;
+    return this.http.get<{ tieneOfertasNuevas: boolean }>(url, this.getAuthHeaders());
+  }
+
+  marcarOfertasComoLeidas(usuarioId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/marcar-leidas/${usuarioId}`, {}, this.getAuthHeaders());
+  }
+
+
+
+  // 🔴 Subject para notificar al NavigationComponent
+  private ofertasLeidasSubject = new BehaviorSubject<boolean>(false);
+  ofertasLeidas$ = this.ofertasLeidasSubject.asObservable();
+
+  notificarLeido(): void {
+    this.ofertasLeidasSubject.next(true); // Emitimos que ya se leyeron
+  }
+
+
   private datosUsuarioSubject = new BehaviorSubject<Usuario | null>(null);
-datosUsuario$ = this.datosUsuarioSubject.asObservable();
+  datosUsuario$ = this.datosUsuarioSubject.asObservable();
 
 
 

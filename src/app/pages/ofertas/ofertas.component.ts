@@ -38,15 +38,26 @@ export class OfertasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log("📥 Entrando a la pestaña de ofertas...");
     const user = this.authService.getUser();
+
     if (user && user.id) {
       this.usuarioId = user.id;
+      console.log("🧠 Usuario ID detectado:", this.usuarioId);
+
       this.obtenerDineroUsuario();
       this.cargarOfertas();
+
+      // 🔴 MARCAR COMO LEÍDAS
+      this.ofertasService.marcarOfertasComoLeidas(this.usuarioId).subscribe(() => {
+        console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
+        this.ofertasService.notificarLeido(); // 🔁 Avisa al NavigationComponent
+      });
     } else {
       console.error("❌ No se encontró el usuario autenticado.");
     }
   }
+
 
   obtenerDineroUsuario(): void {
     this.usuarioService.obtenerDineroUsuario(this.usuarioId).subscribe(  // Verifica que este método exista en UsuarioService
@@ -257,6 +268,11 @@ export class OfertasComponent implements OnInit {
       }
     });
   }
+
+  esMovil(): boolean {
+    return window.innerWidth <= 768;
+  }
+
 
 
 

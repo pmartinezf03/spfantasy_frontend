@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GrupoChat } from '../models/grupochat.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GrupoChatService {
-  private apiUrl = 'http://localhost:8080/api/grupos'; // URL del backend
+  private apiUrl = `http://${environment.apiUrl}/api/grupos`; // URL del backend
 
   constructor(private http: HttpClient) {}
 

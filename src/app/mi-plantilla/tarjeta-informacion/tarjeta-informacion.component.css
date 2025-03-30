@@ -9,39 +9,74 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .tarjeta-info {
   background: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  width: 100%;
+  max-width: 360px;
 }
 
 .tarjeta-info h2 {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
 }
 
 .tarjeta-info img {
   width: 100%;
-  height: auto;
+  max-height: 220px;
+  object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
+}
+
+.tarjeta-info p {
+  font-size: 1rem;
+  margin: 0.3rem 0;
+  color: #444;
 }
 
 .tarjeta-info button {
-  background: red;
+  margin-top: 1rem;
+  background: #e74c3c;
   color: white;
   font-weight: bold;
-  padding: 10px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .tarjeta-info button:hover {
-  background: darkred;
+  background: #c0392b;
+}
+
+/* 📱 Adaptación móvil adicional */
+@media screen and (max-width: 768px) {
+  .tarjeta-info {
+    padding: 16px;
+    width: 100%;
+    max-width: 95vw;
+  }
+
+  .tarjeta-info h2 {
+    font-size: 1.3rem;
+  }
+
+  .tarjeta-info p {
+    font-size: 0.95rem;
+  }
+
+  .tarjeta-info button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
 }

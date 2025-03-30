@@ -109,3 +109,62 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+
+/* ✅ SOLO PARA MÓVILES */
+/* ✅ Fichas tipo tarjeta solo para móviles */
+@media screen and (max-width: 768px) {
+  .jugador-card-mobile {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+  }
+
+  .jugador-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .jugador-header img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .jugador-header .nombre {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .jugador-header .rol {
+    margin-left: auto;
+    background-color: #007bff;
+    color: white;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .jugador-detalles p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #444;
+  }
+
+  .vender-btn {
+    margin-top: 0.7rem;
+    background: #e74c3c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}

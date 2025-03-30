@@ -17,6 +17,6 @@ export interface Jugador {
   t2: number;
   t3: number;
   fp: number;
-  propietarioId?: number | null;  // ✅ Se añade el propietarioId para compatibilidad con la API
-  propietarioUsername?: string;  // ✅ Se añade propietarioUsername para mostrar en la tabla
+  propietarioId?: number | null;
+  propietarioUsername?: string;
 }

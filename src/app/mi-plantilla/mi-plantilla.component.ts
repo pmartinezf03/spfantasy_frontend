@@ -52,8 +52,16 @@ export class MiPlantillaComponent implements OnInit {
     this.usuarioService.obtenerUsuario(this.username, token).subscribe(usuario => {
       if (usuario) {
         this.usuarioDinero = usuario.dinero;
-        this.jugadoresTitulares = usuario.titulares || [];  // ✅ Cargar solo titulares
-        this.jugadoresBanquillo = usuario.suplentes || [];  // ✅ Cargar solo suplentes
+        this.jugadoresTitulares = (usuario.titulares || []).map((j: Jugador) => ({
+          ...j,
+          esTitular: j.esTitular
+        }));
+        this.jugadoresBanquillo = (usuario.suplentes || []).map((j: Jugador) => ({
+          ...j,
+          esTitular: j.esTitular
+        }));
+
+
 
         console.log("✅ Plantilla recuperada correctamente:");
         console.log("Titulares:", this.jugadoresTitulares);
@@ -73,8 +81,15 @@ export class MiPlantillaComponent implements OnInit {
     this.usuarioService.obtenerUsuario(this.username, this.authService.getToken()!).subscribe(usuario => {
       if (usuario) {
         this.usuarioDinero = usuario.dinero;
-        this.jugadoresTitulares = usuario.titulares || [];
-        this.jugadoresBanquillo = usuario.suplentes || [];
+        this.jugadoresTitulares = (usuario.titulares || []).map((j: Jugador) => ({
+          ...j,
+          esTitular: j.esTitular
+        }));
+        this.jugadoresBanquillo = (usuario.suplentes || []).map((j: Jugador) => ({
+          ...j,
+          esTitular: j.esTitular
+        }));
+
 
         console.log("🔄 Estadísticas actualizadas:");
         console.log("Titulares:", this.jugadoresTitulares);
@@ -150,6 +165,11 @@ export class MiPlantillaComponent implements OnInit {
     });
   }
 
+  get jugadoresCompletos(): Jugador[] {
+    return [...this.jugadoresTitulares, ...this.jugadoresBanquillo];
+  }
+
+
   comprarJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
     if (!token) {
@@ -200,6 +220,16 @@ export class MiPlantillaComponent implements OnInit {
       return;
     }
 
+    // ✅ Forzar actualización del estado en frontend y cambiar referencias
+    this.jugadoresTitulares = this.jugadoresTitulares.map(j => ({ ...j, esTitular: true }));
+    this.jugadoresBanquillo = this.jugadoresBanquillo.map(j => ({ ...j, esTitular: false }));
+
+    // ✅ Verificar en consola si se actualizó correctamente
+    console.log('🎯 Estado tras guardar:', [
+      ...this.jugadoresTitulares,
+      ...this.jugadoresBanquillo
+    ]);
+
     const plantillaData = {
       titulares: this.jugadoresTitulares.map(j => j.id),
       suplentes: this.jugadoresBanquillo.map(j => j.id)
@@ -209,6 +239,9 @@ export class MiPlantillaComponent implements OnInit {
       if (response && response.status === "success") {
         alert("✅ Plantilla guardada correctamente.");
         console.log("📤 Plantilla enviada y guardada:", plantillaData);
+
+        // ✅ Opcional: recargar datos del backend para estar seguros
+        this.cargarEstadisticas();
       } else {
         alert("❌ Hubo un error al guardar la plantilla.");
       }
@@ -217,6 +250,7 @@ export class MiPlantillaComponent implements OnInit {
       alert("❌ Error en la petición al guardar la plantilla.");
     });
   }
+
 
   mostrarInformacion(jugador: Jugador): void {
     console.log("📌 Mostrando información del jugador:", jugador);
@@ -228,4 +262,9 @@ export class MiPlantillaComponent implements OnInit {
     this.mostrarModalInformacion = false;
     this.jugadorSeleccionado = null;
   }
+
+  esMovil(): boolean {
+    return window.innerWidth <= 768;
+  }
+
 }

@@ -1,3 +1,172 @@
+/* 🌐 Estilo base */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* 💻 Mostrar tabla solo en escritorio */
+.tabla-escritorio {
+  display: block;
+}
+
+.fichas-jugadores {
+  display: none;
+}
+
+/* 📱 Ajustes SOLO para móviles */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 14px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+
+  h1, h2, h3 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .titulo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .estadisticas-liga {
+    padding: 1rem 0.5rem;
+  }
+
+  .titulo-liga {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ✅ Ocultar tabla en móvil */
+  .tabla-escritorio {
+    display: none;
+  }
+
+  .fichas-jugadores {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .ficha-jugador {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  }
+
+  .header-ficha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-ficha img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-right: 0.5rem;
+  }
+
+  .info-basica {
+    flex-grow: 1;
+  }
+
+  .nombre {
+    font-weight: bold;
+  }
+
+  .posicion {
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  .puntos {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #2c3e50;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    gap: 4px;
+  }
+
+  .propietario {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: #2c3e50;
+    text-align: center;
+  }
+
+  .acciones {
+    margin-top: 0.8rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  /* 🧼 Ajustes tabla PrimeNG */
+  ::ng-deep .p-datatable {
+    font-size: 12px;
+    overflow-x: auto;
+    display: block;
+  }
+
+  ::ng-deep .p-datatable-wrapper {
+    overflow-x: auto !important;
+  }
+
+  ::ng-deep .p-datatable table {
+    min-width: 100%;
+    table-layout: auto;
+  }
+
+  ::ng-deep .p-datatable-thead > tr > th,
+  ::ng-deep .p-datatable-tbody > tr > td {
+    padding: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .jugador-foto {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  .propietario-tag {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  ::ng-deep .p-button {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  /* 💡 Ocultar columnas menos importantes en tabla */
+  ::ng-deep th:nth-child(5),
+  ::ng-deep td:nth-child(5),
+  ::ng-deep th:nth-child(6),
+  ::ng-deep td:nth-child(6),
+  ::ng-deep th:nth-child(7),
+  ::ng-deep td:nth-child(7),
+  ::ng-deep th:nth-child(8),
+  ::ng-deep td:nth-child(8) {
+    display: none;
+  }
+}

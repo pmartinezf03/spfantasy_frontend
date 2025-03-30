@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Jugador } from '../models/jugador.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JugadorService {
-  private apiUrl = 'http://localhost:8080/jugadores';
+  private apiUrl = `${environment.apiUrl}/jugadores`;
 
   constructor(private http: HttpClient) { }
 
@@ -20,7 +21,7 @@ export class JugadorService {
   }
 
   obtenerJugadoresDisponibles(): Observable<Jugador[]> {
-    return this.http.get<Jugador[]>(`http://localhost:8080/jugadores/mercado`);
+    return this.http.get<Jugador[]>(`${environment.apiUrl}/jugadores/mercado`);
   }
 
 }

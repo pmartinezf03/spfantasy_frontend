@@ -1,63 +1,106 @@
 <div class="estadisticas-liga">
   <h2 class="titulo-liga">📊 Estadísticas de la Liga</h2>
 
-  <!-- Tabla PrimeNG -->
-  <p-table [value]="jugadores" [scrollable]="true" scrollHeight="500px" responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Foto</th>
-        <th>Nombre</th>
-        <th>Posición</th>
-        <th>Pts</th>
-        <th>Min</th>
-        <th>TL</th>
-        <th>T2</th>
-        <th>T3</th>
-        <th>Fp</th>
-        <th>Propietario</th>
-        <th>Acción</th>
-      </tr>
-    </ng-template>
+  <!-- 🌐 Tabla PrimeNG solo en escritorio -->
+  <div class="tabla-escritorio">
+    <p-table [value]="jugadores" [scrollable]="true" scrollHeight="500px" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Posición</th>
+          <th>Pts</th>
+          <th>Min</th>
+          <th>TL</th>
+          <th>T2</th>
+          <th>T3</th>
+          <th>Fp</th>
+          <th>Propietario</th>
+          <th>Acción</th>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="body" let-jugador>
-      <tr>
-        <td>
-          <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" class="jugador-foto">
-        </td>
-        <td>{{ jugador.nombre }}</td>
-        <td>{{ jugador.posicion }}</td>
-        <td>{{ jugador.pts }}</td>
-        <td>{{ jugador.min }}</td>
-        <td>{{ jugador.tl }}</td>
-        <td>{{ jugador.t2 }}</td>
-        <td>{{ jugador.t3 }}</td>
-        <td>{{ jugador.fp }}</td>
-        <td>
-          <span *ngIf="jugador.propietarioUsername; else libre" class="propietario-tag">
-            {{ jugador.propietarioUsername }}
-          </span>
-          <ng-template #libre>
-            <p-tag value="Libre" severity="success"></p-tag>
-          </ng-template>
-        </td>
-        <td>
-          <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
-                  pButton type="button" icon="pi pi-dollar" label="Hacer Oferta"
-                  class="p-button-sm p-button-success"
-                  (click)="abrirDialogoOferta(jugador)">
-          </button>
+      <ng-template pTemplate="body" let-jugador>
+        <tr>
+          <td><img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" class="jugador-foto"></td>
+          <td>{{ jugador.nombre }}</td>
+          <td>{{ jugador.posicion }}</td>
+          <td>{{ jugador.pts }}</td>
+          <td>{{ jugador.min }}</td>
+          <td>{{ jugador.tl }}</td>
+          <td>{{ jugador.t2 }}</td>
+          <td>{{ jugador.t3 }}</td>
+          <td>{{ jugador.fp }}</td>
+          <td>
+            <span *ngIf="jugador.propietarioUsername; else libre" class="propietario-tag">{{ jugador.propietarioUsername }}</span>
+            <ng-template #libre>
+              <p-tag value="Libre" severity="success"></p-tag>
+            </ng-template>
+          </td>
+          <td>
+            <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                    pButton type="button" icon="pi pi-dollar" label="Hacer Oferta"
+                    class="p-button-sm p-button-success"
+                    (click)="abrirDialogoOferta(jugador)">
+            </button>
 
-          <button *ngIf="ofertasEnCurso[jugador.id]"
-                  pButton type="button" icon="pi pi-times" label="Cancelar"
-                  class="p-button-sm p-button-danger"
-                  (click)="cancelarOferta(jugador.id)">
-          </button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+            <button *ngIf="ofertasEnCurso[jugador.id]"
+                    pButton type="button" icon="pi pi-times" label="Cancelar"
+                    class="p-button-sm p-button-danger"
+                    (click)="cancelarOferta(jugador.id)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 
-  <!-- Cuadro de diálogo de oferta -->
+  <!-- 📱 Fichas responsive estilo LaLiga Fantasy -->
+  <div class="fichas-jugadores">
+    <div *ngFor="let jugador of jugadores" class="ficha-jugador">
+      <div class="header-ficha">
+        <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}">
+        <div class="info-basica">
+          <div class="nombre">{{ jugador.nombre }}</div>
+          <div class="posicion">{{ jugador.posicion }}</div>
+        </div>
+        <div class="puntos">{{ jugador.pts }} pts</div>
+      </div>
+
+      <div class="stats">
+        <div>Min: {{ jugador.min }}</div>
+        <div>TL: {{ jugador.tl }}</div>
+        <div>T2: {{ jugador.t2 }}</div>
+        <div>T3: {{ jugador.t3 }}</div>
+        <div>Fp: {{ jugador.fp }}</div>
+      </div>
+
+      <div class="propietario">
+        <ng-container *ngIf="jugador.propietarioUsername; else libreMovil">
+          👤 {{ jugador.propietarioUsername }}
+        </ng-container>
+        <ng-template #libreMovil>
+          <p-tag value="Libre" severity="success"></p-tag>
+        </ng-template>
+      </div>
+
+      <div class="acciones">
+        <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                pButton type="button" icon="pi pi-dollar" label="Ofertar"
+                class="p-button-sm p-button-success"
+                (click)="abrirDialogoOferta(jugador)">
+        </button>
+
+        <button *ngIf="ofertasEnCurso[jugador.id]"
+                pButton type="button" icon="pi pi-times" label="Cancelar"
+                class="p-button-sm p-button-danger"
+                (click)="cancelarOferta(jugador.id)">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🪄 Diálogo de oferta -->
   <app-oferta-dialogo
     [mostrarDialogo]="mostrarDialogo"
     [jugadorSeleccionado]="jugadorSeleccionado"

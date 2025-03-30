@@ -30,3 +30,46 @@ th, td {
 button {
   cursor: pointer;
 }
+
+
+/* 📱 Diseño móvil tipo ficha */
+@media (max-width: 768px) {
+  .tabla-web {
+    display: none;
+  }
+
+  .fichas-movil {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .ficha-jugador {
+    display: flex;
+    gap: 1rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .ficha-jugador img {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .jugador-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .jugador-info p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+  }
+}

@@ -6,6 +6,7 @@ import { Message } from '../models/message.model';
 import { Usuario } from '../models/usuario.model';
 import { UsuarioService } from '../services/usuario.service';
 import { GrupoChat } from '../models/grupochat.model';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-chat',
@@ -56,7 +57,7 @@ export class ChatComponent implements OnInit, OnChanges {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
-    this.http.get<Message[]>(`http://localhost:8080/api/mensajes/${this.currentUser.id}/todos`, { headers }).subscribe({
+    this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/${this.currentUser.id}/todos`, { headers }).subscribe({
       next: (todos) => {
         todos.forEach((msg) => {
           const clave = this.getClaveConversacion(msg);
@@ -112,7 +113,7 @@ export class ChatComponent implements OnInit, OnChanges {
 
   loadGruposDelUsuario(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.get<GrupoChat[]>(`http://localhost:8080/api/grupos`, { headers }).subscribe(grupos => {
+    this.http.get<GrupoChat[]>(`${environment.apiUrl}/api/grupos`, { headers }).subscribe(grupos => {
       this.gruposUsuario = grupos.filter(grupo => grupo.usuarios.includes(this.currentUser!.id));
     });
   }
@@ -136,12 +137,12 @@ export class ChatComponent implements OnInit, OnChanges {
   loadMessages(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     if (this.selectedGroupId) {
-      this.http.get<Message[]>(`http://localhost:8080/api/mensajes/grupo/${this.selectedGroupId}/dto`, { headers })
-        .subscribe(data => this.messages = data);
+      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/grupo/${this.selectedGroupId}/dto`, { headers })
+      .subscribe(data => this.messages = data);
     } else if (this.selectedUserId) {
       const clave = this.generarClavePrivada(this.currentUser!.id, this.selectedUserId);
-      this.http.get<Message[]>(`http://localhost:8080/api/mensajes/privado/${this.currentUser!.id}/${this.selectedUserId}/dto`, { headers })
-        .subscribe(data => this.messages = data);
+      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/privado/${this.currentUser!.id}/${this.selectedUserId}/dto`, { headers })
+      .subscribe(data => this.messages = data);
     }
   }
 

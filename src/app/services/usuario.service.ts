@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Jugador } from '../models/jugador.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  private apiUrl = 'http://localhost:8080/usuarios';
+  private apiUrl = `${environment.apiUrl}/usuarios`;
   private dineroUsuario: number = 0;
 
   private dineroSubject = new BehaviorSubject<number>(0);
