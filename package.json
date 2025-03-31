@@ -28,6 +28,7 @@
     "buffer": "^6.0.3",
     "cloudinary": "^2.5.1",
     "firebase": "^11.4.0",
+    "ng-recaptcha": "^13.2.1",
     "primeflex": "^4.0.0",
     "primeicons": "^6.0.1",
     "primeng": "^17.18.15",
