@@ -12,16 +12,25 @@
         <input type="password" formControlName="password">
       </div>
 
-      <button type="submit" class="btn" [disabled]="loginForm.invalid">Ingresar</button>
+      <!-- Aquí agregamos el reCAPTCHA -->
+      <div class="form-group">
+        <re-captcha
+          formControlName="recaptcha"
+          (resolved)="resolved($event)"
+          siteKey="6LeXEgUrAAAAAE1MO62uBhHxZYfa4uWPQhsLyCLY"
+        ></re-captcha>
+
+        //Secret Key: 6LeXEgUrAAAAAAGrzPUUsAqyNkrg8Zg1B0hp9ehS validar en el backend.
+
+      </div>
+
+      <button type="submit" class="btn" [disabled]="loginForm.invalid || !recaptchaResponse">Ingresar</button>
 
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       <p>No tienes una cuenta?
-
         <a routerLink="/auth/register">Regístrate?</a>
       </p>
     </form>
-
-
 
     <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
   </div>

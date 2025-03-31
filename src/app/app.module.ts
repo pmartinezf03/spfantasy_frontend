@@ -18,7 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-
+import { RecaptchaModule } from "ng-recaptcha";
 
 
 // Importación de componentes
@@ -106,6 +106,7 @@ import { CarouselModule } from 'primeng/carousel';
     ProgressBarModule,
     ToastModule,
     CarouselModule,
+    RecaptchaModule,
 
   ],
   providers: [
