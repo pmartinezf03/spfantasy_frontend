@@ -4,7 +4,7 @@ import { OfertasService } from '../../app/services/ofertas.service';
 import { UsuarioService } from '../../app/services/usuario.service';
 import { Jugador } from '../../app/models/jugador.model';
 import { Oferta } from '../../app/models/oferta.model';
-import { AuthService } from '../../app/auth/services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-estadisticas-liga',

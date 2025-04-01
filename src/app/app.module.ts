@@ -54,6 +54,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { CarouselModule } from 'primeng/carousel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { LigasComponent } from './ligas/ligas.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +79,7 @@ import { CarouselModule } from 'primeng/carousel';
     PerfilComponent,
     ContactListComponent,
     ChatWindowComponent,
+    LigasComponent,
 
   ],
   imports: [
@@ -107,12 +110,14 @@ import { CarouselModule } from 'primeng/carousel';
     ToastModule,
     CarouselModule,
     RecaptchaModule,
+    ProgressSpinnerModule,
 
   ],
   providers: [
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     PrimeNGConfig,
+
   ],
   bootstrap: [AppComponent]
 })

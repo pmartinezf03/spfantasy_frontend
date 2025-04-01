@@ -12,7 +12,9 @@ export class LoginComponent {
   loginForm: FormGroup;
   mensaje: string = '';
   errorMessage: string = '';
-  recaptchaResponse: string = '';  // Asegurándote de que sea solo string
+  recaptchaResponse: string = '';
+  loading: boolean = false;
+  showModal: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -42,9 +44,17 @@ export class LoginComponent {
       return;
     }
 
+    this.showModal = true;  // Muestra el modal con el spinner
+    this.loading = true;     // Muestra el spinner
+
+    // Llamamos al servicio de autenticación
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         console.log('Inicio de sesión exitoso:', response);
+        this.loading = false;  // Oculta el spinner
+        this.showModal = false; // Cierra el modal
+
+        // Si todo es correcto, puedes redirigir o mostrar un mensaje de éxito
         this.mensaje = 'Inicio de sesión exitoso!';
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/plantilla']); // o '/chat'
@@ -52,6 +62,8 @@ export class LoginComponent {
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
+        this.loading = false;  // Oculta el spinner
+        this.showModal = false; // Cierra el modal
         this.errorMessage = '⚠ Credenciales incorrectas. Intenta de nuevo.';
         this.mensaje = 'Credenciales incorrectas';
       },

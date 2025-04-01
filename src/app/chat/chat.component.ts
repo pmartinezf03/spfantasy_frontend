@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { WebSocketService } from '../../app/services/websocket.service';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Message } from '../models/message.model';
 import { Usuario } from '../models/usuario.model';

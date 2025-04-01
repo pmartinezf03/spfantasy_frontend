@@ -10,6 +10,7 @@ import {PerfilComponent} from './perfil/perfil.component'
 import { LoginComponent } from './auth/components/login/login.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { OfertasComponent } from './pages/ofertas/ofertas.component';
+import { LigasComponent } from './ligas/ligas.component';
 
 const routes: Routes = [
   { path: 'mercado', component: MercadoComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'chat', component: ChatComponent },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'perfil', component: PerfilComponent },
+  { path:'ligas', component:LigasComponent},
   {
     path: 'auth',
     children: [

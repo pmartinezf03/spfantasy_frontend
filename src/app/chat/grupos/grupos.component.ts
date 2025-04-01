@@ -3,7 +3,7 @@ import { GrupoChat } from '../../models/grupochat.model';
 import { GrupoChatService } from '../../services/grupo-chat.service';
 import { Usuario } from '../../models/usuario.model';
 import { UsuarioService } from '../../services/usuario.service';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Message } from '../../models/message.model';
 
 @Component({

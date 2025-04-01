@@ -3,7 +3,7 @@ export interface Usuario {
   username: string;
   email?: string;
   role: string;
-  dinero: number;           // ✅ Añadido
-  titulares: number[];      // ✅ Añadido (IDs de jugadores titulares)
-  suplentes: number[];      // ✅ Añadido (IDs de jugadores suplentes)
+  dinero: number;
+  titulares: number[];
+  suplentes: number[];
 }
