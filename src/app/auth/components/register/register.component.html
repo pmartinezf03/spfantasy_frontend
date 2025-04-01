@@ -3,6 +3,13 @@
   <div class="background-image"></div>
 
   <div class="auth-box">
+    <img
+      src="https://i.imgur.com/YLu7obR.png"
+      alt="Logo"
+      height="100"
+      style="margin-right: 1rem"
+    />
+
     <h2>Registro</h2>
     <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()">
       <div class="form-group">
@@ -56,7 +63,11 @@
         </small>
       </div>
 
-      <button type="submit" class="btn" [disabled]="registerForm.invalid || loading">
+      <button
+        type="submit"
+        class="btn"
+        [disabled]="registerForm.invalid || loading"
+      >
         Registrarse
       </button>
     </form>
