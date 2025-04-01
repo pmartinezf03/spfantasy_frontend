@@ -71,11 +71,30 @@ export class MiPlantillaComponent implements OnInit {
   }
 
   cargarJugadores(): void {
-    this.jugadorService.obtenerJugadores().subscribe(jugadores => {
-      this.todosLosJugadores = jugadores;
-      console.log("✅ Jugadores cargados en el frontend:", this.todosLosJugadores);
+    const ligaId = this.authService.getLigaId();
+    const usuarioId = this.authService.getUserId();
+
+    if (!ligaId || !usuarioId) {
+      console.warn("⚠ No hay ligaId o usuarioId disponibles.");
+      return;
+    }
+
+    this.jugadorService.obtenerJugadoresDeUsuarioEnLiga(ligaId, usuarioId).subscribe({
+      next: jugadores => {
+        this.todosLosJugadores = jugadores;
+
+        // Separar titulares y suplentes si la API no lo hace
+        this.jugadoresTitulares = jugadores.filter(j => j.esTitular);
+        this.jugadoresBanquillo = jugadores.filter(j => !j.esTitular);
+
+        console.log("✅ Jugadores de la liga cargados:", jugadores);
+      },
+      error: err => {
+        console.error("❌ Error al cargar jugadores de la liga:", err);
+      }
     });
   }
+
 
   cargarEstadisticas(): void {
     this.usuarioService.obtenerUsuario(this.username, this.authService.getToken()!).subscribe(usuario => {

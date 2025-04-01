@@ -1,1 +1,13 @@
-<p>esperando-miembros works!</p>
+<div class="esperando-contenedor">
+  <h2>Esperando a que se unan más jugadores...</h2>
+
+  <p *ngIf="esCreador()">
+    Cuando estés listo, puedes comenzar la liga.
+    <button (click)="iniciarLiga()">Iniciar Liga</button>
+  </p>
+
+  <h3>Miembros actuales:</h3>
+  <ul>
+    <li *ngFor="let m of miembros">{{ m.username }}</li>
+  </ul>
+</div>

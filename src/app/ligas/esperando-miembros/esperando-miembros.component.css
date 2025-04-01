@@ -1,0 +1,16 @@
+.esperando-contenedor {
+  background: #1c1c1e;
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.esperando-contenedor button {
+  background: #ff003c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}

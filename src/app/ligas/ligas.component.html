@@ -3,22 +3,38 @@
   <h2 *ngIf="ligaActual">Estás en la liga: {{ ligaActual.nombre }}</h2>
 
   <div *ngIf="ligaActual">
-    <button (click)="salirLiga()">Salir de la liga</button>
+    <button class="btn-salir" (click)="salirLiga()">Salir de la liga</button>
 
-    <h3>Miembros</h3>
-    <ul>
-      <li *ngFor="let miembro of miembros">
-        {{ miembro.username }} ({{ miembro.email }})
-      </li>
-    </ul>
+    <!-- Componente de gestión para el creador -->
+    <app-gestionar-liga
+      *ngIf="esCreador && !ligaIniciada"
+      [liga]="ligaActual"
+      [miembros]="miembros"
+      (expulsado)="cargarMiembros()"
+      (ligaIniciada)="ligaIniciada = true">
+    </app-gestionar-liga>
+
+    <!-- Componente de espera para miembros o cuando la liga ya ha sido iniciada -->
+    <app-esperando-miembros
+      *ngIf="!esCreador || ligaIniciada"
+      [liga]="ligaActual"
+      [miembros]="miembros">
+    </app-esperando-miembros>
   </div>
 
   <div *ngIf="!ligaActual">
-    <button (click)="mostrarCrear()">Crear Liga</button>
-    <button (click)="mostrarUnirse()">Unirse a Liga</button>
+    <button class="btn-crear" (click)="mostrarCrear()">Crear Liga</button>
+    <button class="btn-unirse" (click)="mostrarUnirse()">Unirse a Liga</button>
 
-    <app-crear-liga *ngIf="mostrarCrearLiga" (ligaCreada)="onLigaCreada($event)"></app-crear-liga>
-    <app-unirse-liga *ngIf="mostrarUnirseLiga" (unido)="onUnidoALiga($event)"></app-unirse-liga>
+    <app-crear-liga
+      *ngIf="mostrarCrearLiga"
+      (ligaCreada)="onLigaCreada($event)">
+    </app-crear-liga>
+
+    <app-unirse-liga
+      *ngIf="mostrarUnirseLiga"
+      (unido)="onUnidoALiga($event)">
+    </app-unirse-liga>
   </div>
 
 </div>

@@ -1,0 +1,29 @@
+.gestionar-contenedor {
+  background-color: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+input {
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  background: #ff003c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}

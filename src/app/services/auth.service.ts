@@ -17,6 +17,8 @@ interface User {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/usuarios`;
   private userSubject = new BehaviorSubject<User | null>(this.loadUserFromStorage());
+  private ligaIdSubject = new BehaviorSubject<number | null>(null);
+
 
   constructor(private http: HttpClient) { }
 
@@ -48,11 +50,11 @@ export class AuthService {
   }
 
   getUserId(): number | null {
-    return this.getUser()?.id || null;  // ✅ Devuelve el ID del usuario autenticado
+    return this.getUser()?.id || null;
   }
 
   getUserRole(): string {
-    return this.getUser()?.role || 'usuario';  // ✅ Si no hay usuario, devuelve "usuario"
+    return this.getUser()?.role || 'usuario';
   }
 
   getToken(): string | null {
@@ -78,8 +80,6 @@ export class AuthService {
     }
   }
 
-
-  // ✅ Método para obtener los headers con el token
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return token ? new HttpHeaders({
@@ -89,5 +89,22 @@ export class AuthService {
   }
 
 
+  setLigaId(ligaId: number | null): void {
+    if (ligaId !== null && ligaId !== undefined) {
+      localStorage.setItem('ligaId', ligaId.toString());
+    } else {
+      localStorage.removeItem('ligaId');
+    }
+  }
+
+  getLigaId(): number | null {
+    const id = localStorage.getItem('ligaId');
+    return id ? +id : null;
+  }
+
+
+  getLigaObservable(): Observable<number | null> {
+    return this.ligaIdSubject.asObservable();
+  }
 
 }

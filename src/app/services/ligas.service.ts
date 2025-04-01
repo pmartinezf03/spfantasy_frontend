@@ -77,4 +77,17 @@ export class LigasService {
     });
   }
 
+  actualizarLiga(dto: any): Observable<string> {
+    return this.http.put(`${this.apiUrl}/actualizar`, dto, { responseType: 'text' });
+  }
+
+  obtenerTodasLasLigas(): Observable<Liga[]> {
+    return this.http.get<Liga[]>(`${this.apiUrl}/todas`, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+
+
+
 }

@@ -1,1 +1,21 @@
-<p>gestionar-liga works!</p>
+<div class="gestionar-contenedor" *ngIf="esCreador()">
+  <h2>Gestionar Liga: {{ liga.nombre }}</h2>
+
+  <div class="formulario">
+    <label>Nueva contraseña:</label>
+    <input type="text" [(ngModel)]="nuevaContrasena" placeholder="(opcional)" />
+
+    <label>Máx. participantes:</label>
+    <input type="number" [(ngModel)]="nuevoMaxParticipantes" min="2" max="30" />
+
+    <button (click)="guardarCambios()">Guardar Cambios</button>
+  </div>
+
+  <h3>Miembros</h3>
+  <ul>
+    <li *ngFor="let miembro of miembros">
+      {{ miembro.username }}
+      <button (click)="expulsarUsuario(miembro.id)" *ngIf="miembro.id !== usuarioId">Expulsar</button>
+    </li>
+  </ul>
+</div>
