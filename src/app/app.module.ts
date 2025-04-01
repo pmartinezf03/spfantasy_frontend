@@ -56,6 +56,8 @@ import { ToastModule } from 'primeng/toast';
 import { CarouselModule } from 'primeng/carousel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LigasComponent } from './ligas/ligas.component';
+import { CrearLigaComponent } from './ligas/crear-liga/crear-liga.component';
+import { UnirseLigaComponent } from './ligas/unirse-liga/unirse-liga.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +82,8 @@ import { LigasComponent } from './ligas/ligas.component';
     ContactListComponent,
     ChatWindowComponent,
     LigasComponent,
+    CrearLigaComponent,
+    UnirseLigaComponent,
 
   ],
   imports: [

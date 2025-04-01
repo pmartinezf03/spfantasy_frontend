@@ -1,1 +1,24 @@
-<p>ligas works!</p>
+<div class="contenedor-ligas">
+
+  <h2 *ngIf="ligaActual">Estás en la liga: {{ ligaActual.nombre }}</h2>
+
+  <div *ngIf="ligaActual">
+    <button (click)="salirLiga()">Salir de la liga</button>
+
+    <h3>Miembros</h3>
+    <ul>
+      <li *ngFor="let miembro of miembros">
+        {{ miembro.username }} ({{ miembro.email }})
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="!ligaActual">
+    <button (click)="mostrarCrear()">Crear Liga</button>
+    <button (click)="mostrarUnirse()">Unirse a Liga</button>
+
+    <app-crear-liga *ngIf="mostrarCrearLiga" (ligaCreada)="onLigaCreada($event)"></app-crear-liga>
+    <app-unirse-liga *ngIf="mostrarUnirseLiga" (unido)="onUnidoALiga($event)"></app-unirse-liga>
+  </div>
+
+</div>

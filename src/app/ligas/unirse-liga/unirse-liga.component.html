@@ -1,0 +1,13 @@
+<div class="unirse-liga-form">
+  <h3>Unirse a una Liga</h3>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <label>Código de invitación:</label>
+  <input type="text" [(ngModel)]="codigo" placeholder="Ej: ABC123" />
+
+  <label>Contraseña:</label>
+  <input type="password" [(ngModel)]="contrasena" placeholder="Contraseña (si aplica)" />
+
+  <button (click)="unirse()">Unirse</button>
+</div>

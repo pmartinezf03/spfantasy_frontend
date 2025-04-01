@@ -1,0 +1,57 @@
+.contenedor-ligas {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: #101820;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h2, h3 {
+  margin-bottom: 16px;
+  color: #f4c542;
+  text-align: center;
+}
+
+button {
+  display: inline-block;
+  background-color: #f4c542;
+  color: #101820;
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  margin: 8px 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ffd700;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background-color: #1a2433;
+  margin: 8px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #2f3b4e;
+}
+
+@media (max-width: 600px) {
+  .contenedor-ligas {
+    padding: 12px;
+  }
+
+  button {
+    width: 100%;
+    margin: 8px 0;
+  }
+}
