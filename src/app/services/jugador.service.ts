@@ -29,10 +29,16 @@ export class JugadorService {
 // JugadorService o MiPlantillaService
 
 obtenerJugadoresDeUsuarioEnLiga(ligaId: number, usuarioId: number): Observable<Jugador[]> {
-  return this.http.get<Jugador[]>(`${environment.apiUrl}/api/jugadores-liga/mis-jugadores`, {
-    params: { ligaId, usuarioId }
+  return this.http.get<Jugador[]>(`${this.apiUrl}/jugadores-liga/mis-jugadores`, {
+    params: {
+      ligaId: ligaId.toString(),
+      usuarioId: usuarioId.toString()
+    }
   });
 }
+
+
+
 
 
 
