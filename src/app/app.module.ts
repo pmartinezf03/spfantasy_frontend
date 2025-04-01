@@ -36,7 +36,7 @@ import { LoginComponent } from './auth/components/login/login.component';
 import { RegisterComponent } from './auth/components/register/register.component';
 import { GruposComponent } from './chat/grupos/grupos.component';
 import { TarjetaInformacionComponent } from './mi-plantilla/tarjeta-informacion/tarjeta-informacion.component';
-import { OfertasComponent } from './pages/ofertas/ofertas.component';
+import { OfertasComponent } from './ofertas/ofertas.component';
 import { OfertaDialogoComponent } from './estadisticas-liga/oferta-dialogo/oferta-dialogo.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { ContactListComponent } from './chat/contact-list/contact-list.component';
@@ -58,6 +58,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LigasComponent } from './ligas/ligas.component';
 import { CrearLigaComponent } from './ligas/crear-liga/crear-liga.component';
 import { UnirseLigaComponent } from './ligas/unirse-liga/unirse-liga.component';
+import { GestionarLigaComponent } from './ligas/gestionar-liga/gestionar-liga.component';
+import { EsperandoMiembrosComponent } from './ligas/esperando-miembros/esperando-miembros.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +86,8 @@ import { UnirseLigaComponent } from './ligas/unirse-liga/unirse-liga.component';
     LigasComponent,
     CrearLigaComponent,
     UnirseLigaComponent,
+    GestionarLigaComponent,
+    EsperandoMiembrosComponent,
 
   ],
   imports: [

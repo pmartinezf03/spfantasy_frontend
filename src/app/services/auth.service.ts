@@ -10,7 +10,6 @@ interface User {
   role: string;
   token?: string;
 }
-//dsofnsgfpewwdfqwefwqeqfw
 
 @Injectable({
   providedIn: 'root'
