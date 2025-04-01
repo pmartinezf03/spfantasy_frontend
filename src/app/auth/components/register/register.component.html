@@ -1,4 +1,7 @@
 <div class="auth-container">
+  <!-- Fondo con imagen GIF animada de baloncesto -->
+  <div class="background-image"></div>
+
   <div class="auth-box">
     <h2>Registro</h2>
     <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()">
@@ -59,8 +62,8 @@
     </form>
 
     <p>
-      Ya tienes una cuenta?
-      <a routerLink="auth/login">Iniciar Sesion</a>
+      ¿Ya tienes una cuenta?
+      <a routerLink="auth/login">Iniciar Sesión</a>
     </p>
 
     <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>

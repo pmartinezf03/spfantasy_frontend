@@ -1,12 +1,28 @@
-/* Fondo estilo LaLiga Fantasy */
+/* Fondo con gradiente y GIF animado de baloncesto */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
   padding: 1rem;
   font-family: 'Segoe UI', sans-serif;
+  position: relative; /* Necesario para posicionar el fondo y el formulario correctamente */
+  overflow: hidden; /* Asegura que no se desborde el contenido */
+  text-align: center; /* Asegura que el formulario esté centrado */
+}
+
+/* Fondo con imagen GIF animada */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-image: url('https://media.giphy.com/media/5xtDaruXh1UvGiFu2wI/giphy.gif'); */
+  background-size: cover;
+  background-position: center;
+  z-index: -1; /* Asegura que el fondo quede detrás del formulario */
+  filter: blur(8px); /* Desenfoque del fondo para mejorar la legibilidad del formulario */
 }
 
 /* Caja del login */
@@ -17,8 +33,8 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 400px;
-  text-align: center;
   animation: fadeIn 0.4s ease-in-out;
+  position: relative; /* Asegura que el formulario quede encima del fondo */
 }
 
 /* Logo o icono de baloncesto */
@@ -130,6 +146,7 @@ a:hover {
     transform: translateY(0);
   }
 }
+
 .btn {
   position: relative;
   padding-left: 40px;
@@ -146,7 +163,6 @@ a:hover {
 button[disabled] {
   pointer-events: none;
 }
-
 
 /* Fondo oscuro que cubre toda la pantalla */
 .modal-overlay {

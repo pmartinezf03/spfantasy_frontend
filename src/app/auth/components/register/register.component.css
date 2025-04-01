@@ -1,11 +1,28 @@
-/* Fondo con imagen */
+/* Fondo con imagen GIF animada de baloncesto */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-              url('../../../assets/background.jpg') center/cover no-repeat;
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative; /* Necesario para posicionar el fondo y el formulario correctamente */
+  overflow: hidden; /* Asegura que no se desborde el contenido */
+  text-align: center; /* Asegura que el formulario esté centrado */
+}
+
+/* Fondo con imagen GIF animada */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-image: url('https://media.giphy.com/media/5xtDaruXh1UvGiFu2wI/giphy.gif'); */
+  background-size: cover;
+  background-position: center;
+  z-index: -1; /* Asegura que el fondo quede detrás del formulario */
+  filter: blur(8px); /* Desenfoque del fondo para mejorar la legibilidad del formulario */
 }
 
 /* Caja del formulario */
@@ -103,25 +120,8 @@ a:hover {
   font-weight: bold;
   color: rgb(255, 0, 0);
 }
-.btn {
-  position: relative;
-  padding-left: 40px;
-}
 
-.spinner-container {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-}
-
-button[disabled] {
-  pointer-events: none;
-}
-
-
-/* Fondo oscuro que cubre toda la pantalla */
+/* Estilos del modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -135,7 +135,6 @@ button[disabled] {
   z-index: 9999; /* Asegura que el modal se muestre encima de todo */
 }
 
-/* Estilo del modal */
 .modal {
   background-color: white;
   padding: 20px;
@@ -144,13 +143,11 @@ button[disabled] {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo del spinner (opcional) */
 p-progressSpinner {
   display: inline-block;
   margin-bottom: 10px;
 }
 
-/* Estilo del texto "Procesando..." */
 span {
   display: block;
   margin-top: 10px;
