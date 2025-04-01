@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { UsuarioService } from '../services/usuario.service';
 import { Router } from '@angular/router';
 import { OfertasService } from '../services/ofertas.service';
@@ -74,11 +74,9 @@ export class NavigationComponent implements OnInit {
         ? [
           { label: '🛒 Mercado', routerLink: '/mercado' },
           { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
+          { label: '🏆 Ligas',routerLink: '/ligas'},
           { label: '💬 Chat', routerLink: '/chat' },
-          {
-            label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas',
-            routerLink: '/ofertas'
-          }
+          {label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas',routerLink: '/ofertas'}
         ]
         : []),
       {

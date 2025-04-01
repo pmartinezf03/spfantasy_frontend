@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../services/usuario.service';
 import { JugadorService } from '../services/jugador.service';
 import { Jugador } from '../models/jugador.model';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { Usuario } from '../models/usuario.model';
 
 @Component({

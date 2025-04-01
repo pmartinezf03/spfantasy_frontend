@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Jugador } from '../models/jugador.model';
 import { UsuarioService } from '../services/usuario.service';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { JugadorService } from '../services/jugador.service'; // Asegúrate de importar el servicio de jugadores
 
 @Component({

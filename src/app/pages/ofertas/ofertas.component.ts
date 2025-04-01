@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { OfertasService } from '../../services/ofertas.service';
 import { UsuarioService } from '../../services/usuario.service';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Oferta } from '../../models/oferta.model';
 import { Jugador } from '../../models/jugador.model';
 import { ChangeDetectorRef } from '@angular/core';

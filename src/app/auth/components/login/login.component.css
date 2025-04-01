@@ -1,105 +1,184 @@
-/* Fondo con imagen */
+/* Fondo estilo LaLiga Fantasy */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-              url('../../..//assets/background.jpg') center/cover no-repeat;
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Caja del formulario */
+/* Caja del login */
 .auth-box {
-  background: rgba(255, 255, 255, 0.9); /* Fondo blanco con transparencia */
+  background: #ffffff;
   padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 400px;
-  backdrop-filter: blur(5px); /* Efecto de desenfoque */
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Logo o icono de baloncesto */
+.auth-logo {
+  width: 100px;
+  margin-bottom: 1rem;
 }
 
 /* Título */
 .auth-box h2 {
-  color: #333;
-  margin-bottom: 1rem;
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 1.8rem;
+  color: #111827;
+  margin-bottom: 1.2rem;
+  font-weight: 700;
 }
 
-/* Estilos para los campos */
+/* Campos del formulario */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   text-align: left;
 }
 
 label {
-  font-weight: bold;
   display: block;
-  margin-bottom: 5px;
-  color: #333;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  color: #374151;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: border 0.3s ease;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  transition: border-color 0.2s ease;
 }
 
 input:focus {
-  border: 1px solid #007bff;
   outline: none;
+  border-color: #ef4444;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
 }
 
-/* Botón principal */
+/* Botón */
 .btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
   width: 100%;
+  padding: 12px;
+  background-color: #ef4444;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s ease;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  background-color: #dc2626;
 }
 
-/* Botón secundario */
-.btn.secondary {
-  background-color: #6c757d;
-  margin-top: 10px;
+/* reCAPTCHA alineado */
+.recaptcha-container {
+  margin-bottom: 1rem;
 }
 
-.btn.secondary:hover {
-  background-color: #5a6268;
-}
-
-/* Enlaces */
-p {
+/* Enlaces y pie */
+.auth-footer {
   margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
 }
 
 a {
-  color: #007bff;
+  color: #ef4444;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-/* Mensaje de error o éxito */
+/* Mensajes */
 .mensaje {
   margin-top: 1rem;
   font-weight: bold;
   color: green;
+}
+
+.error-message {
+  color: #dc2626;
+  margin-top: 0.8rem;
+  font-weight: 600;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.btn {
+  position: relative;
+  padding-left: 40px;
+}
+
+.spinner-container {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+}
+
+button[disabled] {
+  pointer-events: none;
+}
+
+
+/* Fondo oscuro que cubre toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Asegura que el modal se muestre encima de todo */
+}
+
+/* Estilo del modal */
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo del spinner (opcional) */
+p-progressSpinner {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+/* Estilo del texto "Procesando..." */
+span {
+  display: block;
+  margin-top: 10px;
 }
