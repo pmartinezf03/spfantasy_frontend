@@ -24,11 +24,11 @@ export interface Liga {
   iniciada: boolean;
 }
 
-export interface MiembroLiga {
-  id: number;
-  username: string;
-  email: string;
-}
+  export interface MiembroLiga {
+    id: number;
+    username: string;
+    email: string;
+  }
 
 @Injectable({
   providedIn: 'root'

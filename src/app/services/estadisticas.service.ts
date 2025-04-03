@@ -14,20 +14,23 @@ export class EstadisticasService {
 
   obtenerEstadisticas(): Observable<Jugador[]> {
     const ligaId = this.authService.getLigaId();
-    const usuarioId = this.authService.getUserId();
 
-    if (!ligaId || !usuarioId) {
-      console.warn("⚠ No hay ligaId o usuarioId disponibles para estadísticas.");
+    if (!ligaId) {
+      console.warn("⚠ No hay ligaId disponible para estadísticas.");
       return new Observable<Jugador[]>(observer => {
         observer.next([]);
         observer.complete();
       });
     }
 
-    const params = new HttpParams()
-      .set('ligaId', ligaId.toString())
-      .set('usuarioId', usuarioId.toString());
+    const params = new HttpParams().set('ligaId', ligaId.toString());
 
-    return this.http.get<Jugador[]>(`${environment.apiUrl}/api/jugadores-liga/mis-jugadores`, { params });
+    return this.http.get<Jugador[]>(`${environment.apiUrl}/api/jugadores-liga/liga`, { params });
+  }
+
+  obtenerJugadoresDeLiga(ligaId: number): Observable<Jugador[]> {
+    return this.http.get<Jugador[]>(`${environment.apiUrl}/api/jugadores-liga/mercado`, {
+      params: { ligaId }
+    });
   }
 }

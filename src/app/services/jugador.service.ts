@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class JugadorService {
-  private apiUrl = `${environment.apiUrl}/jugadores`;
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
@@ -26,20 +26,15 @@ export class JugadorService {
 
   // jugador.service.ts (o mi-plantilla.service.ts)
 
-// JugadorService o MiPlantillaService
+  // JugadorService o MiPlantillaService
 
-obtenerJugadoresDeUsuarioEnLiga(ligaId: number, usuarioId: number): Observable<Jugador[]> {
-  return this.http.get<Jugador[]>(`${this.apiUrl}/jugadores-liga/mis-jugadores`, {
-    params: {
-      ligaId: ligaId.toString(),
-      usuarioId: usuarioId.toString()
-    }
-  });
-}
-
-
-
-
-
+  obtenerJugadoresDeUsuarioEnLiga(ligaId: number, usuarioId: number): Observable<Jugador[]> {
+    return this.http.get<Jugador[]>(`${this.apiUrl}/jugadores-liga/mis-jugadores`, {
+      params: {
+        ligaId: ligaId.toString(),
+        usuarioId: usuarioId.toString()
+      }
+    });
+  }
 
 }

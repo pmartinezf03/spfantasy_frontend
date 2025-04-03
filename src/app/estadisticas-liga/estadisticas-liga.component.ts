@@ -28,7 +28,7 @@ export class EstadisticasLigaComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const user = this.authService.getUser();
@@ -44,12 +44,19 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
   cargarEstadisticas(): void {
-    this.estadisticasService.obtenerEstadisticas().subscribe(data => {
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.warn("⚠ No se pudo cargar estadísticas: no hay ligaId.");
+      return;
+    }
+
+    this.estadisticasService.obtenerJugadoresDeLiga(ligaId).subscribe(data => {
       this.jugadores = data.map(jugador => ({
         ...jugador,
         propietarioId: jugador.propietarioId ?? 0,
         propietarioUsername: jugador.propietarioUsername ?? 'Libre'
       }));
+      console.log("📊 Jugadores con estadísticas cargados:", this.jugadores);
       this.cdr.detectChanges();
     }, error => {
       console.error("❌ Error obteniendo las estadísticas:", error);
@@ -59,7 +66,6 @@ export class EstadisticasLigaComponent implements OnInit {
   obtenerDineroUsuario(): void {
     this.usuarioService.obtenerDineroUsuario(this.usuarioId).subscribe(dinero => {
       this.usuarioDinero = dinero ?? 0;
-      console.log("💰 Dinero disponible actualizado:", this.usuarioDinero);
       this.cdr.detectChanges();
     }, error => {
       console.error("❌ Error al obtener el dinero del usuario", error);
@@ -75,7 +81,6 @@ export class EstadisticasLigaComponent implements OnInit {
           this.ofertasEnCurso[oferta.jugador.id] = oferta.id;
         }
       });
-      console.log("📊 Ofertas en curso:", this.ofertasEnCurso);
       this.cdr.detectChanges();
     }, error => {
       console.error("❌ Error al obtener ofertas en curso", error);
@@ -83,7 +88,6 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
   abrirDialogoOferta(jugador: Jugador): void {
-    console.log("🔵 Abriendo diálogo para hacer oferta a:", jugador);
     this.jugadorSeleccionado = jugador;
     this.mostrarDialogo = true;
     this.mensajeError = '';
@@ -91,7 +95,6 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
   cerrarDialogoOferta(): void {
-    console.log("🔴 Cerrando diálogo de oferta");
     this.mostrarDialogo = false;
     this.mensajeError = '';
     this.cdr.detectChanges();
@@ -105,8 +108,7 @@ export class EstadisticasLigaComponent implements OnInit {
 
     const totalPropuesto = this.totalOfertasEnCurso + event.monto;
     if (totalPropuesto > this.usuarioDinero) {
-      console.error(`❌ No puedes hacer esta oferta. Tus ofertas totales (${totalPropuesto} €) superan tu dinero disponible (${this.usuarioDinero} €).`);
-      this.mensajeError = `❌ No puedes hacer esta oferta. Tus ofertas totales (${totalPropuesto} €) superan tu dinero disponible (${this.usuarioDinero} €).`;
+      this.mensajeError = `❌ Tus ofertas totales (${totalPropuesto} €) superan tu dinero disponible (${this.usuarioDinero} €).`;
       this.cdr.detectChanges();
       return;
     }
@@ -120,7 +122,6 @@ export class EstadisticasLigaComponent implements OnInit {
     };
 
     this.ofertasService.crearOferta(nuevaOferta).subscribe(ofertaCreada => {
-      console.log("✅ Oferta enviada correctamente");
       if (this.jugadorSeleccionado?.id !== undefined) {
         this.ofertasEnCurso[this.jugadorSeleccionado.id] = ofertaCreada.id ?? 0;
       }
@@ -128,7 +129,6 @@ export class EstadisticasLigaComponent implements OnInit {
       this.obtenerDineroUsuario();
       this.cargarOfertasUsuario();
     }, error => {
-      console.error("❌ Error al enviar la oferta:", error);
       this.mensajeError = "❌ Error al enviar la oferta. Inténtalo nuevamente.";
       this.cdr.detectChanges();
     });
@@ -139,7 +139,6 @@ export class EstadisticasLigaComponent implements OnInit {
     if (!ofertaId) return;
 
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
-      console.log("✅ Oferta cancelada correctamente");
       delete this.ofertasEnCurso[jugadorId];
       this.obtenerDineroUsuario();
       this.cargarOfertasUsuario();
