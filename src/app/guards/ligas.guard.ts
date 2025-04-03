@@ -35,8 +35,9 @@ export class LigasGuard implements CanActivate {
       map(id => {
         if (id !== null && id !== undefined) {
           console.log('✅ Usuario está en una liga:', id);
-          this.authService.setLigaId(id);
-          return true;
+          this.authService.setLigaId(id.id); // ✅ .id de la liga
+          this.authService.setLiga(id);      // ✅ objeto completo
+                    return true;
         } else {
           console.warn('⛔ Usuario NO pertenece a ninguna liga. Redirigiendo...');
           this.router.navigate(['/ligas']);

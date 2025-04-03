@@ -160,29 +160,21 @@ export class MiPlantillaComponent implements OnInit {
       console.error("⚠ No hay token disponible.");
       return;
     }
-
-    console.log('💸 Enviando venta del jugador:', jugador);
-
+  
     this.usuarioService.venderJugador(this.username, jugador, token).subscribe(response => {
-      if (response && response.status === "success") {
-        console.log('✅ Jugador vendido con éxito:', jugador);
-
-        this.usuarioService.actualizarDineroDesdeBackend(this.username, token).subscribe();
-
+      if (response?.status === "success") {
+        console.log('✅ Jugador vendido con éxito');
+        // Actualizar el dinero y las plantillas
+        this.usuarioDinero = response.dinero;
         this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
         this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
-
         this.cargarJugadores();
-        this.cargarEstadisticas();
-
       } else {
-        console.warn('⚠ No se pudo vender el jugador.');
         alert(response.mensaje || '⚠ Error al vender el jugador.');
       }
-    }, error => {
-      console.error('❌ Error al vender jugador:', error);
     });
   }
+  
 
   get jugadoresCompletos(): Jugador[] {
     return [...this.jugadoresTitulares, ...this.jugadoresBanquillo];
@@ -195,37 +187,26 @@ export class MiPlantillaComponent implements OnInit {
       console.error("⚠ No hay token disponible.");
       return;
     }
-
-    console.log('🎯 Datos enviados para comprar el jugador:', jugador);
-
-    if (this.jugadoresBanquillo.length >= 5) {
-      alert("❌ No puedes comprar más jugadores. El banquillo ya está lleno.");
-      console.warn("⚠ Banquillo lleno: No se puede comprar más jugadores.");
+  
+    // Verificación del dinero disponible
+    if (this.usuarioDinero < jugador.precioVenta) {
+      alert('❌ No tienes suficiente dinero para comprar este jugador.');
       return;
     }
-
+  
     this.usuarioService.comprarJugador(this.username, jugador, token).subscribe(response => {
-      if (response && response.status === "success") {
-        console.log('✅ Jugador comprado con éxito:', jugador);
-
-        // Actualizar el dinero del usuario
-        this.usuarioDinero -= jugador.precioVenta;
-
-        // **Agregar el jugador al banquillo**
+      if (response?.status === "success") {
+        this.usuarioDinero = response.dinero;
+        // Agregar el jugador al banquillo
         jugador.esTitular = false;
         this.jugadoresBanquillo.push(jugador);
-        console.log("✅ Jugador añadido al banquillo.");
-
-        this.cargarJugadores();
-        console.log("🔄 Mercado actualizado después de la compra.");
+        console.log('✅ Jugador comprado y agregado al banquillo');
       } else {
-        console.warn('⚠ No se pudo comprar el jugador.');
         alert(response.mensaje || '⚠ Error al comprar el jugador.');
       }
-    }, error => {
-      console.error('❌ Error al comprar jugador:', error);
     });
   }
+  
 
   guardarPlantilla(): void {
     const token = this.authService.getToken();

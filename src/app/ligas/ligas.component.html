@@ -1,26 +1,23 @@
 <div class="contenedor-ligas">
 
-  <h2 *ngIf="ligaActual">Estás en la liga: {{ ligaActual.nombre }}</h2>
-
-  <div *ngIf="ligaActual">
+  <ng-container *ngIf="ligaActual as liga">
+    <h2>Estás en la liga: {{ liga.nombre }}</h2>
     <button class="btn-salir" (click)="salirLiga()">Salir de la liga</button>
 
-    <!-- Componente de gestión para el creador -->
     <app-gestionar-liga
       *ngIf="esCreador && !ligaIniciada"
-      [liga]="ligaActual"
+      [liga]="liga"
       [miembros]="miembros"
       (expulsado)="cargarMiembros()"
       (ligaIniciada)="ligaIniciada = true">
     </app-gestionar-liga>
 
-    <!-- Componente de espera para miembros o cuando la liga ya ha sido iniciada -->
     <app-esperando-miembros
       *ngIf="!esCreador || ligaIniciada"
-      [liga]="ligaActual"
+      [liga]="liga"
       [miembros]="miembros">
     </app-esperando-miembros>
-  </div>
+  </ng-container>
 
   <div *ngIf="!ligaActual">
     <button class="btn-crear" (click)="mostrarCrear()">Crear Liga</button>

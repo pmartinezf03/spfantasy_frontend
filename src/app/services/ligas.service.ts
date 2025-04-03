@@ -24,11 +24,11 @@ export interface Liga {
   iniciada: boolean;
 }
 
-  export interface MiembroLiga {
-    id: number;
-    username: string;
-    email: string;
-  }
+export interface MiembroLiga {
+  id: number;
+  username: string;
+  email: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -71,11 +71,15 @@ export class LigasService {
   }
 
   // ligas.service.ts
-  obtenerLigaDelUsuario(usuarioId: number): Observable<number | null> {
-    return this.http.get<number>(`${this.apiUrl}/usuario/${usuarioId}/liga`, {
+  obtenerLigaDelUsuario(usuarioId: number): Observable<Liga | null> {
+    return this.http.get<Liga>(`${this.apiUrl}/usuario/${usuarioId}/liga`, {
       headers: this.authService.getAuthHeaders()
     });
   }
+
+
+
+
 
   actualizarLiga(dto: any): Observable<string> {
     return this.http.put(`${this.apiUrl}/actualizar`, dto, { responseType: 'text' });
@@ -86,8 +90,5 @@ export class LigasService {
       headers: this.authService.getAuthHeaders()
     });
   }
-
-
-
 
 }

@@ -28,7 +28,7 @@ export class EstadisticasLigaComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getUser();
@@ -73,7 +73,13 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
   cargarOfertasUsuario(): void {
-    this.ofertasService.obtenerOfertasPorComprador(this.usuarioId).subscribe(ofertas => {
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.warn("⚠ No se pudo cargar ofertas: no hay liga activa.");
+      return;
+    }
+
+    this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(ofertas => {
       this.totalOfertasEnCurso = ofertas.reduce((total, oferta) => total + (oferta.montoOferta ?? 0), 0);
       this.ofertasEnCurso = {};
       ofertas.forEach(oferta => {
@@ -86,6 +92,7 @@ export class EstadisticasLigaComponent implements OnInit {
       console.error("❌ Error al obtener ofertas en curso", error);
     });
   }
+
 
   abrirDialogoOferta(jugador: Jugador): void {
     this.jugadorSeleccionado = jugador;
@@ -113,12 +120,20 @@ export class EstadisticasLigaComponent implements OnInit {
       return;
     }
 
+    const ligaId = this.authService.getLigaId(); // ✅ Seguridad
+
+    if (!ligaId) {
+      console.error("❌ No se pudo enviar la oferta: no hay liga activa.");
+      return;
+    }
+
     const nuevaOferta: Oferta = {
       jugador: this.jugadorSeleccionado,
       comprador: { id: this.usuarioId },
       vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
       montoOferta: event.monto,
-      estado: "PENDIENTE"
+      estado: 'PENDIENTE',
+      liga: { id: ligaId }  // ✅ Asociación correcta
     };
 
     this.ofertasService.crearOferta(nuevaOferta).subscribe(ofertaCreada => {
@@ -133,6 +148,7 @@ export class EstadisticasLigaComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
+
 
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId] ?? 0;

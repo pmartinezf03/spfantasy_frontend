@@ -1,39 +1,77 @@
-<!-- mercado.component.html -->
 <div class="mercado-container">
-  <h1>Mercado de Jugadores</h1>
+  <h2>🛒 Mercado de Jugadores</h2>
 
-  <!-- Dinero del usuario -->
-  <div class="usuario-dinero">
-    <h3>Dinero disponible: {{ usuarioDinero | currency:'USD' }}</h3>
+  <div class="jugadores-mercado">
+    <div *ngFor="let jugador of jugadores" class="shadow-6 jugador-card">
+      <img [src]="jugador.fotoUrl" [alt]="obtenerNombreJugador(jugador)" />
+
+      <div class="info">
+        <h4>{{ obtenerNombreJugador(jugador) }}</h4>
+        <p>{{ jugador.posicion }}</p>
+        <p>
+          <strong>Precio:</strong> {{ jugador.precioVenta | currency : "EUR" }}
+        </p>
+        <p>
+          <strong>Propietario:</strong>
+          {{ jugador.propietarioUsername || "Libre" }}
+        </p>
+
+        <!-- Botón de Comprar -->
+        <button
+          *ngIf="!jugador.propietarioId"
+          mat-raised-button
+          color="primary"
+          (click)="comprarJugador(jugador)"
+        >
+          Comprar
+        </button>
+
+        <!-- Botón de Hacer Oferta -->
+        <!-- Hacer oferta -->
+        <button
+          *ngIf="
+            jugador.propietarioId &&
+            jugador.propietarioId !== usuarioId &&
+            !ofertasEnCurso[jugador.id]
+          "
+          mat-raised-button
+          color="accent"
+          (click)="abrirDialogoOferta(jugador)"
+        >
+          Hacer Oferta
+        </button>
+
+        <!-- Cancelar oferta -->
+        <button
+          *ngIf="ofertasEnCurso[jugador.id]"
+          mat-raised-button
+          color="warn"
+          (click)="cancelarOferta(jugador.id)"
+        >
+          Cancelar Oferta
+        </button>
+
+        <!-- Botón de Cancelar Oferta -->
+        <button
+          *ngIf="ofertasEnCurso[jugador.id]"
+          mat-raised-button
+          color="warn"
+          (click)="cancelarOferta(jugador.id)"
+        >
+          Cancelar Oferta
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- Tabla de jugadores en venta -->
-  <table mat-table [dataSource]="jugadores" class="mat-elevation-z8">
-    <ng-container matColumnDef="nombre">
-      <th mat-header-cell *matHeaderCellDef> Nombre </th>
-      <td mat-cell *matCellDef="let jugador"> {{ jugador.nombre }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="foto">
-      <th mat-header-cell *matHeaderCellDef> Foto </th>
-      <td mat-cell *matCellDef="let jugador">
-        <img [src]="jugador.fotoUrl" alt="{{jugador.nombre}}" class="jugador-img" />
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="precio">
-      <th mat-header-cell *matHeaderCellDef> Precio </th>
-      <td mat-cell *matCellDef="let jugador"> {{ jugador.precioVenta | currency:'USD' }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="accion">
-      <th mat-header-cell *matHeaderCellDef> Acción </th>
-      <td mat-cell *matCellDef="let jugador">
-        <button mat-button color="primary" (click)="comprarJugador(jugador)">Comprar</button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="['nombre', 'foto', 'precio', 'accion']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['nombre', 'foto', 'precio', 'accion'];"></tr>
-  </table>
+  <app-oferta-dialogo
+    [mostrarDialogo]="mostrarDialogo"
+    [jugadorSeleccionado]="obtenerJugadorBase(jugadorSeleccionado)"
+    [usuarioId]="usuarioId"
+    [usuarioDinero]="usuarioDinero"
+    [totalOfertasEnCurso]="0"
+    (cerrar)="cerrarDialogoOferta()"
+    (enviarOferta)="enviarOferta($event.monto)"
+  >
+  </app-oferta-dialogo>
 </div>

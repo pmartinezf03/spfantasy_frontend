@@ -25,30 +25,46 @@ export class LigasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const usuario = this.authService.getUser();
-    if (usuario) {
-      this.usuarioId = usuario.id;
-      this.cargarLigaDelUsuario();
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.usuarioId = user.id;
+  
+      this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
+        next: (liga) => {
+          console.log("✅ Liga detectada del usuario:", liga);
+  
+          if (liga) {
+            this.authService.setLigaId(liga.id);
+            this.authService.setLiga(liga); // ✅ objeto completo
+            this.ligaActual = liga;
+            this.ligaIniciada = liga.iniciada;
+            this.esCreador = liga.creador?.id === this.usuarioId;
+            this.cargarMiembros();
+          } else {
+            this.ligaActual = null;
+          }
+        },
+        error: (err) => {
+          console.warn("ℹ️ Usuario no tiene liga:", err);
+          this.ligaActual = null;
+        }
+      });
     }
   }
+  
+
 
   cargarLigaDelUsuario(): void {
     if (!this.usuarioId) return;
 
     this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
-      next: ligaId => {
-        if (ligaId) {
-          this.authService.setLigaId(ligaId);
-
-          this.ligasService.obtenerTodasLasLigas().subscribe(ligas => {
-            const liga = ligas.find(l => l.id === ligaId);
-            if (liga) {
-              this.ligaActual = liga;
-              this.ligaIniciada = liga.iniciada;
-              this.esCreador = liga.creador?.id === this.usuarioId;
-              this.cargarMiembros();
-            }
-          });
+      next: liga => {
+        if (liga) {
+          this.authService.setLigaId(liga.id); // ✅ Guarda el ID
+          this.ligaActual = liga;
+          this.ligaIniciada = liga.iniciada;
+          this.esCreador = liga.creador?.id === this.usuarioId;
+          this.cargarMiembros();
         }
       },
       error: () => {
@@ -58,28 +74,32 @@ export class LigasComponent implements OnInit {
     });
   }
 
+
   onLigaCreada(liga: Liga): void {
     this.ligaActual = liga;
-    this.mostrarCrearLiga = false;
     this.authService.setLigaId(liga.id);
-    this.cargarMiembros();
+    this.authService.setLiga(liga); // ✅ añadimos esto
+    this.mostrarCrearLiga = false;
     this.esCreador = true;
     this.ligaIniciada = false;
+    this.cargarMiembros();
     this.router.navigate(['/mercado']);
   }
-
+  
   onUnidoALiga(liga: Liga): void {
     this.ligaActual = liga;
-    this.mostrarUnirseLiga = false;
     this.authService.setLigaId(liga.id);
-    this.cargarMiembros();
+    this.authService.setLiga(liga); // ✅ añadimos esto
+    this.mostrarUnirseLiga = false;
     this.esCreador = false;
     this.ligaIniciada = false;
+    this.cargarMiembros();
     this.router.navigate(['/mercado']);
   }
+  
 
   cargarMiembros(): void {
-    if (!this.ligaActual?.id) return; // ✅ Prevención segura
+    if (!this.ligaActual?.id) return; 
 
     this.ligasService.obtenerMiembros(this.ligaActual.id).subscribe({
       next: miembros => this.miembros = miembros,
@@ -89,19 +109,26 @@ export class LigasComponent implements OnInit {
 
 
   salirLiga(): void {
-    if (!this.ligaActual || !this.usuarioId) return;
-
-    this.ligasService.salirDeLiga(this.ligaActual.id, this.usuarioId).subscribe({
+    const ligaId = this.ligaActual?.id;
+    if (!ligaId || !this.usuarioId) return;
+  
+    this.ligasService.salirDeLiga(ligaId, this.usuarioId).subscribe({
       next: () => {
         this.ligaActual = null;
         this.miembros = [];
         this.authService.setLigaId(null);
+        this.authService.setLiga(null); // ✅ Limpieza
         this.esCreador = false;
         this.ligaIniciada = false;
       },
-      error: err => console.error('Error al salir de la liga:', err)
+      error: err => {
+        console.error('❌ Error al salir de la liga:', err);
+      }
     });
   }
+  
+  
+  
 
   mostrarCrear(): void {
     this.mostrarCrearLiga = true;

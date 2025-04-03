@@ -20,25 +20,25 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
     if (user) {
-      // Verificar si ya tiene liga
       const ligaId = this.authService.getLigaId();
-
+  
       if (ligaId) {
         console.log('✅ Liga encontrada en AuthService:', ligaId);
-        return; // ya la tenía cargada, no hacemos nada
+        return;
       }
-
+  
       console.log('ℹ️ No hay liga en memoria, buscando desde el backend...');
       this.ligasService.obtenerLigaDelUsuario(user.id).subscribe({
-        next: (id) => {
-          if (id) {
-            console.log('✅ Liga encontrada en el backend:', id);
-            this.authService.setLigaId(id);
-            this.router.navigate(['/mercado']); // redirigir a zona de juego
+        next: (liga) => {
+          if (liga) {
+            this.authService.setLigaId(liga.id);     // ID
+            this.authService.setLiga(liga);          // Liga completa
+            this.router.navigate(['/mercado']);
           } else {
-            this.router.navigate(['/ligas']); // si no está en liga, va a crear/unirse
+            this.router.navigate(['/ligas']);
           }
         },
+      
         error: () => {
           console.log('❌ Error verificando liga');
           this.router.navigate(['/ligas']);
@@ -46,4 +46,6 @@ export class AppComponent implements OnInit {
       });
     }
   }
+  
+  
 }

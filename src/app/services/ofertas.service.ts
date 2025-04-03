@@ -19,16 +19,18 @@ export class OfertasService {
   }
 
   crearOferta(oferta: Oferta): Observable<Oferta> {
-    return this.http.post<Oferta>(this.apiUrl, oferta, this.getAuthHeaders());
+    const headers = this.authService.getAuthHeaders();
+    return this.http.post<Oferta>(`${this.apiUrl}`, oferta, { headers });
+  }
+  
+  obtenerOfertasPorVendedor(vendedorId: number, ligaId: number): Observable<Oferta[]> {
+    return this.http.get<Oferta[]>(`${this.apiUrl}/vendedor/${vendedorId}?ligaId=${ligaId}`, this.getAuthHeaders());
   }
 
-  obtenerOfertasPorVendedor(vendedorId: number): Observable<Oferta[]> {
-    return this.http.get<Oferta[]>(`${this.apiUrl}/vendedor/${vendedorId}`, this.getAuthHeaders());
+  obtenerOfertasPorComprador(compradorId: number, ligaId: number): Observable<Oferta[]> {
+    return this.http.get<Oferta[]>(`${this.apiUrl}/comprador/${compradorId}?ligaId=${ligaId}`, this.getAuthHeaders());
   }
 
-  obtenerOfertasPorComprador(compradorId: number): Observable<Oferta[]> {
-    return this.http.get<Oferta[]>(`${this.apiUrl}/comprador/${compradorId}`, this.getAuthHeaders());
-  }
 
   actualizarOferta(id: number, oferta: Oferta): Observable<Oferta> {
     return this.http.put<Oferta>(`${this.apiUrl}/${id}`, oferta, this.getAuthHeaders());
@@ -47,25 +49,18 @@ export class OfertasService {
   }
 
   hacerContraoferta(oferta: Oferta): Observable<Oferta> {
-    if (!oferta.id) {
-      console.error("❌ Error: La oferta no tiene un ID válido.");
-      return new Observable<Oferta>();
-    }
-
     const url = `${this.apiUrl}/contraoferta/${oferta.id}`;
-
     const payload = {
-      montoOferta: oferta.montoOferta,  // ✅ Especificamos claramente el monto nuevo
+      montoOferta: oferta.montoOferta,
       comprador: oferta.comprador,
       vendedor: oferta.vendedor,
       jugador: oferta.jugador,
-      estado: 'CONTRAOFERTA'
+      estado: 'CONTRAOFERTA',
+      liga: oferta.liga
     };
-
-    console.log("📤 Payload enviado al backend (contraoferta):", payload);
-
-    return this.http.post<Oferta>(url, payload, this.getAuthHeaders()); // ✅ Importante incluir headers aquí
+    return this.http.post<Oferta>(url, payload, this.getAuthHeaders());
   }
+
 
   tieneOfertasNuevas(vendedorId: number): Observable<{ tieneOfertasNuevas: boolean }> {
     const url = `${this.apiUrl}/nuevas/${vendedorId}`;
@@ -91,6 +86,10 @@ export class OfertasService {
   datosUsuario$ = this.datosUsuarioSubject.asObservable();
 
 
-
+  obtenerUltimaOferta(usuarioId: number, jugadorId: number) {
+    const ligaId = this.authService.getLigaId(); // o pásalo como argumento si no tienes acceso
+    return this.http.get<Oferta>(`${this.apiUrl}/ultima-oferta/${usuarioId}/${jugadorId}?ligaId=${ligaId}`);
+  }
+  
 
 }

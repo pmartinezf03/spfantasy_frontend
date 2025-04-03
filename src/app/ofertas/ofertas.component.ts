@@ -39,6 +39,7 @@ export class OfertasComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("📥 Entrando a la pestaña de ofertas...");
+    console.log(this.usuarioId)
     const user = this.authService.getUser();
 
     if (user && user.id) {
@@ -51,7 +52,7 @@ export class OfertasComponent implements OnInit {
       // 🔴 MARCAR COMO LEÍDAS
       this.ofertasService.marcarOfertasComoLeidas(this.usuarioId).subscribe(() => {
         console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
-        this.ofertasService.notificarLeido(); // 🔁 Avisa al NavigationComponent
+        this.ofertasService.notificarLeido();
       });
     } else {
       console.error("❌ No se encontró el usuario autenticado.");
@@ -76,22 +77,30 @@ export class OfertasComponent implements OnInit {
 
 
   cargarOfertas(): void {
-    this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId).subscribe(
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.warn("⚠ No hay liga activa para filtrar ofertas.");
+      return;
+    }
+
+    this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId, ligaId).subscribe(
       (data) => {
+        console.log("🎯 Ofertas recibidas (como vendedor):", data);
         this.ofertasRecibidas = data.filter(oferta => oferta.estado !== 'CONTRAOFERTA');
         this.contraofertasRecibidas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
-      },
-      (error) => console.error('❌ Error al cargar ofertas recibidas', error)
+      }
     );
 
-    this.ofertasService.obtenerOfertasPorComprador(this.usuarioId).subscribe(
+
+    this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(
       (data) => {
-        this.ofertasEnviadas = data.filter(oferta => oferta.estado !== 'CONTRAOFERTA');
-        this.contraofertasEnviadas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
-      },
-      (error) => console.error('❌ Error al cargar ofertas enviadas', error)
+        this.ofertasEnviadas = data.filter(o => o.estado !== 'CONTRAOFERTA');
+        this.contraofertasEnviadas = data.filter(o => o.estado === 'CONTRAOFERTA');
+      }
     );
+
   }
+
 
   retirarOferta(oferta: Oferta): void {
     this.ofertasService.retirarOferta(oferta.id!).subscribe(() => {
@@ -104,6 +113,10 @@ export class OfertasComponent implements OnInit {
   }
 
   aceptarOferta(oferta: Oferta): void {
+    if (!oferta?.id) {
+      console.error('❌ Oferta no válida: falta el ID');
+      return;
+    }
     this.ofertasService.aceptarOferta(oferta.id!).subscribe({
       next: () => {
         console.log("✅ Oferta aceptada.");
@@ -194,13 +207,21 @@ export class OfertasComponent implements OnInit {
       return;
     }
 
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.error("❌ No se pudo enviar la oferta: no hay liga activa.");
+      return;
+    }
+
     const nuevaOferta: Oferta = {
       jugador: this.jugadorSeleccionado,
       comprador: { id: this.usuarioId },
       vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
       montoOferta: monto,
-      estado: 'PENDIENTE'
+      estado: 'PENDIENTE',
+      liga: { id: ligaId } // 👈 Se añade la liga
     };
+
 
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
@@ -238,8 +259,18 @@ export class OfertasComponent implements OnInit {
   }
 
   enviarContraoferta(montoContraoferta: number): void {
+    if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.jugador) {
+      console.error("❌ No se puede enviar la contraoferta, falta el jugador seleccionado.");
+      return;
+    }
     if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.id) {
       console.error("❌ No se puede enviar la contraoferta, falta la oferta seleccionada o su ID.");
+      return;
+    }
+
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.error("❌ No se pudo enviar la contraoferta: no hay liga activa.");
       return;
     }
 
@@ -247,9 +278,11 @@ export class OfertasComponent implements OnInit {
       jugador: this.ofertaSeleccionada.jugador,
       comprador: { id: this.usuarioId },
       vendedor: this.ofertaSeleccionada.comprador,
-      montoOferta: montoContraoferta,  // 🔥 Usamos el monto recibido del diálogo
-      estado: 'CONTRAOFERTA'
+      montoOferta: montoContraoferta,
+      estado: 'CONTRAOFERTA',
+      liga: { id: ligaId } // 👈 Se añade la liga también
     };
+
 
     console.log("📤 Enviando contraoferta:", nuevaOferta);
     console.log("🔖 Oferta original seleccionada:", this.ofertaSeleccionada);
@@ -273,6 +306,17 @@ export class OfertasComponent implements OnInit {
     return window.innerWidth <= 768;
   }
 
+  obtenerNombreJugador(jugador: any): string {
+    if (!jugador) return '';
+    return jugador.jugadorBase ? jugador.jugadorBase.nombre : jugador.nombre;
+  }
+
+
+
+
+  obtenerJugadorBase(jugador: any): Jugador {
+    return jugador?.jugadorBase ?? jugador;
+  }
 
 
 

@@ -1,75 +1,74 @@
 .mercado-container {
-  width: 80%;
+  width: 90%;
+  max-width: 1000px;
   margin: 0 auto;
+  padding: 1rem;
   text-align: center;
 }
 
-.usuario-dinero {
-  margin-bottom: 20px;
-  font-size: 1.2em;
+.jugadores-mercado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
-table {
+.jugador-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+  max-width: 500px;
 }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-.jugador-img {
-  width: 50px;
-  height: 50px;
+.jugador-card img {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
 }
 
-button {
-  cursor: pointer;
+.jugador-card .info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
+.jugador-card .info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
 
-/* 📱 Diseño móvil tipo ficha */
-@media (max-width: 768px) {
-  .tabla-web {
-    display: none;
-  }
+.jugador-card .info p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+}
 
-  .fichas-movil {
-    display: flex;
+.jugador-card button {
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 600px) {
+  .jugador-card {
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .ficha-jugador {
-    display: flex;
-    gap: 1rem;
-    background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     align-items: center;
-    justify-content: flex-start;
+    text-align: center;
   }
 
-  .ficha-jugador img {
-    width: 64px;
-    height: 64px;
-    border-radius: 8px;
-    object-fit: cover;
+  .jugador-card img {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
   }
 
-  .jugador-info h3 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-
-  .jugador-info p {
-    margin: 4px 0;
-    font-size: 0.9rem;
+  .jugador-card .info {
+    align-items: center;
   }
 }
