@@ -46,7 +46,7 @@ export class GruposComponent implements OnInit {
   }
 
   cargarUsuarios(): void {
-    this.usuarioService.getUsuarios().subscribe({
+    this.usuarioService.obtenerUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data.filter(u => u.id !== this.usuarioId);
       },

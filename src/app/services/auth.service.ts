@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Liga } from './ligas.service';
+import { UsuarioService } from './usuario.service';
+import { Usuario } from '../models/usuario.model';
 
 interface User {
   id: number;
@@ -10,36 +12,54 @@ interface User {
   email: string;
   role: string;
   token?: string;
+  dinero?: number;
+  dineroPendiente?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/usuarios`;
-  private userSubject = new BehaviorSubject<User | null>(this.loadUserFromStorage());
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
+
+  private userSubject = new BehaviorSubject<User | null>(null);  // ❗ Iniciamos vacío
+  private usuarioCompletoSubject = new BehaviorSubject<Usuario | null>(null);
+  usuarioCompleto$ = this.usuarioCompletoSubject.asObservable();
+
   private ligaIdSubject = new BehaviorSubject<number | null>(null);
   private ligaActual: Liga | null = null;
 
-  constructor(private http: HttpClient) {
-    // ✅ Al iniciar, si hay liga guardada en localStorage, emitirla
+  constructor(
+    private http: HttpClient,
+    private usuarioService: UsuarioService
+  ) {
     const id = this.getLigaId();
     this.ligaIdSubject.next(id);
-  }
-
-  private loadUserFromStorage(): User | null {
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      console.log("📦 Usuario desde storage:", user);
-      return user;
-    } catch (error) {
-      console.error('❌ Error al cargar usuario desde localStorage:', error);
-      return null;
+  
+    // 👇 Al cargar el servicio, intenta cargar el usuario completo
+    const user = this.getUser();
+    if (user?.id) {
+      this.refreshUsuarioCompleto(); // 👈 Esto actualiza usuarioCompleto$
     }
   }
+  
 
-  register(user: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/registro`, user);
+  private restaurarSesionDesdeStorage(): void {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const token = localStorage.getItem('token');
+
+      if (user && token) {
+        this.userSubject.next(user);
+        this.refreshUsuarioCompleto(); // 🔄 Refresca datos extendidos (dinero, etc.)
+        console.log("📦 Usuario restaurado desde storage:", user);
+      } else {
+        this.logout(); // ❌ Limpia si hay datos inconsistentes
+      }
+    } catch (error) {
+      console.error('❌ Error al restaurar sesión:', error);
+      this.logout();
+    }
   }
 
   login(credentials: any): Observable<{ user: User, token: string }> {
@@ -50,18 +70,53 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
           this.userSubject.next(response.user);
+          this.refreshUsuarioCompleto();
         }
       })
     );
   }
 
   logout(): void {
+    console.log("🚪 Cerrando sesión...");
+    
+    // 🧹 Limpieza de localStorage
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('ligaId');
+  
+    // 🧹 Limpieza de estado interno
     this.userSubject.next(null);
+    this.usuarioCompletoSubject.next(null);
     this.setLiga(null);
-    this.setLigaId(null); // ✅ limpiar también el BehaviorSubject
+    this.setLigaId(null);
+  
+    // (opcional) Limpieza de sessionStorage si lo has usado en algún componente
+    sessionStorage.clear();
+  }
+  
+
+  register(user: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/registro`, user);
+  }
+  
+
+  refreshUsuarioCompleto(): void {
+    const user = this.getUser();
+    if (user?.id) {
+      console.log('🔁 Refrescando usuario completo...');
+      this.usuarioService.obtenerUsuarioCompleto(user.id).subscribe(usuario => {
+        const actualizado = {
+          ...user,
+          dinero: usuario.dinero,
+          dineroPendiente: usuario.dineroPendiente
+        };
+
+        localStorage.setItem('user', JSON.stringify(actualizado));
+        this.userSubject.next(actualizado); // ✅ Actualiza info básica (con dinero)
+        this.usuarioCompletoSubject.next(usuario); // ✅ Actualiza objeto completo
+        console.log('📤 Usuario completo actualizado:', actualizado);
+      });
+    }
   }
 
   getUser(): User | null {
@@ -81,7 +136,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return !!this.getUser();
   }
 
   getUserObservable(): Observable<User | null> {
@@ -102,8 +157,7 @@ export class AuthService {
     } else {
       localStorage.removeItem('ligaId');
     }
-
-    this.ligaIdSubject.next(ligaId); // ✅ notificar cambio a todos los observadores
+    this.ligaIdSubject.next(ligaId);
   }
 
   getLigaId(): number | null {

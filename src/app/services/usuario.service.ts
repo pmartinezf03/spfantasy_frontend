@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Jugador } from '../models/jugador.model';
 import { environment } from '../../environments/environment';
+import { Usuario } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  private apiUrl = `${environment.apiUrl}/usuarios`;
-  private dineroUsuario: number = 0;
-
-  private dineroSubject = new BehaviorSubject<number>(0);
-  dineroUsuario$ = this.dineroSubject.asObservable();
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
 
   constructor(private http: HttpClient) { }
 
@@ -27,10 +24,8 @@ export class UsuarioService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get<any>(`${this.apiUrl}/${username}`, { headers }).pipe(
-      tap(response => {
-        console.log("📩 Datos recibidos del backend:", response);
-      }),
+    return this.http.get<any>(`${this.apiUrl}/by-username/${username}`, { headers }).pipe(
+      tap(response => console.log("📩 Datos recibidos del backend:", response)),
       catchError(error => {
         console.error('❌ Error al obtener usuario:', error);
         return throwError(() => error);
@@ -40,7 +35,6 @@ export class UsuarioService {
 
   comprarJugador(username: string, jugador: Jugador, token: string): Observable<any> {
     if (!username || !jugador?.id || !token) {
-      console.error('⚠ Error: Falta username, ID de jugador o token para comprar.');
       return throwError(() => new Error('No se puede comprar el jugador sin datos válidos.'));
     }
 
@@ -49,20 +43,9 @@ export class UsuarioService {
       'Content-Type': 'application/json'
     });
 
-    const payload = { id: jugador.id }; // ✅ solo ID necesario
+    const payload = { id: jugador.id };
 
-    console.log("📦 Payload exacto enviado al backend:", payload);
-
-    return this.http.post<any>(`${this.apiUrl}/${username}/comprar`, payload, { headers }).pipe(
-      tap(response => {
-        console.log("📤 Respuesta del backend al comprar:", response);
-        this.actualizarDineroDesdeBackend(username, token).subscribe();
-      }),
-      catchError(error => {
-        console.error('❌ Error al comprar jugador:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/${username}/comprar`, payload, { headers });
   }
 
   guardarPlantilla(username: string, plantillaData: { titulares: number[], suplentes: number[] }, token: string): Observable<any> {
@@ -71,15 +54,7 @@ export class UsuarioService {
       'Content-Type': 'application/json'
     });
 
-    return this.http.post<any>(`${this.apiUrl}/${username}/guardar-plantilla`, plantillaData, { headers }).pipe(
-      tap(response => {
-        console.log("📤 Respuesta del backend al guardar la plantilla:", response);
-      }),
-      catchError(error => {
-        console.error('❌ Error al guardar la plantilla:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/${username}/guardar-plantilla`, plantillaData, { headers });
   }
 
   venderJugador(username: string, jugador: Jugador, token: string): Observable<any> {
@@ -94,51 +69,25 @@ export class UsuarioService {
       precioVenta: jugador.precioVenta
     };
 
-    return this.http.post<any>(`${this.apiUrl}/${username}/vender`, jugadorPayload, { headers }).pipe(
-      tap(response => {
-        console.log("📤 Respuesta del backend al vender:", response);
-        this.actualizarDineroDesdeBackend(username, token).subscribe();
-      }),
-      catchError((error) => {
-        console.error('❌ Error al vender jugador:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/${username}/vender`, jugadorPayload, { headers });
   }
 
-  obtenerDineroUsuario(usuarioId: number): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/${usuarioId}/dinero`);
+  obtenerUsuarioCompleto(usuarioId: number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/${usuarioId}`);
   }
 
-  getUsuarios(): Observable<any[]> {
+  obtenerUsuarios(): Observable<Usuario[]> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
     });
-
-    return this.http.get<any[]>(`${this.apiUrl}`, { headers }).pipe(
-      tap(response => console.log('👥 Usuarios cargados:', response)),
+  
+    return this.http.get<Usuario[]>(`${this.apiUrl}`, { headers }).pipe(
+      tap(usuarios => console.log('📥 Usuarios cargados desde el backend:', usuarios)),
       catchError(error => {
         console.error('❌ Error al obtener usuarios:', error);
         return throwError(() => error);
       })
     );
   }
-
-  setDinero(dinero: number): void {
-    this.dineroUsuario = dinero;
-  }
-
-  getDinero(): number {
-    return this.dineroUsuario;
-  }
-
-  actualizarDineroDesdeBackend(username: string, token: string): Observable<number> {
-    return this.obtenerUsuario(username, token).pipe(
-      tap(usuario => {
-        this.setDinero(usuario.dinero);
-        console.log('💰 Dinero actualizado desde backend:', usuario.dinero);
-      }),
-      map(usuario => usuario.dinero)
-    );
-  }
+  
 }

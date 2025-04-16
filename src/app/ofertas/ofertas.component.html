@@ -14,7 +14,7 @@
       <tr>
         <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
         <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
-        <td>{{ oferta.comprador?.username }}</td>
+        <td>{{ oferta.compradorUsername }}</td>
         <td class="acciones">
           <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
                   (click)="aceptarOferta(oferta)" title="Aceptar oferta">
@@ -68,7 +68,7 @@
       <tr>
         <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
         <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
-        <td>{{ oferta.comprador?.username }}</td>
+        <td>{{ oferta.compradorUsername }}</td>
         <td class="acciones">
           <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
                   (click)="aceptarContraoferta(oferta)" title="Aceptar contraoferta">

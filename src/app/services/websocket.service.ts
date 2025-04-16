@@ -43,4 +43,20 @@ export class WebSocketService {
       this.stompClient.publish({ destination: '/app/chat/enviar', body: JSON.stringify(message) });
     }
   }
+
+
+  private ofertasSubject = new Subject<any>();
+
+subscribeToOfertas(usuarioId: number): void {
+  this.stompClient.subscribe(`/chat/ofertas/${usuarioId}`, (message) => {
+    const oferta = JSON.parse(message.body);
+    console.log('🟢 Nueva oferta recibida por WebSocket:', oferta);
+    this.ofertasSubject.next(oferta);
+  });
+}
+
+getOfertas() {
+  return this.ofertasSubject.asObservable();
+}
+
 }

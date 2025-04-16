@@ -39,65 +39,59 @@ export class ChatComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
-    if (!user) return;
-
-    this.currentUser = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      dinero: 0,
-      titulares: [],
-      suplentes: []
-    };
-
-    this.loadUsuarios();
-    this.loadGruposDelUsuario();
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-
-    this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/${this.currentUser.id}/todos`, { headers }).subscribe({
-      next: (todos) => {
-        todos.forEach((msg) => {
-          const clave = this.getClaveConversacion(msg);
-          if (!this.mensajesPorConversacion.has(clave)) {
-            this.mensajesPorConversacion.set(clave, []);
-          }
-          this.mensajesPorConversacion.get(clave)!.push(msg);
-
-          const yaLeido = this.ultimosLeidos.get(clave) ?? 0;
-          const esPropio = msg.remitenteId === this.currentUser!.id;
-
-          if (!esPropio && (msg.id ?? 0) > yaLeido) {
+    this.authService.usuarioCompleto$.subscribe(user => {
+      if (!user) return;
+  
+      this.currentUser = user;
+      this.loadUsuarios();
+      this.loadGruposDelUsuario();
+  
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+  
+      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/${user.id}/todos`, { headers }).subscribe({
+        next: (todos) => {
+          todos.forEach((msg) => {
+            const clave = this.getClaveConversacion(msg);
+            if (!this.mensajesPorConversacion.has(clave)) {
+              this.mensajesPorConversacion.set(clave, []);
+            }
+            this.mensajesPorConversacion.get(clave)!.push(msg);
+  
+            const yaLeido = this.ultimosLeidos.get(clave) ?? 0;
+            const esPropio = msg.remitenteId === user.id;
+  
+            if (!esPropio && (msg.id ?? 0) > yaLeido) {
+              this.notificacionesPendientes.add(clave);
+            }
+          });
+  
+          this.refreshVistaActual();
+        },
+        error: (err) => console.error("Error al precargar mensajes:", err)
+      });
+  
+      // WebSocket
+      this.webSocketService.getMessages().subscribe((message: Message) => {
+        const clave = this.getClaveConversacion(message);
+        if (!this.mensajesPorConversacion.has(clave)) {
+          this.mensajesPorConversacion.set(clave, []);
+        }
+  
+        const mensajes = this.mensajesPorConversacion.get(clave)!;
+        if (!mensajes.some(m => m.id === message.id)) {
+          mensajes.push(message);
+          if (clave === this.getClaveActual()) {
+            this.messages = [...mensajes];
+            this.markAsRead(clave, message.id ?? 0);
+            this.changeDetector.detectChanges();
+          } else if (message.remitenteId !== this.currentUser?.id) {
             this.notificacionesPendientes.add(clave);
           }
-        });
-
-        this.refreshVistaActual();
-      },
-      error: (err) => console.error("Error al precargar mensajes:", err)
-    });
-
-    this.webSocketService.getMessages().subscribe((message: Message) => {
-      const clave = this.getClaveConversacion(message);
-      if (!this.mensajesPorConversacion.has(clave)) {
-        this.mensajesPorConversacion.set(clave, []);
-      }
-
-      const mensajes = this.mensajesPorConversacion.get(clave)!;
-      if (!mensajes.some(m => m.id === message.id)) {
-        mensajes.push(message);
-        if (clave === this.getClaveActual()) {
-          this.messages = [...mensajes];
-          this.markAsRead(clave, message.id ?? 0);
-          this.changeDetector.detectChanges();
-        } else if (message.remitenteId !== this.currentUser?.id) {
-          this.notificacionesPendientes.add(clave);
         }
-      }
+      });
     });
   }
+  
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedGroupId'] || changes['selectedUserId']) {
@@ -106,9 +100,10 @@ export class ChatComponent implements OnInit, OnChanges {
   }
 
   loadUsuarios(): void {
-    this.usuarioService.getUsuarios().subscribe(usuarios => {
-      this.usuarios = usuarios.filter(u => u.id !== this.currentUser!.id);
+    this.usuarioService.obtenerUsuarios().subscribe((usuarios: Usuario[]) => {
+      this.usuarios = usuarios.filter((u: Usuario) => u.id !== this.currentUser!.id);
     });
+    
   }
 
   loadGruposDelUsuario(): void {

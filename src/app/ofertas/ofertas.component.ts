@@ -46,7 +46,7 @@ export class OfertasComponent implements OnInit {
       this.usuarioId = user.id;
       console.log("🧠 Usuario ID detectado:", this.usuarioId);
 
-      this.obtenerDineroUsuario();
+      this.authService.refreshUsuarioCompleto();
       this.cargarOfertas();
 
       // 🔴 MARCAR COMO LEÍDAS
@@ -60,18 +60,13 @@ export class OfertasComponent implements OnInit {
   }
 
 
-  obtenerDineroUsuario(): void {
-    this.usuarioService.obtenerDineroUsuario(this.usuarioId).subscribe(  // Verifica que este método exista en UsuarioService
-      (dinero: number) => {
-        this.usuarioDinero = dinero;
-        console.log("💰 Dinero actualizado:", this.usuarioDinero);
-        this.cdr.detectChanges();
-      },
-      error => {
-        console.error('❌ Error al obtener dinero del usuario', error);
-      }
-    );
+  suscribirseAlDinero(): void {
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.usuarioDinero = usuario?.dinero ?? 0;
+      this.cdr.detectChanges();
+    });
   }
+  
 
 
 
@@ -106,7 +101,7 @@ export class OfertasComponent implements OnInit {
     this.ofertasService.retirarOferta(oferta.id!).subscribe(() => {
       console.log("✅ Oferta retirada correctamente.");
       this.cargarOfertas();
-      this.obtenerDineroUsuario();
+      this.authService.refreshUsuarioCompleto();
     }, error => {
       console.error("❌ Error al retirar la oferta", error);
     });
@@ -122,7 +117,7 @@ export class OfertasComponent implements OnInit {
         console.log("✅ Oferta aceptada.");
         this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
         this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
-        this.obtenerDineroUsuario();
+        this.authService.refreshUsuarioCompleto();
       },
       error: (error) => {
         console.error("❌ Error al aceptar la oferta:", error);
@@ -148,7 +143,7 @@ export class OfertasComponent implements OnInit {
       next: () => {
         console.log("✅ Contraoferta aceptada correctamente, ID:", oferta.id);
         this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
-        this.obtenerDineroUsuario();
+        this.authService.refreshUsuarioCompleto();
         this.cargarOfertas();
       },
       error: (error) => {
@@ -178,7 +173,7 @@ export class OfertasComponent implements OnInit {
     this.mensajeError = '';
 
     // 🔹 Obtener el dinero antes de abrir el diálogo
-    this.obtenerDineroUsuario();
+    this.authService.refreshUsuarioCompleto();
 
     // 🔹 Calcular la suma de todas las ofertas en curso
     const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
@@ -228,16 +223,11 @@ export class OfertasComponent implements OnInit {
         console.log("✅ Oferta enviada correctamente.");
 
         // ✅ Actualizar dinero desde backend inmediatamente
-        const username = this.authService.getUser()?.username;
-        const token = this.authService.getToken();
-        if (username && token) {
-          this.usuarioService.actualizarDineroDesdeBackend(username, token).subscribe(dineroActualizado => {
-            this.usuarioDinero = dineroActualizado;
-          });
-        }
+        this.authService.refreshUsuarioCompleto(); // ✅ Nuevo método global
+
 
         this.mostrarDialogoOferta = false;
-        this.obtenerDineroUsuario();
+        this.authService.refreshUsuarioCompleto();
         this.cargarOfertas();
       },
       error: (error) => {
@@ -263,7 +253,7 @@ export class OfertasComponent implements OnInit {
       console.error("❌ No se puede enviar la contraoferta, falta el jugador seleccionado.");
       return;
     }
-    if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.id) {
+    if (!this.ofertaSeleccionada.id) {
       console.error("❌ No se puede enviar la contraoferta, falta la oferta seleccionada o su ID.");
       return;
     }
@@ -276,13 +266,11 @@ export class OfertasComponent implements OnInit {
 
     const nuevaOferta: Oferta = {
       jugador: this.ofertaSeleccionada.jugador,
-      comprador: { id: this.usuarioId },
-      vendedor: this.ofertaSeleccionada.comprador,
+      comprador: { id: this.usuarioId }, // tú haces la contraoferta
       montoOferta: montoContraoferta,
       estado: 'CONTRAOFERTA',
-      liga: { id: ligaId } // 👈 Se añade la liga también
+      liga: { id: ligaId }
     };
-
 
     console.log("📤 Enviando contraoferta:", nuevaOferta);
     console.log("🔖 Oferta original seleccionada:", this.ofertaSeleccionada);
@@ -291,7 +279,7 @@ export class OfertasComponent implements OnInit {
       next: (respuesta) => {
         console.log("✅ Contraoferta enviada correctamente:", respuesta);
         this.mostrarDialogoContraoferta = false;
-        this.obtenerDineroUsuario();
+        this.authService.refreshUsuarioCompleto();
         this.cargarOfertas();
       },
       error: (error) => {
@@ -301,6 +289,7 @@ export class OfertasComponent implements OnInit {
       }
     });
   }
+
 
   esMovil(): boolean {
     return window.innerWidth <= 768;

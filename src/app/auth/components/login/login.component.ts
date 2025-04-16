@@ -16,6 +16,9 @@ export class LoginComponent {
   loading: boolean = false;
   showModal: boolean = false;
 
+  // 👉 Esta variable permite activar o desactivar el captcha
+  activarCaptcha: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -24,18 +27,18 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      recaptcha: ['', Validators.required],  // Validar que reCAPTCHA es obligatorio
+      recaptcha: [
+        '',
+        this.activarCaptcha ? Validators.required : [] // ✅ Solo es obligatorio si está activo
+      ],
     });
   }
 
-  // Método que recibe la respuesta del reCAPTCHA
+  // ✅ Método que recibe la respuesta del reCAPTCHA
   resolved(captchaResponse: string | null): void {
-    if (captchaResponse) {
-      this.recaptchaResponse = captchaResponse;  // Si es un string válido, lo asignamos
-    } else {
-      this.recaptchaResponse = '';  // Si es null, asignamos una cadena vacía
-    }
-    this.loginForm.controls['recaptcha'].setValue(this.recaptchaResponse);  // Poner el valor en el formulario
+    if (!this.activarCaptcha) return; // ✅ Ignora si está desactivado
+    this.recaptchaResponse = captchaResponse || '';
+    this.loginForm.controls['recaptcha'].setValue(this.recaptchaResponse);
   }
 
   iniciarSesion() {
@@ -43,30 +46,32 @@ export class LoginComponent {
       this.mensaje = 'Completa todos los campos';
       return;
     }
-
+  
     this.showModal = true;  // Muestra el modal con el spinner
-    this.loading = true;     // Muestra el spinner
-
-    // Llamamos al servicio de autenticación
+    this.loading = true;    // Muestra el spinner
+  
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         console.log('Inicio de sesión exitoso:', response);
-        this.loading = false;  // Oculta el spinner
-        this.showModal = false; // Cierra el modal
-
-        // Si todo es correcto, puedes redirigir o mostrar un mensaje de éxito
+        this.loading = false;
+        this.showModal = false;
         this.mensaje = 'Inicio de sesión exitoso!';
+  
+        // 🔄 Forzar carga del usuario completo con dinero y dineroPendiente
+        this.authService.refreshUsuarioCompleto();
+  
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate(['/plantilla']); // o '/chat'
+          this.router.navigate(['/plantilla']);
         });
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
-        this.loading = false;  // Oculta el spinner
-        this.showModal = false; // Cierra el modal
+        this.loading = false;
+        this.showModal = false;
         this.errorMessage = '⚠ Credenciales incorrectas. Intenta de nuevo.';
         this.mensaje = 'Credenciales incorrectas';
       },
     });
   }
+  
 }

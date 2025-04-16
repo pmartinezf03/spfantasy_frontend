@@ -3,16 +3,17 @@ import { Jugador } from './jugador.model';
 export interface Oferta {
   id?: number;
 
-  // Soporta tanto `jugador` directo como `jugador.jugadorBase`
   jugador: Jugador | {
     id: number;
     jugadorBase: Jugador;
-    // Puedes añadir aquí más propiedades si usas más datos de JugadorLiga
     precioVenta?: number;
   };
 
-  comprador: { id: number };
-  vendedor: { id: number | null };
+  compradorUsername?: string;
+  vendedorUsername?: string;
+
+  comprador: { id: number; username?: string };
+  vendedor?: { id: number | null; username?: string };
   montoOferta: number;
   estado: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA' | 'CONTRAOFERTA';
   timestamp?: string;

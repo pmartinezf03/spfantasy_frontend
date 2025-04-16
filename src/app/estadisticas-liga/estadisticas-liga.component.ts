@@ -64,8 +64,8 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
   obtenerDineroUsuario(): void {
-    this.usuarioService.obtenerDineroUsuario(this.usuarioId).subscribe(dinero => {
-      this.usuarioDinero = dinero ?? 0;
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.usuarioDinero = usuario?.dinero ?? 0;
       this.cdr.detectChanges();
     }, error => {
       console.error("❌ Error al obtener el dinero del usuario", error);

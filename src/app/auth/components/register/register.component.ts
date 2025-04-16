@@ -7,15 +7,14 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-
 export class RegisterComponent {
   registerForm: FormGroup;
   captchaToken: string | null = null;
   captchaInvalido: boolean = false;
   mensaje: string = '';
   recaptchaSiteKey: string = '6LeXEgUrAAAAAE1MO62uBhHxZYfa4uWPQhsLyCLY';
-  loading: boolean = false;  // Gestionar el estado del spinner
-  showModal: boolean = false; // Mostrar el modal con el spinner
+  loading: boolean = false;
+  showModal: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.registerForm = this.fb.group({
@@ -49,7 +48,6 @@ export class RegisterComponent {
       return;
     }
 
-    // Activar el spinner
     this.loading = true;
     this.showModal = true;
 
@@ -60,17 +58,21 @@ export class RegisterComponent {
 
     this.authService.register(datos).subscribe({
       next: response => {
-        console.log('Usuario registrado con éxito:', response);
-        this.loading = false;  // Desactivar el spinner
-        this.showModal = false;  // Ocultar el modal
-        this.mensaje = 'Registro exitoso!';
+        console.log('✅ Usuario registrado correctamente:', response);
+        this.loading = false;
+        this.showModal = false;
+        this.mensaje = '🎉 Registro exitoso. Ahora puedes iniciar sesión.';
+
+        // 🔁 Limpia cualquier rastro previo por seguridad
+        this.authService.logout();
+        this.registerForm.reset();
         this.captchaToken = null;
       },
       error: error => {
-        console.error('Error al registrar usuario:', error);
-        this.loading = false;  // Desactivar el spinner
-        this.showModal = false;  // Ocultar el modal
-        this.mensaje = 'Error en el registro.';
+        console.error('❌ Error al registrar usuario:', error);
+        this.loading = false;
+        this.showModal = false;
+        this.mensaje = '⚠ Error en el registro. Inténtalo nuevamente.';
       }
     });
   }

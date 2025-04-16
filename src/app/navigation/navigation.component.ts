@@ -16,6 +16,9 @@ export class NavigationComponent implements OnInit {
   usuarioLogueado: string | null = null;
   usuarioDinero = 0;
   tieneOfertasNuevas: boolean = false;
+  usuarioDineroPendiente = 0;
+  datosUsuarioCargados = false;
+  esperandoUsuario = true;
 
 
   constructor(
@@ -26,34 +29,57 @@ export class NavigationComponent implements OnInit {
 
   ) { }
   usuarioId: number = 0;
+
   ngOnInit(): void {
-    this.authService.getUserObservable().subscribe(user => {
-      this.isUserLoggedIn = !!user;
-      this.usuarioLogueado = user?.username || null;
+    console.log('📍 NavigationComponent inicializado');
+  
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.esperandoUsuario = false;
 
-      if (this.isUserLoggedIn && user?.id) {
-        this.usuarioService.obtenerDineroUsuario(user.id).subscribe(dinero => {
-          this.usuarioDinero = dinero;
-        });
-
-        this.ofertasService.tieneOfertasNuevas(user.id).subscribe(resp => {
-          this.tieneOfertasNuevas = resp.tieneOfertasNuevas;
-          this.construirMenu();
-        });
-
-        // ✅ Escuchamos cuando el usuario entra a la pestaña y las ofertas se marcan como leídas
-        this.ofertasService.ofertasLeidas$.subscribe(leidas => {
-          if (leidas) {
-            console.log("🔴 Ofertas leídas, ocultando punto rojo");
-            this.tieneOfertasNuevas = false;
-            this.construirMenu();
-          }
-        });
-      } else {
-        this.construirMenu();
-      }
+      const token = this.authService.getToken();
+      this.isUserLoggedIn = !!usuario && !!token;
+    
+      this.usuarioLogueado = usuario?.username || null;
+      this.usuarioDinero = usuario?.dinero ?? 0;
+      this.usuarioDineroPendiente = usuario?.dineroPendiente ?? 0;
+      this.datosUsuarioCargados = !!usuario;
+  
+      console.log('✅ Datos del usuario en navbar:');
+      console.log('   👤 Username:', this.usuarioLogueado);
+      console.log('   💰 Dinero:', this.usuarioDinero);
+      console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
+  
+      this.construirMenu();
     });
+  
+    const user = this.authService.getUser();
+    console.log('📦 Usuario desde AuthService.getUser():', user);
+  
+    if (user?.id) {
+      console.log('🔄 Llamando a refreshUsuarioCompleto()...');
+      this.authService.refreshUsuarioCompleto();
+    }
+  
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.ofertasService.tieneOfertasNuevas(userId).subscribe(resp => {
+        this.tieneOfertasNuevas = resp.tieneOfertasNuevas;
+        console.log('📨 Ofertas nuevas detectadas:', this.tieneOfertasNuevas);
+        this.construirMenu();
+      });
+  
+      this.ofertasService.ofertasLeidas$.subscribe(leidas => {
+        if (leidas) {
+          this.tieneOfertasNuevas = false;
+          console.log('🧹 Ofertas marcadas como leídas');
+          this.construirMenu();
+        }
+      });
+    }
   }
+  
+  
+
 
 
   construirMenu(): void {
@@ -90,10 +116,20 @@ export class NavigationComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  
+    // 🧠 Asegurar limpieza del estado visual
     this.usuarioLogueado = null;
     this.usuarioDinero = 0;
+    this.usuarioDineroPendiente = 0;
     this.isUserLoggedIn = false;
-    this.router.navigate(['/auth']);
-    this.construirMenu();
+    this.datosUsuarioCargados = false;
+  
+    console.log('🔐 Usuario desconectado');
+  
+    // 🔄 Navegamos al login y reconstruimos el menú
+    this.router.navigate(['/auth']).then(() => {
+      this.construirMenu();
+    });
   }
+  
 }

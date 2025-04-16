@@ -2,6 +2,14 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
+    {
+      "type": "java",
+      "name": "Depurar Backend Spring Boot",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005
+    },
     {
       "name": "ng serve",
       "type": "chrome",
@@ -16,5 +24,9 @@
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html"
     }
+
+
   ]
 }
+
+

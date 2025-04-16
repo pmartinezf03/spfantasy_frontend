@@ -4,6 +4,7 @@ export interface Usuario {
   email?: string;
   role: string;
   dinero: number;
+  dineroPendiente: number;
   titulares: number[];
   suplentes: number[];
 }

@@ -29,7 +29,7 @@ export class ContactListComponent implements OnInit, OnChanges {
     const currentUser = this.authService.getUser();
     if (!currentUser) return;
 
-    this.usuarioService.getUsuarios().subscribe((data: Usuario[]) => {
+    this.usuarioService.obtenerUsuarios().subscribe((data: Usuario[]) => {
       this.usuarios = data.filter(u => u.id !== currentUser.id);
     });
   }
@@ -84,7 +84,7 @@ export class ContactListComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.usuarioService.getUsuarios().subscribe((data: Usuario[]) => {
+    this.usuarioService.obtenerUsuarios().subscribe((data: Usuario[]) => {
       const encontrado = data.find(
         u => u.username.toLowerCase() === this.nuevoContactoUsername.toLowerCase()
       );

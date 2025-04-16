@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-perfil',
@@ -10,38 +9,18 @@ import { UsuarioService } from '../services/usuario.service';
 export class PerfilComponent implements OnInit {
   usuarioLogueado: any = null;
   usuarioDinero: number = 0;
+  dineroPendiente: number = 0;
 
-  constructor(private authService: AuthService, private usuarioService: UsuarioService) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
-    const token = this.authService.getToken();
+    
+    this.authService.refreshUsuarioCompleto();
 
-    if (user && token) {
-      this.usuarioLogueado = user;
-
-      this.usuarioService.actualizarDineroDesdeBackend(user.username, token).subscribe();
-
-      this.usuarioService.dineroUsuario$.subscribe(dinero => {
-        this.usuarioDinero = dinero;
-      });
-    }
-  }
-
-  ngOnChanges(): void {
-    const user = this.authService.getUser();
-    const token = this.authService.getToken();
-
-
-    this.usuarioLogueado = user;
-
-    this.usuarioService.actualizarDineroDesdeBackend(user!.username, token!).subscribe();
-
-    this.usuarioService.dineroUsuario$.subscribe(dinero => {
-      this.usuarioDinero = dinero;
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.usuarioLogueado = usuario;
+      this.usuarioDinero = usuario?.dinero ?? 0;
+      this.dineroPendiente = usuario?.dineroPendiente ?? 0;
     });
   }
-
-
-
 }
