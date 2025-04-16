@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef,NgZone  } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
 import { UsuarioService } from '../services/usuario.service';
@@ -19,47 +19,45 @@ export class NavigationComponent implements OnInit {
   usuarioDineroPendiente = 0;
   datosUsuarioCargados = false;
   esperandoUsuario = true;
-
+  usuarioId: number = 0;
 
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
     private router: Router,
     private ofertasService: OfertasService,
-
-  ) { }
-  usuarioId: number = 0;
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {}
 
   ngOnInit(): void {
     console.log('📍 NavigationComponent inicializado');
-  
-    this.authService.usuarioCompleto$.subscribe(usuario => {
-      this.esperandoUsuario = false;
 
-      const token = this.authService.getToken();
-      this.isUserLoggedIn = !!usuario && !!token;
+    // 🔁 Suscribirse al usuario completo
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.zone.run(() => {
+        this.esperandoUsuario = false;
     
-      this.usuarioLogueado = usuario?.username || null;
-      this.usuarioDinero = usuario?.dinero ?? 0;
-      this.usuarioDineroPendiente = usuario?.dineroPendiente ?? 0;
-      this.datosUsuarioCargados = !!usuario;
-  
-      console.log('✅ Datos del usuario en navbar:');
-      console.log('   👤 Username:', this.usuarioLogueado);
-      console.log('   💰 Dinero:', this.usuarioDinero);
-      console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
-  
-      this.construirMenu();
+        const token = this.authService.getToken();
+        this.isUserLoggedIn = !!usuario && !!token;
+    
+        this.usuarioLogueado = usuario?.username || null;
+        this.usuarioDinero = usuario?.dinero ?? 0;
+        this.usuarioDineroPendiente = usuario?.dineroPendiente ?? 0;
+        this.datosUsuarioCargados = !!usuario;
+    
+        console.log('✅ Datos del usuario en navbar:');
+        console.log('   👤 Username:', this.usuarioLogueado);
+        console.log('   💰 Dinero:', this.usuarioDinero);
+        console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
+    
+        this.construirMenu();
+        this.cdr.detectChanges(); // forzar por si acaso
+      });
     });
-  
-    const user = this.authService.getUser();
-    console.log('📦 Usuario desde AuthService.getUser():', user);
-  
-    if (user?.id) {
-      console.log('🔄 Llamando a refreshUsuarioCompleto()...');
-      this.authService.refreshUsuarioCompleto();
-    }
-  
+    
+
+    // 🔔 Verificar si hay ofertas nuevas
     const userId = this.authService.getUserId();
     if (userId) {
       this.ofertasService.tieneOfertasNuevas(userId).subscribe(resp => {
@@ -67,7 +65,7 @@ export class NavigationComponent implements OnInit {
         console.log('📨 Ofertas nuevas detectadas:', this.tieneOfertasNuevas);
         this.construirMenu();
       });
-  
+
       this.ofertasService.ofertasLeidas$.subscribe(leidas => {
         if (leidas) {
           this.tieneOfertasNuevas = false;
@@ -76,34 +74,27 @@ export class NavigationComponent implements OnInit {
         }
       });
     }
+
+    // 🔁 Refrescar usuario completo al iniciar, si no lo estaba
+    const user = this.authService.getUser();
+    if (user?.id) {
+      this.authService.refreshUsuarioCompleto();
+    }
   }
-  
-  
-
-
 
   construirMenu(): void {
     this.items = [
-      {
-        label: '🏠 Inicio',
-        routerLink: '/'
-      },
-      {
-        label: '📊 Estadísticas',
-        routerLink: '/estadisticas-liga'
-      },
-      {
-        label: '📰 Noticias',
-        routerLink: '/noticias'
-      },
+      { label: '🏠 Inicio', routerLink: '/' },
+      { label: '📊 Estadísticas', routerLink: '/estadisticas-liga' },
+      { label: '📰 Noticias', routerLink: '/noticias' },
       ...(this.isUserLoggedIn
         ? [
-          { label: '🛒 Mercado', routerLink: '/mercado' },
-          { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
-          { label: '🏆 Ligas',routerLink: '/ligas'},
-          { label: '💬 Chat', routerLink: '/chat' },
-          {label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas',routerLink: '/ofertas'}
-        ]
+            { label: '🛒 Mercado', routerLink: '/mercado' },
+            { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
+            { label: '🏆 Ligas', routerLink: '/ligas' },
+            { label: '💬 Chat', routerLink: '/chat' },
+            { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' }
+          ]
         : []),
       {
         label: this.isUserLoggedIn ? '🚪 Cerrar Sesión' : '🔑 Iniciar sesión',
@@ -116,20 +107,17 @@ export class NavigationComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-  
-    // 🧠 Asegurar limpieza del estado visual
+
     this.usuarioLogueado = null;
     this.usuarioDinero = 0;
     this.usuarioDineroPendiente = 0;
     this.isUserLoggedIn = false;
     this.datosUsuarioCargados = false;
-  
+
     console.log('🔐 Usuario desconectado');
-  
-    // 🔄 Navegamos al login y reconstruimos el menú
+
     this.router.navigate(['/auth']).then(() => {
       this.construirMenu();
     });
   }
-  
 }

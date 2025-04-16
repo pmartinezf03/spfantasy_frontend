@@ -138,11 +138,27 @@ export class EstadisticasLigaComponent implements OnInit {
 
     this.ofertasService.crearOferta(nuevaOferta).subscribe(ofertaCreada => {
       if (this.jugadorSeleccionado?.id !== undefined) {
-        this.ofertasEnCurso[this.jugadorSeleccionado.id] = ofertaCreada.id ?? 0;
+        const jugadorId = this.jugadorSeleccionado.id;
+      
+        // ✅ Mostrar botón de cancelar oferta inmediatamente
+        this.ofertasEnCurso[jugadorId] = -1;
+        this.cdr.detectChanges();
+      
+        // 🔁 Luego lo reemplazamos por el ID real al llegar la respuesta
+        this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId).subscribe({
+          next: (oferta) => {
+            if (oferta?.id) {
+              this.ofertasEnCurso[jugadorId] = oferta.id;
+              this.cdr.detectChanges();
+            }
+          }
+        });
       }
+      
       this.cerrarDialogoOferta();
-      this.obtenerDineroUsuario();
-      this.cargarOfertasUsuario();
+      this.authService.refreshUsuarioCompleto();
+
+      
     }, error => {
       this.mensajeError = "❌ Error al enviar la oferta. Inténtalo nuevamente.";
       this.cdr.detectChanges();
@@ -153,13 +169,24 @@ export class EstadisticasLigaComponent implements OnInit {
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId] ?? 0;
     if (!ofertaId) return;
-
+  
+    // ✅ Ocultar el botón al instante
+    delete this.ofertasEnCurso[jugadorId];
+    this.cdr.detectChanges();
+  
+    // 🔁 Confirmar con el backend
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
-      delete this.ofertasEnCurso[jugadorId];
       this.obtenerDineroUsuario();
-      this.cargarOfertasUsuario();
+      this.authService.refreshUsuarioCompleto();
+
+      // Opcional si quieres verificar otra vez:
+      // this.cargarOfertasUsuario();
     }, error => {
       console.error("❌ Error al cancelar la oferta:", error);
+      // Si falla, lo volvemos a mostrar
+      this.ofertasEnCurso[jugadorId] = ofertaId;
+      this.cdr.detectChanges();
     });
   }
+  
 }

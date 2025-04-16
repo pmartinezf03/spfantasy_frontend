@@ -51,6 +51,8 @@ export class MercadoComponent implements OnInit {
     
         const ligaId = this.authService.getLigaId();
         if (ligaId) this.cargarJugadores(ligaId);
+        this.authService.refreshUsuarioCompleto(); // 🔄 actualizar dinero tras enviar oferta
+
     
         this.cdr.detectChanges();
       }
@@ -120,8 +122,10 @@ export class MercadoComponent implements OnInit {
   cerrarDialogoOferta(): void {
     this.jugadorSeleccionado = undefined;
     this.mostrarDialogo = false;
-    this.mensajeError = '';
-    this.cdr.detectChanges();
+
+    // 🔄 Refrescar usuario completo para actualizar dinero y dineroPendiente
+    this.authService.refreshUsuarioCompleto();
+    
   }
   
 
@@ -130,11 +134,11 @@ export class MercadoComponent implements OnInit {
       console.error('Datos de jugador no válidos al enviar oferta');
       return;
     }
-
+  
     const jugadorId = this.jugadorSeleccionado.id;
     const ligaId = this.authService.getLigaId();
     if (!ligaId) return;
-
+  
     const nuevaOferta: Oferta = {
       comprador: { id: this.usuarioId },
       vendedor: { id: this.jugadorSeleccionado.propietarioId },
@@ -144,18 +148,18 @@ export class MercadoComponent implements OnInit {
       estado: 'PENDIENTE',
       timestamp: new Date().toISOString()
     };
-
+  
+    // ✅ Cerramos el diálogo
+    this.mostrarDialogo = false;
+  
+    // ✅ Mostramos botón de "Cancelar oferta" al instante
+    this.ofertasEnCurso[jugadorId] = -1; // Marcamos como oferta pendiente local
+    this.cdr.detectChanges(); // 🔄 Forzamos render inmediato
+  
+    // 🔁 Enviamos la oferta real al backend
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
-        this.mostrarDialogo = false;
-
-        // Intentar recuperar la última oferta creada
-        // Asignamos -1 como valor temporal para ocultar botón de "Hacer oferta"
-        this.cdr.detectChanges();
-
-        // Intentamos obtener la verdadera ID de la oferta desde el backend
-        console.log('🧾 Buscando última oferta del jugadorLigaId:', jugadorId, 'para usuarioId:', this.usuarioId);
-
+        // Luego obtenemos la oferta real del backend (con ID)
         this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId).subscribe({
           next: (oferta) => {
             if (oferta?.id) {
@@ -171,11 +175,8 @@ export class MercadoComponent implements OnInit {
             }
           }
         });
-        
-
-
-
-        this.suscribirseAlDinero();
+  
+        this.authService.refreshUsuarioCompleto();
         this.cargarJugadores(ligaId);
       },
       error: err => {
@@ -183,17 +184,29 @@ export class MercadoComponent implements OnInit {
       }
     });
   }
+  
 
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId];
     if (!ofertaId) return;
-
+  
+    // ✅ Ocultar botón al instante
+    delete this.ofertasEnCurso[jugadorId];
+    this.cdr.detectChanges(); // 🔄 Refrescar vista para que aparezca "Hacer Oferta"
+  
+    // 🔁 Confirmar cancelación en el backend
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
-      delete this.ofertasEnCurso[jugadorId];
-      this.suscribirseAlDinero();
-      this.cargarOfertasUsuario();
+      // Opcional: volver a verificar con el backend si quieres seguridad
+      // this.cargarOfertasUsuario();
+      this.authService.refreshUsuarioCompleto(); // Actualizar dinero tras cancelación
+    }, error => {
+      console.error('❌ Error al cancelar oferta:', error);
+      // En caso de error, volvemos a marcarla como activa
+      this.ofertasEnCurso[jugadorId] = ofertaId;
+      this.cdr.detectChanges();
     });
   }
+  
 
   obtenerNombreJugador(jugador: any): string {
     return jugador?.jugadorBase?.nombre || jugador?.nombre || '';
