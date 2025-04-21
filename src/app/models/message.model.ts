@@ -10,4 +10,5 @@ export interface Message {
   grupoId?: number | null;
   contenido: string;
   timestamp?: string;
+  remitenteAlias?: string;
 }

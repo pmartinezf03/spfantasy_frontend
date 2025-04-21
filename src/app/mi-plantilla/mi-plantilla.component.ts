@@ -154,23 +154,28 @@ export class MiPlantillaComponent implements OnInit {
     }
   }
 
-  venderJugador(jugador: Jugador): void {
+  venderJugador(jugador: any): void {
     const token = this.authService.getToken();
-    if (!token) {
-      console.error("⚠ No hay token disponible.");
-      return;
-    }
+    if (!token || !this.username) return;
   
-    this.usuarioService.venderJugador(this.username, jugador, token).subscribe(response => {
-      if (response?.status === "success") {
-        console.log('✅ Jugador vendido con éxito');
-        // Actualizar el dinero y las plantillas
-        this.usuarioDinero = response.dinero;
-        this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
-        this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
-        this.cargarJugadores();
-      } else {
-        alert(response.mensaje || '⚠ Error al vender el jugador.');
+    this.usuarioService.venderJugador(this.username, jugador, token).subscribe({
+
+      next: (response) => {
+        if (response?.status === "success") {
+          console.log('✅ Jugador vendido con éxito');
+  
+          this.usuarioDinero = response.dinero;
+          this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
+          this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
+  
+          this.authService.refreshUsuarioCompleto();
+          this.cargarJugadores();
+        } else {
+          alert(response.mensaje || '⚠ Error al vender el jugador.');
+        }
+      },
+      error: (err) => {
+        console.error("❌ Error al vender jugador:", err);
       }
     });
   }

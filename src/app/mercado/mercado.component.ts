@@ -34,37 +34,37 @@ export class MercadoComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
     if (!user || !user.id) return;
-  
+
     this.usuarioId = user.id;
     this.username = user.username;
-  
+
     this.suscribirseAlDinero(); // ✅ dinero actualizado
     this.cargarOfertasUsuario(); // ✅ carga inicial
     this.webSocketService.subscribeToOfertas(this.usuarioId); // 👈 suscripción WebSocket
-  
+
     this.webSocketService.getOfertas().subscribe((oferta: Oferta) => {
       const jugadorId = oferta.jugador?.id;
       const ofertaId = oferta.id;
-    
+
       if (typeof jugadorId === 'number' && typeof ofertaId === 'number') {
         this.ofertasEnCurso[jugadorId] = ofertaId;
-    
+
         const ligaId = this.authService.getLigaId();
         if (ligaId) this.cargarJugadores(ligaId);
         this.authService.refreshUsuarioCompleto(); // 🔄 actualizar dinero tras enviar oferta
 
-    
+
         this.cdr.detectChanges();
       }
     });
-    
-  
+
+
     this.authService.getLigaObservable().subscribe(ligaId => {
       if (ligaId) this.cargarJugadores(ligaId);
     });
   }
-  
-  
+
+
 
   suscribirseAlDinero(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
@@ -72,7 +72,7 @@ export class MercadoComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
-  
+
 
   cargarJugadores(ligaId: number): void {
     this.estadisticasService.obtenerJugadoresDeLiga(ligaId).subscribe((jugadores: Jugador[]) => {
@@ -95,22 +95,31 @@ export class MercadoComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
-
   comprarJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
-    if (!token || this.usuarioDinero < jugador.precioVenta) return;
+    const ligaId = this.authService.getLigaId();
+    if (!token || !ligaId || !jugador?.id) return;
 
-    this.usuarioService.comprarJugador(this.username, jugador, token).subscribe(response => {
-      if (response?.status === "success") {
-        this.usuarioDinero = response.dinero;
-        this.authService.refreshUsuarioCompleto(); // ✅ Esto actualiza el dinero y se refleja globalmente
-        const ligaId = this.authService.getLigaId();
-        if (ligaId) this.cargarJugadores(ligaId);
-      } else {
-        alert(response.mensaje || '⚠ Error al comprar el jugador.');
+    const jugadorBaseId = jugador.id;
+
+    this.usuarioService.comprarJugadorDeLiga(this.username, jugadorBaseId, ligaId, token).subscribe({
+      next: (response) => {
+        if (response?.status === 'success') {
+          this.usuarioDinero = response.dinero;
+          this.authService.refreshUsuarioCompleto();
+          this.cargarJugadores(ligaId);
+        } else {
+          alert(response.mensaje || '⚠ Error al comprar el jugador.');
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error al comprar jugador de liga:', err);
+        alert('⚠ Error al comprar el jugador.');
       }
     });
   }
+
+
 
   abrirDialogoOferta(jugador: Jugador): void {
     this.jugadorSeleccionado = jugador;
@@ -125,20 +134,20 @@ export class MercadoComponent implements OnInit {
 
     // 🔄 Refrescar usuario completo para actualizar dinero y dineroPendiente
     this.authService.refreshUsuarioCompleto();
-    
+
   }
-  
+
 
   enviarOferta(monto: number): void {
     if (!this.jugadorSeleccionado?.id || !this.jugadorSeleccionado?.propietarioId) {
       console.error('Datos de jugador no válidos al enviar oferta');
       return;
     }
-  
+
     const jugadorId = this.jugadorSeleccionado.id;
     const ligaId = this.authService.getLigaId();
     if (!ligaId) return;
-  
+
     const nuevaOferta: Oferta = {
       comprador: { id: this.usuarioId },
       vendedor: { id: this.jugadorSeleccionado.propietarioId },
@@ -148,14 +157,14 @@ export class MercadoComponent implements OnInit {
       estado: 'PENDIENTE',
       timestamp: new Date().toISOString()
     };
-  
+
     // ✅ Cerramos el diálogo
     this.mostrarDialogo = false;
-  
+
     // ✅ Mostramos botón de "Cancelar oferta" al instante
     this.ofertasEnCurso[jugadorId] = -1; // Marcamos como oferta pendiente local
     this.cdr.detectChanges(); // 🔄 Forzamos render inmediato
-  
+
     // 🔁 Enviamos la oferta real al backend
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
@@ -175,7 +184,7 @@ export class MercadoComponent implements OnInit {
             }
           }
         });
-  
+
         this.authService.refreshUsuarioCompleto();
         this.cargarJugadores(ligaId);
       },
@@ -184,16 +193,16 @@ export class MercadoComponent implements OnInit {
       }
     });
   }
-  
+
 
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId];
     if (!ofertaId) return;
-  
+
     // ✅ Ocultar botón al instante
     delete this.ofertasEnCurso[jugadorId];
     this.cdr.detectChanges(); // 🔄 Refrescar vista para que aparezca "Hacer Oferta"
-  
+
     // 🔁 Confirmar cancelación en el backend
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
       // Opcional: volver a verificar con el backend si quieres seguridad
@@ -206,7 +215,7 @@ export class MercadoComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
-  
+
 
   obtenerNombreJugador(jugador: any): string {
     return jugador?.jugadorBase?.nombre || jugador?.nombre || '';

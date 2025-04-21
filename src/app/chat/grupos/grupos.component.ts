@@ -23,6 +23,7 @@ export class GruposComponent implements OnInit {
   usuarios: Usuario[] = [];
   nuevoGrupo: Partial<GrupoChat & { participantesIds?: number[] }> = {};
   usuarioId: number = 0;
+  esAdmin: boolean = false;
 
   constructor(
     private grupoChatService: GrupoChatService,
@@ -33,7 +34,7 @@ export class GruposComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
     this.usuarioId = user ? user.id : 0;
-
+    this.esAdmin = user?.role === 'admin';
     this.cargarGrupos();
     this.cargarUsuarios();
   }
@@ -86,10 +87,6 @@ export class GruposComponent implements OnInit {
     return mensajes.some(m => m.id && m.id > ultimoLeido && m.remitenteId !== this.usuarioId);
   }
 
-  get esAdmin(): boolean {
-    const esAdmin = this.usuarioActual?.role === 'admin';
-    console.log('👤 ¿Es admin?', esAdmin);
-    return esAdmin;
-  }
+
 
 }

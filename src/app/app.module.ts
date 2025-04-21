@@ -60,6 +60,9 @@ import { CrearLigaComponent } from './ligas/crear-liga/crear-liga.component';
 import { UnirseLigaComponent } from './ligas/unirse-liga/unirse-liga.component';
 import { GestionarLigaComponent } from './ligas/gestionar-liga/gestionar-liga.component';
 import { EsperandoMiembrosComponent } from './ligas/esperando-miembros/esperando-miembros.component';
+import { FiltroContactosPipe } from './pipes/filtro-contactos.pipe';
+import { HistorialComponent } from './ofertas/historial/historial.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -88,6 +91,9 @@ import { EsperandoMiembrosComponent } from './ligas/esperando-miembros/esperando
     UnirseLigaComponent,
     GestionarLigaComponent,
     EsperandoMiembrosComponent,
+    FiltroContactosPipe,
+    HistorialComponent,
+    
 
   ],
   imports: [
@@ -119,6 +125,7 @@ import { EsperandoMiembrosComponent } from './ligas/esperando-miembros/esperando
     CarouselModule,
     RecaptchaModule,
     ProgressSpinnerModule,
+    NgChartsModule,
 
   ],
   providers: [

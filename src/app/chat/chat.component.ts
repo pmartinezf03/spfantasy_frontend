@@ -41,13 +41,14 @@ export class ChatComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.authService.usuarioCompleto$.subscribe(user => {
       if (!user) return;
-  
+
       this.currentUser = user;
       this.loadUsuarios();
       this.loadGruposDelUsuario();
-  
+
       const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-  
+
+      // Precargar mensajes históricos
       this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/${user.id}/todos`, { headers }).subscribe({
         next: (todos) => {
           todos.forEach((msg) => {
@@ -56,27 +57,48 @@ export class ChatComponent implements OnInit, OnChanges {
               this.mensajesPorConversacion.set(clave, []);
             }
             this.mensajesPorConversacion.get(clave)!.push(msg);
-  
+
             const yaLeido = this.ultimosLeidos.get(clave) ?? 0;
             const esPropio = msg.remitenteId === user.id;
-  
+
             if (!esPropio && (msg.id ?? 0) > yaLeido) {
               this.notificacionesPendientes.add(clave);
             }
           });
-  
+
           this.refreshVistaActual();
         },
         error: (err) => console.error("Error al precargar mensajes:", err)
       });
-  
-      // WebSocket
+
+      // 🔔 SUSCRIBIRSE a todos los grupos del usuario (chat de liga incluido)
+      this.http.get<GrupoChat[]>(`${environment.apiUrl}/api/grupos`, { headers }).subscribe(grupos => {
+        grupos.forEach(grupo => {
+          this.webSocketService.subscribeToChannel(
+            this.webSocketService.getCanalGrupo(grupo.id)
+          );
+        });
+      });
+
+      // 🔔 SUSCRIBIRSE a todos los posibles chats privados por alias
+      this.usuarioService.obtenerUsuarios().subscribe(usuarios => {
+        this.usuarios = usuarios.filter(u => u.id !== this.currentUser!.id);
+
+        this.usuarios.forEach(contacto => {
+          if (contacto.alias && user.alias) {
+            const canalPrivado = this.webSocketService.getCanalPrivado(user.alias, contacto.alias);
+            this.webSocketService.subscribeToChannel(canalPrivado);
+          }
+        });
+      });
+
+      // 🔁 ESCUCHAR MENSAJES ENTRANTES
       this.webSocketService.getMessages().subscribe((message: Message) => {
         const clave = this.getClaveConversacion(message);
         if (!this.mensajesPorConversacion.has(clave)) {
           this.mensajesPorConversacion.set(clave, []);
         }
-  
+
         const mensajes = this.mensajesPorConversacion.get(clave)!;
         if (!mensajes.some(m => m.id === message.id)) {
           mensajes.push(message);
@@ -91,7 +113,7 @@ export class ChatComponent implements OnInit, OnChanges {
       });
     });
   }
-  
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedGroupId'] || changes['selectedUserId']) {
@@ -103,13 +125,13 @@ export class ChatComponent implements OnInit, OnChanges {
     this.usuarioService.obtenerUsuarios().subscribe((usuarios: Usuario[]) => {
       this.usuarios = usuarios.filter((u: Usuario) => u.id !== this.currentUser!.id);
     });
-    
+
   }
 
   loadGruposDelUsuario(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     this.http.get<GrupoChat[]>(`${environment.apiUrl}/api/grupos`, { headers }).subscribe(grupos => {
-      this.gruposUsuario = grupos.filter(grupo => grupo.usuarios.includes(this.currentUser!.id));
+      this.gruposUsuario = grupos.filter(grupo => grupo.usuariosIds?.includes(this.currentUser!.id));
     });
   }
 
@@ -140,18 +162,34 @@ export class ChatComponent implements OnInit, OnChanges {
       .subscribe(data => this.messages = data);
     }
   }
-
   sendMessage(contenido: string): void {
     if (!contenido.trim() || !this.currentUser) return;
-    const message: Message = {
+
+    const mensaje: Message = {
       remitenteId: this.currentUser.id,
       contenido: contenido.trim(),
       grupoId: this.selectedGroupId || undefined,
       destinatarioId: this.selectedUserId || undefined,
       timestamp: new Date().toISOString()
     };
-    this.webSocketService.sendMessage(message);
+
+    if (this.selectedGroupId) {
+      const canalGrupo = this.webSocketService.getCanalGrupo(this.selectedGroupId);
+      this.webSocketService.publishMessage(canalGrupo, mensaje);
+    } else if (this.selectedUserId) {
+      const destino = this.usuarios.find(u => u.id === this.selectedUserId);
+      if (destino?.alias && this.currentUser.alias) {
+        const canalPrivado = this.webSocketService.getCanalPrivado(this.currentUser.alias, destino.alias);
+        this.webSocketService.publishMessage(canalPrivado, mensaje);
+      } else {
+        console.warn("❌ No se puede enviar el mensaje: alias no disponible.");
+      }
+    }
   }
+
+
+
+
 
   private refreshVistaActual(): void {
     const clave = this.getClaveActual();

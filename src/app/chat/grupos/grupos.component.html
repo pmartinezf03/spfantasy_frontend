@@ -6,11 +6,19 @@
   </div>
 
   <ul class="grupo-lista">
-    <li *ngFor="let grupo of grupos" class="grupo-item" (click)="emitirGrupoSeleccionado(grupo.id)">
-      <strong>{{ grupo.nombre }}</strong>
+    <li
+      *ngFor="let grupo of grupos"
+      class="grupo-item"
+      (click)="emitirGrupoSeleccionado(grupo.id)"
+    >
+      <strong>
+        {{ grupo.nombre }}
+        <span *ngIf="grupo.nombre.startsWith('liga-')" class="badge-liga">🏀 Liga</span>
+      </strong>
       <p class="descripcion">{{ grupo.descripcion }}</p>
     </li>
   </ul>
+  
 
   <!-- SOLO PARA ADMINISTRADORES -->
   <div class="crear-grupo" *ngIf="esAdmin">

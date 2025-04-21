@@ -7,4 +7,5 @@ export interface Usuario {
   dineroPendiente: number;
   titulares: number[];
   suplentes: number[];
+  alias?: string;
 }

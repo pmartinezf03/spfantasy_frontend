@@ -17,13 +17,14 @@ export class ContactListComponent implements OnInit, OnChanges {
   @Output() usuarioSeleccionado = new EventEmitter<number>();
 
   usuarios: Usuario[] = [];
-  nuevoContactoUsername: string = '';
+  nuevoContactoAlias: string = '';
   mensaje: string = '';
+  filtroContacto: string = '';
 
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const currentUser = this.authService.getUser();
@@ -36,13 +37,9 @@ export class ContactListComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificacionesPendientes']) {
-      console.log('📩 Notificaciones actualizadas en ContactList:', this.notificacionesPendientes);
-
-      // 🔁 Forzamos detección manual si Angular no lo hace automáticamente
       this.notificacionesPendientes = new Set(this.notificacionesPendientes);
     }
   }
-
 
   generarClavePrivada(id1: number, id2: number): string {
     return [id1, id2].sort((a, b) => a - b).join('-');
@@ -53,30 +50,23 @@ export class ContactListComponent implements OnInit, OnChanges {
     const mensajes = this.mensajesPorConversacion.get(clave) || [];
     const ultimoLeido = this.ultimosLeidos.get(clave) || 0;
 
-    const tieneNuevo = mensajes.some(m => {
+    return mensajes.some(m => {
       const remitenteId = m.remitenteId ?? m.remitente?.id ?? -999;
-      const esNuevo = m.id && m.id > ultimoLeido && remitenteId !== this.usuarioActual.id;
-
-      if (esNuevo) {
-        console.log(`🔴 Mensaje nuevo para contacto ${usuario.username}, id ${m.id}, remitente ${remitenteId}`);
-      }
-
-      return esNuevo;
+      return m.id && m.id > ultimoLeido && remitenteId !== this.usuarioActual.id;
     });
-
-    return tieneNuevo;
   }
-
 
   seleccionarContacto(id: number): void {
     this.usuarioSeleccionado.emit(id);
   }
 
   agregarContacto(): void {
-    if (!this.nuevoContactoUsername.trim()) return;
+    if (!this.nuevoContactoAlias.trim()) return;
+
+    const aliasLower = this.nuevoContactoAlias.toLowerCase();
 
     const yaExiste = this.usuarios.some(
-      u => u.username.toLowerCase() === this.nuevoContactoUsername.toLowerCase()
+      u => u.alias?.toLowerCase() === aliasLower
     );
 
     if (yaExiste) {
@@ -86,15 +76,15 @@ export class ContactListComponent implements OnInit, OnChanges {
 
     this.usuarioService.obtenerUsuarios().subscribe((data: Usuario[]) => {
       const encontrado = data.find(
-        u => u.username.toLowerCase() === this.nuevoContactoUsername.toLowerCase()
+        u => u.alias?.toLowerCase() === aliasLower
       );
 
       if (encontrado) {
         this.usuarios.push(encontrado);
-        this.mensaje = `✅ ${encontrado.username} añadido.`;
-        this.nuevoContactoUsername = '';
+        this.mensaje = `✅ ${encontrado.username} (@${encontrado.alias}) añadido.`;
+        this.nuevoContactoAlias = '';
       } else {
-        this.mensaje = '❌ Usuario no encontrado.';
+        this.mensaje = '❌ Alias no encontrado.';
       }
     });
   }
@@ -102,5 +92,4 @@ export class ContactListComponent implements OnInit, OnChanges {
   trackByUsuarioId(index: number, usuario: Usuario): number {
     return usuario.id;
   }
-
 }

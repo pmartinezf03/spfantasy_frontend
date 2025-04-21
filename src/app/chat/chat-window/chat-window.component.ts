@@ -32,13 +32,10 @@ export class ChatWindowComponent implements OnChanges, AfterViewInit {
       this.mensajesOrdenados = [...this.mensajes].sort((a, b) =>
         new Date(a.timestamp!).getTime() - new Date(b.timestamp!).getTime()
       );
-      setTimeout(() => this.scrollToBottom(), 0); // scroll después de render
+      requestAnimationFrame(() => this.scrollToBottom()); // scroll más fluido
     }
-
-    console.log('👤 ID Usuario actual:', this.usuarioActual?.id);
-console.log('📨 Remitente del mensaje[0]:', this.mensajes[0]?.remitenteId);
-
   }
+
 
   ngAfterViewInit(): void {
     this.scrollToBottom(); // inicial

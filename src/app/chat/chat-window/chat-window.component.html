@@ -11,9 +11,10 @@
              mensaje.grupoId ? getColorClase(mensaje.remitenteId!) : ''
            ]">
 
-        <!-- Nombre si es grupo o no soy yo -->
+        <!-- 🧠 Mostrar nombre + alias si el mensaje no es mío o si es de grupo -->
         <div class="remitente" *ngIf="mensaje.remitenteId !== usuarioActual.id || mensaje.grupoId">
           {{ mensaje.remitenteNombre }}
+          <small *ngIf="mensaje.remitenteAlias" class="alias">{{ '@' + mensaje.remitenteAlias }}</small>
         </div>
 
         <div class="contenido">{{ mensaje.contenido }}</div>

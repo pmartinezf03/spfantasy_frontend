@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class GrupoChatService {
-  private apiUrl = `http://${environment.apiUrl}/api/grupos`; // URL del backend
+  private apiUrl = `${environment.apiUrl}/api/grupos`;
 
   constructor(private http: HttpClient) {}
 

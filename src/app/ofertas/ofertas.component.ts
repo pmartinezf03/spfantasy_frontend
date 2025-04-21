@@ -66,7 +66,7 @@ export class OfertasComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
-  
+
 
 
 
@@ -81,20 +81,19 @@ export class OfertasComponent implements OnInit {
     this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId, ligaId).subscribe(
       (data) => {
         console.log("🎯 Ofertas recibidas (como vendedor):", data);
-        this.ofertasRecibidas = data.filter(oferta => oferta.estado !== 'CONTRAOFERTA');
+        this.ofertasRecibidas = data.filter(oferta => oferta.estado !== 'CONTRAOFERTA' && oferta.estado !== 'ACEPTADA');
         this.contraofertasRecibidas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
       }
     );
 
-
     this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(
       (data) => {
-        this.ofertasEnviadas = data.filter(o => o.estado !== 'CONTRAOFERTA');
+        this.ofertasEnviadas = data.filter(o => o.estado !== 'CONTRAOFERTA' && o.estado !== 'ACEPTADA');
         this.contraofertasEnviadas = data.filter(o => o.estado === 'CONTRAOFERTA');
       }
     );
-
   }
+
 
 
   retirarOferta(oferta: Oferta): void {
@@ -112,18 +111,28 @@ export class OfertasComponent implements OnInit {
       console.error('❌ Oferta no válida: falta el ID');
       return;
     }
+  
     this.ofertasService.aceptarOferta(oferta.id!).subscribe({
       next: () => {
         console.log("✅ Oferta aceptada.");
+  
         this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
         this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
+  
         this.authService.refreshUsuarioCompleto();
+  
+        // 👇 Añadimos esto para actualizar inmediatamente el historial
+        const historialComponent = document.querySelector('app-historial') as any;
+        if (historialComponent?.ngOnInit) historialComponent.ngOnInit();
+  
+        this.cargarOfertas();
       },
       error: (error) => {
         console.error("❌ Error al aceptar la oferta:", error);
       }
     });
   }
+  
 
 
 

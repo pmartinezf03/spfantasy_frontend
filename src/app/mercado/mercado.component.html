@@ -1,69 +1,69 @@
-<div class="mercado-container">
-  <h2>🛒 Mercado de Jugadores</h2>
+<div class="mercado-container p-grid">
 
-  <div class="jugadores-mercado">
-    <div *ngFor="let jugador of jugadores" class="shadow-6 jugador-card">
-      <img [src]="jugador.fotoUrl" [alt]="obtenerNombreJugador(jugador)" />
+  <!-- 🟦 COLUMNA IZQUIERDA: Jugadores -->
+  <div class="p-col-12 p-md-8">
+    <h2>🛒 Mercado de Jugadores</h2>
 
-      <div class="info">
-        <h4>{{ obtenerNombreJugador(jugador) }}</h4>
-        <p>{{ jugador.posicion }}</p>
-        <p>
-          <strong>Precio:</strong> {{ jugador.precioVenta | currency : "EUR" }}
-        </p>
-        <p>
-          <strong>Propietario:</strong>
-          {{ jugador.propietarioUsername || "Libre" }}
-        </p>
+    <div class="jugadores-mercado">
+      <div *ngFor="let jugador of jugadores" class="shadow-6 jugador-card">
+        <img [src]="jugador.fotoUrl" [alt]="obtenerNombreJugador(jugador)" />
 
-        <!-- Botón de Comprar -->
-        <button
-          *ngIf="!jugador.propietarioId"
-          mat-raised-button
-          color="primary"
-          (click)="comprarJugador(jugador)"
-        >
-          Comprar
-        </button>
+        <div class="info">
+          <h4>{{ obtenerNombreJugador(jugador) }}</h4>
+          <p>{{ jugador.posicion }}</p>
+          <p>
+            <strong>Precio:</strong> {{ jugador.precioVenta | currency : "EUR" }}
+          </p>
+          <p>
+            <strong>Propietario:</strong>
+            {{ jugador.propietarioUsername || "Libre" }}
+          </p>
 
-        <!-- Botón de Hacer Oferta -->
-        <!-- Hacer oferta -->
-        <button
-          *ngIf="
-            jugador.propietarioId &&
-            jugador.propietarioId !== usuarioId &&
-            !ofertasEnCurso[jugador.id]
-          "
-          mat-raised-button
-          color="accent"
-          (click)="abrirDialogoOferta(jugador)"
-        >
-          Hacer Oferta
-        </button>
+          <!-- Botón de Comprar -->
+          <button
+            *ngIf="!jugador.propietarioId"
+            mat-raised-button
+            color="primary"
+            (click)="comprarJugador(jugador)">
+            Comprar
+          </button>
 
-        <!-- Cancelar oferta -->
-        <button
-          *ngIf="ofertasEnCurso[jugador.id]"
-          mat-raised-button
-          color="warn"
-          (click)="cancelarOferta(jugador.id)"
-        >
-          Cancelar Oferta
-        </button>
+          <!-- Botón de Hacer Oferta -->
+          <button
+            *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
+            mat-raised-button
+            color="accent"
+            (click)="abrirDialogoOferta(jugador)">
+            Hacer Oferta
+          </button>
 
-
+          <!-- Cancelar oferta -->
+          <button
+            *ngIf="ofertasEnCurso[jugador.id]"
+            mat-raised-button
+            color="warn"
+            (click)="cancelarOferta(jugador.id)">
+            Cancelar Oferta
+          </button>
+        </div>
       </div>
     </div>
+
+    <app-oferta-dialogo
+      [mostrarDialogo]="mostrarDialogo"
+      [jugadorSeleccionado]="obtenerJugadorBase(jugadorSeleccionado)"
+      [usuarioId]="usuarioId"
+      [usuarioDinero]="usuarioDinero"
+      [totalOfertasEnCurso]="0"
+      (cerrar)="cerrarDialogoOferta()"
+      (enviarOferta)="enviarOferta($event.monto)">
+    </app-oferta-dialogo>
   </div>
 
-  <app-oferta-dialogo
-    [mostrarDialogo]="mostrarDialogo"
-    [jugadorSeleccionado]="obtenerJugadorBase(jugadorSeleccionado)"
-    [usuarioId]="usuarioId"
-    [usuarioDinero]="usuarioDinero"
-    [totalOfertasEnCurso]="0"
-    (cerrar)="cerrarDialogoOferta()"
-    (enviarOferta)="enviarOferta($event.monto)"
-  >
-  </app-oferta-dialogo>
+  <!-- 🟨 COLUMNA DERECHA: Historial -->
+  <div class="p-col-12 p-md-4">
+    <h3>📜 Historial de Transacciones</h3>
+    <app-historial></app-historial>
+  </div>
+
 </div>
