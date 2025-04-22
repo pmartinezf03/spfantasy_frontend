@@ -8,8 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class MiPlantillaService {
-  private apiUrl = `http://${environment.apiUrl}/jugadores`; // Ajusta la URL del backend
-
+  private apiUrl = `http://${environment.apiUrl}/jugadores`;
   constructor(private http: HttpClient) {}
 
   // Método para obtener los jugadores desde el backend

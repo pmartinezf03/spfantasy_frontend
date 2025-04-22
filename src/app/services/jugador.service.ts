@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Jugador } from '../models/jugador.model';
 import { environment } from '../../environments/environment';
 
@@ -34,7 +34,13 @@ export class JugadorService {
         ligaId: ligaId.toString(),
         usuarioId: usuarioId.toString()
       }
-    });
+    }).pipe(
+      tap(jugadores => {
+        console.log("📦 [SERVICE] Jugadores recibidos desde el backend:");
+        console.table(jugadores); // 🔍 esto te mostrará si vienen 'rendimiento' y 'puntosTotales'
+      })
+    );
   }
+  
 
 }

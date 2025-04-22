@@ -43,8 +43,9 @@
             <div class="jugador-detalles">
               <p>📍 {{ jugador.posicion }}</p>
               <p>💰 {{ jugador.precioVenta | currency }}</p>
-              <p>📈 Rendimiento: {{ jugador.rendimiento }}</p>
-              <p>⭐ Total: {{ jugador.puntosTotales }}</p>
+              <p>📈 Rendimiento: {{ jugador.fp ?? '-' }}</p>
+              <p>⭐ Total: {{ jugador.pts ?? '-' }}</p>
+              
             </div>
             <button class="vender-btn" (click)="venderJugador(jugador)">💸 Vender</button>
           </div>

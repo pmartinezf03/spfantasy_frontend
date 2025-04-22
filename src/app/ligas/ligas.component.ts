@@ -17,25 +17,24 @@ export class LigasComponent implements OnInit {
   mostrarUnirseLiga = false;
   esCreador = false;
   ligaIniciada = false;
+  usuario: any = null;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private ligasService: LigasService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getUser();
     if (user && user.id) {
       this.usuarioId = user.id;
-  
+
       this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
         next: (liga) => {
-          console.log("✅ Liga detectada del usuario:", liga);
-  
-          if (liga) {
+          if (liga && liga.id) {
             this.authService.setLigaId(liga.id);
-            this.authService.setLiga(liga); // ✅ objeto completo
+            this.authService.setLiga(liga);
             this.ligaActual = liga;
             this.ligaIniciada = liga.iniciada;
             this.esCreador = liga.creador?.id === this.usuarioId;
@@ -44,15 +43,16 @@ export class LigasComponent implements OnInit {
             this.ligaActual = null;
           }
         },
-        error: (err) => {
-          console.warn("ℹ️ Usuario no tiene liga:", err);
+        error: () => {
           this.ligaActual = null;
         }
       });
     }
-  }
-  
 
+    this.authService.usuarioCompleto$.subscribe(user => {
+      this.usuario = user;
+    });
+  }
 
   cargarLigaDelUsuario(): void {
     if (!this.usuarioId) return;
@@ -60,7 +60,7 @@ export class LigasComponent implements OnInit {
     this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
       next: liga => {
         if (liga) {
-          this.authService.setLigaId(liga.id); // ✅ Guarda el ID
+          this.authService.setLigaId(liga.id);
           this.ligaActual = liga;
           this.ligaIniciada = liga.iniciada;
           this.esCreador = liga.creador?.id === this.usuarioId;
@@ -74,32 +74,31 @@ export class LigasComponent implements OnInit {
     });
   }
 
-
   onLigaCreada(liga: Liga): void {
     this.ligaActual = liga;
     this.authService.setLigaId(liga.id);
-    this.authService.setLiga(liga); // ✅ añadimos esto
+    this.authService.setLiga(liga);
     this.mostrarCrearLiga = false;
     this.esCreador = true;
     this.ligaIniciada = false;
     this.cargarMiembros();
     this.router.navigate(['/mercado']);
+    this.authService.refreshUsuarioCompleto(); // refresca datos del usuario
   }
-  
+
   onUnidoALiga(liga: Liga): void {
     this.ligaActual = liga;
     this.authService.setLigaId(liga.id);
-    this.authService.setLiga(liga); // ✅ añadimos esto
+    this.authService.setLiga(liga);
     this.mostrarUnirseLiga = false;
     this.esCreador = false;
     this.ligaIniciada = false;
     this.cargarMiembros();
     this.router.navigate(['/mercado']);
   }
-  
 
   cargarMiembros(): void {
-    if (!this.ligaActual?.id) return; 
+    if (!this.ligaActual?.id) return;
 
     this.ligasService.obtenerMiembros(this.ligaActual.id).subscribe({
       next: miembros => this.miembros = miembros,
@@ -107,17 +106,16 @@ export class LigasComponent implements OnInit {
     });
   }
 
-
   salirLiga(): void {
     const ligaId = this.ligaActual?.id;
     if (!ligaId || !this.usuarioId) return;
-  
+
     this.ligasService.salirDeLiga(ligaId, this.usuarioId).subscribe({
       next: () => {
         this.ligaActual = null;
         this.miembros = [];
         this.authService.setLigaId(null);
-        this.authService.setLiga(null); // ✅ Limpieza
+        this.authService.setLiga(null);
         this.esCreador = false;
         this.ligaIniciada = false;
       },
@@ -126,9 +124,6 @@ export class LigasComponent implements OnInit {
       }
     });
   }
-  
-  
-  
 
   mostrarCrear(): void {
     this.mostrarCrearLiga = true;

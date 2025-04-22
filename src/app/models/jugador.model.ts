@@ -1,5 +1,6 @@
 export interface Jugador {
   id: number;
+  idLiga: number;
   nombre: string;
   posicion: string;
   equipo: {

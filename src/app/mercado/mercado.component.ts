@@ -88,12 +88,17 @@ export class MercadoComponent implements OnInit {
     this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(ofertas => {
       this.ofertasEnCurso = {};
       ofertas.forEach(oferta => {
-        if (oferta.jugador?.id && oferta.id) {
+        if (
+          oferta.jugador?.id &&
+          oferta.id &&
+          oferta.estado === 'PENDIENTE' // ✅ Solo si está pendiente
+        ) {
           this.ofertasEnCurso[oferta.jugador.id] = oferta.id;
         }
       });
       this.cdr.detectChanges();
     });
+
   }
   comprarJugador(jugador: Jugador): void {
     const token = this.authService.getToken();

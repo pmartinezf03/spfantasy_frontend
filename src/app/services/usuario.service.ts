@@ -94,6 +94,22 @@ export class UsuarioService {
     return this.http.post<any>(`${this.apiUrl}/${username}/vender`, jugadorPayload, { headers });
   }
 
+  venderJugadorDeLiga(username: string, jugadorLigaId: number, token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  
+    return this.http.post<any>(
+      `${this.apiUrl}/${username}/vender-jugador-liga/${jugadorLigaId}`,
+      {},
+      {
+        headers,
+        responseType: 'text' as 'json'  // <- ⚠️ Esto arregla el error del JSON parse
+      }
+    );
+  }
+  
+
   obtenerUsuarioCompleto(usuarioId: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${usuarioId}`);
   }

@@ -28,16 +28,19 @@ export class CrearLigaComponent {
 
     this.ligasService.crearLiga({
       nombre: this.nombre,
-      codigo: this.codigoInvitacion,
+      codigoInvitacion: this.codigoInvitacion, // ✅ CORRECTO
       creadorId: usuario.id
     }).subscribe({
       next: liga => {
+        this.authService.setLiga(liga); // ✅ Guarda la liga en el servicio
+        this.authService.setLigaId(liga.id); // ✅ Guarda el ID también
         this.ligaCreada.emit(liga);
-        this.error = null;
+                this.error = null;
       },
       error: err => {
         this.error = err.error?.message || 'Error al crear la liga';
       }
     });
+    
   }
 }

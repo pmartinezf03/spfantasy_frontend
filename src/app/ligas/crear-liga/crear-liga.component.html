@@ -1,13 +1,13 @@
-<div class="crear-liga-form">
-  <h3>Crear Nueva Liga</h3>
+  <div class="crear-liga-form">
+    <h3>Crear Nueva Liga</h3>
 
-  <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
 
-  <label>Nombre:</label>
-  <input type="text" [(ngModel)]="nombre" placeholder="Nombre de la liga" />
+    <label>Nombre:</label>
+    <input type="text" [(ngModel)]="nombre" placeholder="Nombre de la liga" />
 
-  <label>Código de invitación:</label>
-  <input type="text" [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" />
+    <label>Código de invitación:</label>
+    <input type="text" [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" />
 
-  <button (click)="crearLiga()">Crear</button>
-</div>
+    <button (click)="crearLiga()">Crear</button>
+  </div>

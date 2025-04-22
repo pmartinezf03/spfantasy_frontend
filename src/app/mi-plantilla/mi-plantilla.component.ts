@@ -41,8 +41,9 @@ export class MiPlantillaComponent implements OnInit {
     }
 
     // Llamar a cargar jugadores al inicio para obtener los datos correctos
-    this.obtenerDatosUsuario();
-    this.cargarJugadores(); // Asegúrate de cargar los jugadores
+    this.cargarJugadores();
+    this.cargarDinero(); // Nuevo método solo para el dinero
+    
   }
 
   obtenerDatosUsuario() {
@@ -70,6 +71,18 @@ export class MiPlantillaComponent implements OnInit {
     });
   }
 
+  cargarDinero() {
+    const token = this.authService.getToken();
+    if (!token) return;
+  
+    this.usuarioService.obtenerUsuario(this.username, token).subscribe(usuario => {
+      if (usuario) {
+        this.usuarioDinero = usuario.dinero;
+      }
+    });
+  }
+  
+
   cargarJugadores(): void {
     const ligaId = this.authService.getLigaId();
     const usuarioId = this.authService.getUserId();
@@ -81,6 +94,8 @@ export class MiPlantillaComponent implements OnInit {
 
     this.jugadorService.obtenerJugadoresDeUsuarioEnLiga(ligaId, usuarioId).subscribe({
       next: jugadores => {
+        console.log("✅ Jugadores recibidos para mostrar en vista LISTA:");
+        console.table(jugadores);
         this.todosLosJugadores = jugadores;
 
         // Separar titulares y suplentes si la API no lo hace
@@ -154,32 +169,39 @@ export class MiPlantillaComponent implements OnInit {
     }
   }
 
-  venderJugador(jugador: any): void {
+  venderJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
     if (!token || !this.username) return;
   
-    this.usuarioService.venderJugador(this.username, jugador, token).subscribe({
-
-      next: (response) => {
-        if (response?.status === "success") {
-          console.log('✅ Jugador vendido con éxito');
+    console.log("📡 [FRONT] Enviando venta de jugador ID:", jugador.id, "ID_Liga:", jugador.idLiga);
   
-          this.usuarioDinero = response.dinero;
+    this.usuarioService.venderJugadorDeLiga(this.username, jugador.idLiga, token)
+      .subscribe({
+        next: (response) => {
+          console.log("✅ [FRONT] Respuesta correcta del backend:", response);
+  
           this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
           this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
   
           this.authService.refreshUsuarioCompleto();
           this.cargarJugadores();
-        } else {
-          alert(response.mensaje || '⚠ Error al vender el jugador.');
+        },
+        error: (err) => {
+          console.error("❌ [FRONT] Error al vender jugador:", err);
+          if (err?.error?.text) {
+            try {
+              const parsed = JSON.parse(err.error.text);
+              console.log("📦 [FRONT] Intento de parsear text plano como JSON:", parsed);
+            } catch (e) {
+              console.error("⚠️ [FRONT] No se pudo parsear como JSON:", err.error.text);
+            }
+          }
         }
-      },
-      error: (err) => {
-        console.error("❌ Error al vender jugador:", err);
-      }
-    });
+      });
   }
   
+
+
 
   get jugadoresCompletos(): Jugador[] {
     return [...this.jugadoresTitulares, ...this.jugadoresBanquillo];
@@ -188,30 +210,35 @@ export class MiPlantillaComponent implements OnInit {
 
   comprarJugador(jugador: Jugador): void {
     const token = this.authService.getToken();
-    if (!token) {
-      console.error("⚠ No hay token disponible.");
+    const ligaId = this.authService.getLigaId();
+
+    if (!token || !this.username || !ligaId) {
+      console.error("⚠ Faltan datos para comprar jugador.");
       return;
     }
-  
+
     // Verificación del dinero disponible
     if (this.usuarioDinero < jugador.precioVenta) {
       alert('❌ No tienes suficiente dinero para comprar este jugador.');
       return;
     }
-  
-    this.usuarioService.comprarJugador(this.username, jugador, token).subscribe(response => {
-      if (response?.status === "success") {
-        this.usuarioDinero = response.dinero;
-        // Agregar el jugador al banquillo
-        jugador.esTitular = false;
-        this.jugadoresBanquillo.push(jugador);
-        console.log('✅ Jugador comprado y agregado al banquillo');
-      } else {
-        alert(response.mensaje || '⚠ Error al comprar el jugador.');
+
+    this.usuarioService.comprarJugadorDeLiga(this.username, jugador.id, ligaId, token).subscribe({
+      next: (response) => {
+        console.log('✅ Jugador comprado correctamente');
+
+        // Refrescar dinero y plantilla
+        this.authService.refreshUsuarioCompleto();
+        this.cargarJugadores();
+      },
+      error: (error) => {
+        console.error("❌ Error al comprar jugador:", error);
+        alert("❌ No se pudo comprar el jugador.");
       }
     });
   }
-  
+
+
 
   guardarPlantilla(): void {
     const token = this.authService.getToken();

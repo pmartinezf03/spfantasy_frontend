@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Liga } from './ligas.service';
+import { Liga, LigasService } from './ligas.service';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from '../models/usuario.model';
 
@@ -31,18 +31,19 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private ligasService: LigasService
   ) {
     const id = this.getLigaId();
     this.ligaIdSubject.next(id);
-  
+
     // 👇 Al cargar el servicio, intenta cargar el usuario completo
     const user = this.getUser();
     if (user?.id) {
       this.refreshUsuarioCompleto(); // 👈 Esto actualiza usuarioCompleto$
     }
   }
-  
+
 
   private restaurarSesionDesdeStorage(): void {
     try {
@@ -78,32 +79,33 @@ export class AuthService {
 
   logout(): void {
     console.log("🚪 Cerrando sesión...");
-    
+
     // 🧹 Limpieza de localStorage
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('ligaId');
-  
+
     // 🧹 Limpieza de estado interno
     this.userSubject.next(null);
     this.usuarioCompletoSubject.next(null);
     this.setLiga(null);
     this.setLigaId(null);
-  
+
     // (opcional) Limpieza de sessionStorage si lo has usado en algún componente
     sessionStorage.clear();
   }
-  
+
 
   register(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/registro`, user);
   }
-  
+
 
   refreshUsuarioCompleto(): void {
     const user = this.getUser();
     if (user?.id) {
       console.log('🔁 Refrescando usuario completo...');
+
       this.usuarioService.obtenerUsuarioCompleto(user.id).subscribe(usuario => {
         const actualizado = {
           ...user,
@@ -111,13 +113,28 @@ export class AuthService {
           dineroPendiente: usuario.dineroPendiente
         };
 
-        localStorage.setItem('user', JSON.stringify(actualizado));
-        this.userSubject.next(actualizado); // ✅ Actualiza info básica (con dinero)
-        this.usuarioCompletoSubject.next(usuario); // ✅ Actualiza objeto completo
-        console.log('📤 Usuario completo actualizado:', actualizado);
+        // 👇 Consultar si el usuario está en una liga
+        this.ligasService.obtenerLigaDelUsuario(user.id).subscribe(liga => {
+          if (liga) {
+            this.setLiga(liga);
+            this.setLigaId(liga.id);
+            console.log("✅ Usuario está en liga:", liga.nombre);
+          } else {
+            this.setLiga(null);
+            this.setLigaId(null);
+            console.log("🚫 Usuario no está en ninguna liga");
+          }
+
+          // 👉 Guardar todo en localStorage (excepto la liga como tal, solo ID)
+          localStorage.setItem('user', JSON.stringify(actualizado));
+          this.userSubject.next(actualizado); // Datos básicos
+          this.usuarioCompletoSubject.next(usuario); // Objeto completo
+          console.log('📤 Usuario completo actualizado:', actualizado);
+        });
       });
     }
   }
+
 
   getUser(): User | null {
     return this.userSubject.value;

@@ -1,13 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
 export interface CrearLigaDTO {
   nombre: string;
-  codigo: string;
+  codigoInvitacion: string; // ✅ antes ponía 'codigo'
   creadorId: number;
 }
+
 
 export interface UnirseLigaDTO {
   usuarioId: number;
@@ -37,10 +38,7 @@ export class LigasService {
 
   private apiUrl = 'http://localhost:8080/api/ligas';
 
-  constructor(private http: HttpClient,
-    private authService: AuthService,
-
-  ) { }
+  constructor(private http: HttpClient) { }
 
   crearLiga(dto: CrearLigaDTO): Observable<Liga> {
     return this.http.post<Liga>(`${this.apiUrl}/crear`, dto);
@@ -70,13 +68,19 @@ export class LigasService {
     return this.http.get<any[]>(`${this.apiUrl}/${ligaId}/ranking`);
   }
 
-  // ligas.service.ts
   obtenerLigaDelUsuario(usuarioId: number): Observable<Liga | null> {
-    return this.http.get<Liga>(`${this.apiUrl}/usuario/${usuarioId}/liga`, {
-      headers: this.authService.getAuthHeaders()
-    });
+    return this.http.get<Liga>(`${this.apiUrl}/usuario/${usuarioId}/liga`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          console.warn("ℹ️ Usuario sin liga actualmente");
+          return of(null); // Usuario sin liga
+        } else {
+          console.error("❌ Error inesperado al consultar liga:", error);
+          return throwError(() => error); // Otro error real
+        }
+      })
+    );
   }
-
 
 
 
@@ -86,9 +90,8 @@ export class LigasService {
   }
 
   obtenerTodasLasLigas(): Observable<Liga[]> {
-    return this.http.get<Liga[]>(`${this.apiUrl}/todas`, {
-      headers: this.authService.getAuthHeaders()
-    });
+    return this.http.get<Liga[]>(`${this.apiUrl}/todas`);
   }
+
 
 }

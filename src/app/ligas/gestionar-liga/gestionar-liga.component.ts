@@ -24,10 +24,20 @@ export class GestionarLigaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.usuarioId = this.authService.getUserId()!;
-    this.cargarMiembros();
+    const liga = this.authService.getLiga(); // si usas objeto completo
+    // const ligaId = this.authService.getLigaId(); // si usas solo el ID
+  
+    if (liga) {
+      this.liga = liga;
+      this.ligasService.obtenerMiembros(liga.id).subscribe({
+        next: miembros => this.miembros = miembros,
+        error: err => console.error("Error al cargar miembros:", err)
+      });
+    } else {
+      console.warn("⚠️ Liga no definida al iniciar el componente");
+    }
   }
-
+  
   cargarMiembros(): void {
     this.ligasService.obtenerMiembros(this.liga.id).subscribe({
       next: data => this.miembros = data,

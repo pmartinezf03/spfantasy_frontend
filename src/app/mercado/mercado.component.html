@@ -1,7 +1,7 @@
-<div class="mercado-container p-grid">
+<div class="grid mercado-container">
 
   <!-- 🟦 COLUMNA IZQUIERDA: Jugadores -->
-  <div class="p-col-12 p-md-8">
+  <div class="col-12 md:col-8">
     <h2>🛒 Mercado de Jugadores</h2>
 
     <div class="jugadores-mercado">
@@ -11,38 +11,19 @@
         <div class="info">
           <h4>{{ obtenerNombreJugador(jugador) }}</h4>
           <p>{{ jugador.posicion }}</p>
-          <p>
-            <strong>Precio:</strong> {{ jugador.precioVenta | currency : "EUR" }}
-          </p>
-          <p>
-            <strong>Propietario:</strong>
-            {{ jugador.propietarioUsername || "Libre" }}
-          </p>
+          <p><strong>Precio:</strong> {{ jugador.precioVenta | currency : "EUR" }}</p>
+          <p><strong>Propietario:</strong> {{ jugador.propietarioUsername || "Libre" }}</p>
 
-          <!-- Botón de Comprar -->
-          <button
-            *ngIf="!jugador.propietarioId"
-            mat-raised-button
-            color="primary"
-            (click)="comprarJugador(jugador)">
+          <button *ngIf="!jugador.propietarioId" mat-raised-button color="primary" (click)="comprarJugador(jugador)">
             Comprar
           </button>
 
-          <!-- Botón de Hacer Oferta -->
-          <button
-            *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
-            mat-raised-button
-            color="accent"
-            (click)="abrirDialogoOferta(jugador)">
+          <button *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
+                  mat-raised-button color="accent" (click)="abrirDialogoOferta(jugador)">
             Hacer Oferta
           </button>
 
-          <!-- Cancelar oferta -->
-          <button
-            *ngIf="ofertasEnCurso[jugador.id]"
-            mat-raised-button
-            color="warn"
-            (click)="cancelarOferta(jugador.id)">
+          <button *ngIf="ofertasEnCurso[jugador.id]" mat-raised-button color="warn" (click)="cancelarOferta(jugador.id)">
             Cancelar Oferta
           </button>
         </div>
@@ -61,7 +42,7 @@
   </div>
 
   <!-- 🟨 COLUMNA DERECHA: Historial -->
-  <div class="p-col-12 p-md-4">
+  <div class="col-12 md:col-4">
     <h3>📜 Historial de Transacciones</h3>
     <app-historial></app-historial>
   </div>
