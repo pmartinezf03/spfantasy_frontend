@@ -45,23 +45,28 @@ export class EstadisticasLigaComponent implements OnInit {
 
   cargarEstadisticas(): void {
     const ligaId = this.authService.getLigaId();
+  
     if (!ligaId) {
       console.warn("⚠ No se pudo cargar estadísticas: no hay ligaId.");
       return;
     }
-
-    this.estadisticasService.obtenerJugadoresDeLiga(ligaId).subscribe(data => {
-      this.jugadores = data.map(jugador => ({
-        ...jugador,
-        propietarioId: jugador.propietarioId ?? 0,
-        propietarioUsername: jugador.propietarioUsername ?? 'Libre'
-      }));
-      console.log("📊 Jugadores con estadísticas cargados:", this.jugadores);
-      this.cdr.detectChanges();
-    }, error => {
-      console.error("❌ Error obteniendo las estadísticas:", error);
+  
+    this.estadisticasService.getJugadoresDeLiga(ligaId).subscribe({
+      next: (data: Jugador[]) => {
+        this.jugadores = data.map((jugador: Jugador) => ({
+          ...jugador,
+          propietarioId: jugador.propietarioId ?? 0,
+          propietarioUsername: jugador.propietarioUsername ?? 'Libre'
+        }));
+        console.log("📊 Jugadores con estadísticas cargados:", this.jugadores);
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error("❌ Error obteniendo las estadísticas:", error);
+      }
     });
   }
+  
 
   obtenerDineroUsuario(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
@@ -80,13 +85,16 @@ export class EstadisticasLigaComponent implements OnInit {
     }
 
     this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(ofertas => {
-      this.totalOfertasEnCurso = ofertas.reduce((total, oferta) => total + (oferta.montoOferta ?? 0), 0);
-      this.ofertasEnCurso = {};
+      this.ofertasEnCurso = {}; // ✅ limpiar completamenteºººº
+      this.totalOfertasEnCurso = 0;
+
       ofertas.forEach(oferta => {
-        if (oferta.jugador?.id !== undefined && oferta.id !== undefined) {
+        if (oferta.estado === 'PENDIENTE' && oferta.jugador?.id !== undefined && oferta.id !== undefined) {
           this.ofertasEnCurso[oferta.jugador.id] = oferta.id;
+          this.totalOfertasEnCurso += oferta.montoOferta ?? 0;
         }
       });
+
       this.cdr.detectChanges();
     }, error => {
       console.error("❌ Error al obtener ofertas en curso", error);
@@ -120,8 +128,7 @@ export class EstadisticasLigaComponent implements OnInit {
       return;
     }
 
-    const ligaId = this.authService.getLigaId(); // ✅ Seguridad
-
+    const ligaId = this.authService.getLigaId();
     if (!ligaId) {
       console.error("❌ No se pudo enviar la oferta: no hay liga activa.");
       return;
@@ -133,19 +140,18 @@ export class EstadisticasLigaComponent implements OnInit {
       vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
       montoOferta: event.monto,
       estado: 'PENDIENTE',
-      liga: { id: ligaId }  // ✅ Asociación correcta
+      liga: { id: ligaId }
     };
 
-    this.ofertasService.crearOferta(nuevaOferta).subscribe(ofertaCreada => {
+    this.ofertasService.crearOferta(nuevaOferta).subscribe(() => {
       if (this.jugadorSeleccionado?.id !== undefined) {
         const jugadorId = this.jugadorSeleccionado.id;
-      
-        // ✅ Mostrar botón de cancelar oferta inmediatamente
-        this.ofertasEnCurso[jugadorId] = -1;
+
+        this.ofertasEnCurso[jugadorId] = -1; // Marcamos visualmente
         this.cdr.detectChanges();
-      
-        // 🔁 Luego lo reemplazamos por el ID real al llegar la respuesta
-        this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId).subscribe({
+
+        // Esperamos al backend para recuperar ID real
+        this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId, ligaId).subscribe({
           next: (oferta) => {
             if (oferta?.id) {
               this.ofertasEnCurso[jugadorId] = oferta.id;
@@ -154,11 +160,10 @@ export class EstadisticasLigaComponent implements OnInit {
           }
         });
       }
-      
+
       this.cerrarDialogoOferta();
       this.authService.refreshUsuarioCompleto();
-
-      
+      this.cargarOfertasUsuario(); // <- AÑADIDO CLAVE
     }, error => {
       this.mensajeError = "❌ Error al enviar la oferta. Inténtalo nuevamente.";
       this.cdr.detectChanges();
@@ -166,27 +171,24 @@ export class EstadisticasLigaComponent implements OnInit {
   }
 
 
+
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId] ?? 0;
     if (!ofertaId) return;
-  
-    // ✅ Ocultar el botón al instante
+
     delete this.ofertasEnCurso[jugadorId];
     this.cdr.detectChanges();
-  
-    // 🔁 Confirmar con el backend
+
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
       this.obtenerDineroUsuario();
       this.authService.refreshUsuarioCompleto();
-
-      // Opcional si quieres verificar otra vez:
-      // this.cargarOfertasUsuario();
+      this.cargarOfertasUsuario(); // <- AÑADIDO CLAVE
     }, error => {
       console.error("❌ Error al cancelar la oferta:", error);
-      // Si falla, lo volvemos a mostrar
-      this.ofertasEnCurso[jugadorId] = ofertaId;
+      this.ofertasEnCurso[jugadorId] = ofertaId; // Restauramos si falló
       this.cdr.detectChanges();
     });
   }
-  
+
+
 }

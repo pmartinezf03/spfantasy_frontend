@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Liga, LigasService } from './ligas.service';
+import { LigasService } from './ligas.service';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from '../models/usuario.model';
+import { Liga } from '../models/liga.model';
 
 interface User {
   id: number;
@@ -53,7 +54,6 @@ export class AuthService {
       if (user && token) {
         this.userSubject.next(user);
         this.refreshUsuarioCompleto(); // 🔄 Refresca datos extendidos (dinero, etc.)
-        console.log("📦 Usuario restaurado desde storage:", user);
       } else {
         this.logout(); // ❌ Limpia si hay datos inconsistentes
       }
@@ -78,7 +78,6 @@ export class AuthService {
   }
 
   logout(): void {
-    console.log("🚪 Cerrando sesión...");
 
     // 🧹 Limpieza de localStorage
     localStorage.removeItem('user');
@@ -104,7 +103,6 @@ export class AuthService {
   refreshUsuarioCompleto(): void {
     const user = this.getUser();
     if (user?.id) {
-      console.log('🔁 Refrescando usuario completo...');
 
       this.usuarioService.obtenerUsuarioCompleto(user.id).subscribe(usuario => {
         const actualizado = {
@@ -118,18 +116,15 @@ export class AuthService {
           if (liga) {
             this.setLiga(liga);
             this.setLigaId(liga.id);
-            console.log("✅ Usuario está en liga:", liga.nombre);
           } else {
             this.setLiga(null);
             this.setLigaId(null);
-            console.log("🚫 Usuario no está en ninguna liga");
           }
 
           // 👉 Guardar todo en localStorage (excepto la liga como tal, solo ID)
           localStorage.setItem('user', JSON.stringify(actualizado));
           this.userSubject.next(actualizado); // Datos básicos
           this.usuarioCompletoSubject.next(usuario); // Objeto completo
-          console.log('📤 Usuario completo actualizado:', actualizado);
         });
       });
     }

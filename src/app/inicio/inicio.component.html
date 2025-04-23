@@ -1,0 +1,112 @@
+<!-- inicio.component.html -->
+<div class="dashboard-container p-4 animate__animated animate__fadeIn">
+
+  <!-- 👋 Bienvenida animada -->
+  <div class="welcome-section animate__animated animate__fadeInDown">
+    <h2>👋 ¡Hola, {{ usuario?.username }}!</h2>
+    <p>Tu Fantasy Basketball personalizado empieza aquí</p>
+  </div>
+
+  <!-- 📊 Comparativa principal -->
+  <div class="section animate__animated animate__zoomIn">
+    <p-card styleClass="highlight-card">
+      <ng-template pTemplate="header">
+        <h3 class="text-xl font-bold text-black">📊 Comparativa: Tú vs Liga</h3>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions" style="max-height: 220px;"></p-chart>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <!-- 📈 Gráficas individuales dinámicas -->
+  <div class="section">
+    <h3 class="section-title">📈 Estadísticas Individuales</h3>
+    <div class="grid gap-4">
+      <div class="col-12 md:col-6 xl:col-4" *ngFor="let chart of chartsResumen">
+        <p-card class="highlight-card animate__animated animate__fadeInUp">
+          <ng-template pTemplate="header">
+            <h4 class="text-xl font-bold text-black">{{ chart.titulo }}</h4>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <p-chart [type]="chart.tipo" [data]="chart.data" [options]="chart.options" style="height: 250px;"></p-chart>
+          </ng-template>
+        </p-card>
+      </div>
+      </div>
+    </div>
+
+  <!-- 🏀 Radar y Doughnut -->
+  <div class="section grid">
+    <div class="col-12 md:col-6 animate__animated animate__fadeInLeft">
+      <p-card class="highlight-card">
+        <ng-template pTemplate="header">
+          <h4 class="text-xl font-bold text-black">📡 Radar - Perfil de tu equipo</h4>
+        </ng-template>
+        <p-chart type="radar" [data]="radarData" [options]="radarOptions"></p-chart>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6 animate__animated animate__fadeInRight">
+      <p-card class="highlight-card">
+        <ng-template pTemplate="header">
+          <h4 class="text-xl font-bold text-black">🍩 Distribución de Fortalezas</h4>
+        </ng-template>
+        <p-chart type="doughnut" [data]="doughnutData" [options]="doughnutOptions"></p-chart>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- 🏆 Ranking -->
+  <div class="section">
+    <h3 class="section-title">🏆 Ranking de tu Liga</h3>
+    <div class="ranking-list">
+      <div *ngFor="let user of ranking; let i = index" class="ranking-item animate__animated animate__fadeInLeft">
+        <span class="position">{{ i + 1 }}º</span>
+        <span class="name">👤 {{ user.nombre }}</span>
+        <span class="points">{{ user.puntosTotales }} pts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚀 Carrusel de estadísticas destacadas -->
+  <div class="section">
+    <h3 class="section-title">📈 Destacados de la Semana</h3>
+    <p-carousel [value]="carruselTop" [numVisible]="1" [circular]="true" [autoplayInterval]="5000" styleClass="custom-carousel">
+      <ng-template pTemplate="item" let-top>
+        <p-card class="glass-card animate__animated animate__fadeIn">
+          <ng-template pTemplate="header">
+            <h3 class="text-xl font-bold text-black">{{ top.titulo }}</h3>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <ul class="stat-list">
+              <li *ngFor="let j of top.jugadores">🏀 {{ j.nombre }} — {{ top.formato(j) }}</li>
+            </ul>
+          </ng-template>
+        </p-card>
+      </ng-template>
+    </p-carousel>
+  </div>
+
+  <!-- ⚡ Accesos Rápidos -->
+  <div class="section">
+    <h3 class="section-title">⚡ Accesos Rápidos</h3>
+    <div class="flex flex-wrap justify-content-center gap-3">
+      <button pButton label="📊 Estadísticas" class="p-button-rounded p-button-info" routerLink="/estadisticas"></button>
+      <button pButton label="💰 Mercado" class="p-button-rounded p-button-success" routerLink="/mercado"></button>
+      <button pButton label="📋 Mi Plantilla" class="p-button-rounded p-button-warning" routerLink="/mi-plantilla"></button>
+      <button pButton label="💬 Chat" class="p-button-rounded p-button-help" routerLink="/chat"></button>
+    </div>
+  </div>
+
+  <!-- 📰 Noticias -->
+  <div class="section">
+    <h3 class="section-title">📰 Últimas Noticias</h3>
+    <div class="news-container">
+      <div class="news-card animate__animated animate__fadeIn" *ngFor="let noticia of noticias">
+        <img [src]="noticia.imagenUrl" class="news-image" />
+        <h4>{{ noticia.titulo }}</h4>
+        <p>{{ noticia.contenido | slice:0:100 }}...</p>
+      </div>
+    </div>
+  </div>
+</div>

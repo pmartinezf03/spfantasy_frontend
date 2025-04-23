@@ -1,11 +1,17 @@
-<p-dialog header="🏀 Hacer Oferta" [(visible)]="mostrarDialogo" [modal]="true" [closable]="true" [style]="{width: '450px'}">
+<p-dialog [header]="modo === 'oferta' ? '🏀 Hacer Oferta' : '🔁 Enviar Contraoferta'"
+          [(visible)]="mostrarDialogo"
+          [modal]="true"
+          [closable]="true"
+          [style]="{width: '450px'}">
+
   <div class="oferta-dialogo-body">
     <p><b>Jugador:</b> {{ jugadorSeleccionado?.nombre }}</p>
     <p><b>💰 Tu saldo:</b> {{ usuarioDinero | currency:'EUR' }}</p>
-    <p><b>📈 Ofertas activas:</b> {{ totalOfertasEnCurso | currency:'EUR' }}</p>
+
+    <p *ngIf="modo === 'oferta'"><b>📈 Ofertas activas:</b> {{ totalOfertasEnCurso | currency:'EUR' }}</p>
 
     <div class="form-group">
-      <label for="montoOferta">💸 Monto de la oferta</label>
+      <label for="montoOferta">💸 Monto de la {{ modo === 'oferta' ? 'oferta' : 'contraoferta' }}</label>
       <p-inputNumber
         inputId="montoOferta"
         [(ngModel)]="montoOferta"
@@ -23,7 +29,11 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton label="Enviar Oferta" icon="pi pi-check" class="p-button-success" (click)="confirmarOferta()"></button>
+    <button pButton [label]="modo === 'oferta' ? 'Enviar Oferta' : 'Enviar Contraoferta'"
+            icon="pi pi-check"
+            class="p-button-success"
+            (click)="confirmarOferta()">
+    </button>
     <button pButton label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="cerrarDialogo()"></button>
   </ng-template>
 </p-dialog>

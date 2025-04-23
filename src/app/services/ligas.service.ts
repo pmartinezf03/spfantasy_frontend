@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { Liga } from '../models/liga.model';
 
 export interface CrearLigaDTO {
   nombre: string;
@@ -16,14 +17,7 @@ export interface UnirseLigaDTO {
   contrasena: string
 }
 
-export interface Liga {
-  id: number;
-  nombre: string;
-  codigoInvitacion: string;
-  creador: any;
-  maxParticipantes: number;
-  iniciada: boolean;
-}
+
 
 export interface MiembroLiga {
   id: number;

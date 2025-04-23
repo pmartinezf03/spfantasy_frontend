@@ -75,11 +75,17 @@ export class MercadoComponent implements OnInit {
 
 
   cargarJugadores(ligaId: number): void {
-    this.estadisticasService.obtenerJugadoresDeLiga(ligaId).subscribe((jugadores: Jugador[]) => {
-      this.jugadores = jugadores;
-      this.cdr.detectChanges();
+    this.estadisticasService.getJugadoresDeLiga(ligaId).subscribe({
+      next: (jugadores: Jugador[]) => {
+        this.jugadores = jugadores;
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error("❌ Error al cargar jugadores:", error);
+      }
     });
   }
+  
 
   cargarOfertasUsuario(): void {
     const ligaId = this.authService.getLigaId();
@@ -148,11 +154,11 @@ export class MercadoComponent implements OnInit {
       console.error('Datos de jugador no válidos al enviar oferta');
       return;
     }
-
+  
     const jugadorId = this.jugadorSeleccionado.id;
     const ligaId = this.authService.getLigaId();
     if (!ligaId) return;
-
+  
     const nuevaOferta: Oferta = {
       comprador: { id: this.usuarioId },
       vendedor: { id: this.jugadorSeleccionado.propietarioId },
@@ -162,19 +168,19 @@ export class MercadoComponent implements OnInit {
       estado: 'PENDIENTE',
       timestamp: new Date().toISOString()
     };
-
+  
     // ✅ Cerramos el diálogo
     this.mostrarDialogo = false;
-
+  
     // ✅ Mostramos botón de "Cancelar oferta" al instante
-    this.ofertasEnCurso[jugadorId] = -1; // Marcamos como oferta pendiente local
-    this.cdr.detectChanges(); // 🔄 Forzamos render inmediato
-
+    this.ofertasEnCurso[jugadorId] = -1;
+    this.cdr.detectChanges();
+  
     // 🔁 Enviamos la oferta real al backend
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
-        // Luego obtenemos la oferta real del backend (con ID)
-        this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId).subscribe({
+        // ✅ Actualizar oferta real con ID desde el backend
+        this.ofertasService.obtenerUltimaOferta(this.usuarioId, jugadorId, ligaId).subscribe({
           next: (oferta) => {
             if (oferta?.id) {
               this.ofertasEnCurso[jugadorId] = oferta.id;
@@ -189,15 +195,19 @@ export class MercadoComponent implements OnInit {
             }
           }
         });
-
+  
         this.authService.refreshUsuarioCompleto();
         this.cargarJugadores(ligaId);
       },
       error: err => {
-        console.error('Error al enviar oferta:', err);
+        console.error('❌ Error al enviar oferta:', err);
+        // Volvemos a mostrar botón de oferta si falló
+        delete this.ofertasEnCurso[jugadorId];
+        this.cdr.detectChanges();
       }
     });
   }
+  
 
 
   cancelarOferta(jugadorId: number): void {

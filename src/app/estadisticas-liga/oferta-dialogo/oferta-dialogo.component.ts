@@ -11,14 +11,17 @@ export class OfertaDialogoComponent {
   @Input() jugadorSeleccionado?: Jugador;
   @Input() usuarioId!: number;
   @Input() usuarioDinero!: number;
-  @Input() totalOfertasEnCurso!: number;  // 🔹 Nuevo: total de ofertas activas
+  @Input() totalOfertasEnCurso!: number;
   @Output() cerrar = new EventEmitter<void>();
   @Output() enviarOferta = new EventEmitter<{ monto: number }>();
+  @Input() modo: 'oferta' | 'contraoferta' = 'oferta';
+  @Output() enviarContraoferta = new EventEmitter<{ monto: number }>();
 
   montoOferta: number = 0;
   mensajeError: string = '';
 
   cerrarDialogo() {
+    console.log("❎ [Dialogo] Cerrar diálogo");
     this.cerrar.emit();
   }
 
@@ -27,17 +30,26 @@ export class OfertaDialogoComponent {
       this.mensajeError = "❌ El monto de la oferta debe ser mayor a 0.";
       return;
     }
-
-    const totalPropuesto = this.totalOfertasEnCurso + this.montoOferta;
-
-    if (totalPropuesto > this.usuarioDinero) {
-      this.mensajeError = `❌ No tienes suficiente dinero. Fondos disponibles: ${this.usuarioDinero} €, ofertas en curso: ${this.totalOfertasEnCurso} €, oferta actual: ${this.montoOferta} €.`;
-      return;  // ❌ No cerramos el diálogo
+  
+    console.log("📤 BOTÓN CONFIRMAR pulsado. Modo:", this.modo);
+    console.log("💸 Monto introducido:", this.montoOferta);
+  
+    if (this.modo === 'oferta') {
+      const totalPropuesto = this.totalOfertasEnCurso + this.montoOferta;
+      if (totalPropuesto > this.usuarioDinero) {
+        this.mensajeError = `❌ No tienes suficiente dinero. Fondos disponibles: ${this.usuarioDinero} €, ofertas en curso: ${this.totalOfertasEnCurso} €, oferta actual: ${this.montoOferta} €.`;  
+        return;
+      }
+  
+      console.log("✅ Emitiendo evento enviarOferta...");
+      this.enviarOferta.emit({ monto: this.montoOferta });
+  
+    } else {
+      console.log("✅ Emitiendo evento enviarContraoferta...");
+      this.enviarContraoferta.emit({ monto: this.montoOferta });
     }
-
-    // ✅ Emitimos la oferta si los fondos son suficientes
-    this.enviarOferta.emit({ monto: this.montoOferta });
+  
     this.cerrarDialogo();
   }
-
+  
 }

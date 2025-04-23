@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LigasService, MiembroLiga, Liga } from '../../services/ligas.service';
+import { LigasService, MiembroLiga} from '../../services/ligas.service';
 import { AuthService } from '../../services/auth.service';
+import { Liga } from '../../models/liga.model';
 
 @Component({
   selector: 'app-gestionar-liga',
@@ -69,6 +70,6 @@ export class GestionarLigaComponent implements OnInit {
   }
 
   esCreador(): boolean {
-    return this.usuarioId === this.liga.creador.id;
+    return this.usuarioId === this.liga.creadorId;
   }
 }

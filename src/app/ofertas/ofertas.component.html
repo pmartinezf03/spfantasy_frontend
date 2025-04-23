@@ -13,18 +13,30 @@
     <ng-template pTemplate="body" let-oferta>
       <tr>
         <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
         <td>{{ oferta.compradorUsername }}</td>
         <td class="acciones">
-          <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
-                  (click)="aceptarOferta(oferta)" title="Aceptar oferta">
-          </button>
-          <button pButton icon="pi pi-times" class="p-button-danger p-button-sm"
-                  (click)="rechazarOferta(oferta)" title="Rechazar oferta">
-          </button>
-          <button pButton icon="pi pi-refresh" class="p-button-warning p-button-sm"
-                  (click)="abrirDialogoContraoferta(oferta)" title="Hacer contraoferta">
-          </button>
+          <button
+            pButton
+            icon="pi pi-check"
+            class="p-button-success p-button-sm"
+            (click)="aceptarOferta(oferta)"
+            title="Aceptar oferta"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-times"
+            class="p-button-danger p-button-sm"
+            (click)="rechazarOferta(oferta)"
+            title="Rechazar oferta"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-refresh"
+            class="p-button-warning p-button-sm"
+            (click)="abrirDialogoContraoferta(oferta)"
+            title="Hacer contraoferta"
+          ></button>
         </td>
       </tr>
     </ng-template>
@@ -43,12 +55,16 @@
     <ng-template pTemplate="body" let-oferta>
       <tr>
         <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
         <td>{{ oferta.estado }}</td>
         <td class="acciones">
-          <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"
-                  (click)="retirarOferta(oferta)" title="Retirar oferta">
-          </button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger p-button-sm"
+            (click)="retirarOferta(oferta)"
+            title="Retirar oferta"
+          ></button>
         </td>
       </tr>
     </ng-template>
@@ -67,26 +83,37 @@
     <ng-template pTemplate="body" let-oferta>
       <tr>
         <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency:'EUR' }}</td>
+        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
         <td>{{ oferta.compradorUsername }}</td>
         <td class="acciones">
-          <button pButton icon="pi pi-check" class="p-button-success p-button-sm"
-                  (click)="aceptarContraoferta(oferta)" title="Aceptar contraoferta">
-          </button>
-          <button pButton icon="pi pi-times" class="p-button-danger p-button-sm"
-                  (click)="rechazarOferta(oferta)" title="Rechazar contraoferta">
-          </button>
+          <button
+            pButton
+            icon="pi pi-check"
+            class="p-button-success p-button-sm"
+            (click)="aceptarContraoferta(oferta)"
+            title="Aceptar contraoferta"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-times"
+            class="p-button-danger p-button-sm"
+            (click)="rechazarOferta(oferta)"
+            title="Rechazar contraoferta"
+          ></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
-<!-- ✅ Diálogo único para contraoferta -->
-<app-oferta-dialogo
-  [mostrarDialogo]="mostrarDialogoContraoferta"
-  [jugadorSeleccionado]="obtenerJugadorBase(ofertaSeleccionada?.jugador)"
-  [usuarioId]="usuarioId"
-  [usuarioDinero]="usuarioDinero"
-  (cerrar)="mostrarDialogoContraoferta = false"
-  (enviarOferta)="enviarContraoferta($event.monto)">
-</app-oferta-dialogo>
+
+  <app-oferta-dialogo
+    [mostrarDialogo]="mostrarDialogoContraoferta"
+    [jugadorSeleccionado]="obtenerJugadorBase(ofertaSeleccionada?.jugador)"
+    [usuarioId]="usuarioId"
+    [usuarioDinero]="usuarioDinero"
+    [modo]="'contraoferta'"
+    [totalOfertasEnCurso]="0"
+    (cerrar)="mostrarDialogoContraoferta = false"
+    (enviarContraoferta)="enviarContraoferta($event)"
+  >
+  </app-oferta-dialogo>
 </div>

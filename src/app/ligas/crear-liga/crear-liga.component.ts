@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { LigasService, Liga } from '../../services/ligas.service';
+import { LigasService } from '../../services/ligas.service';
 import { AuthService } from '../../services/auth.service';
+import { Liga } from '../../models/liga.model';
 
 @Component({
   selector: 'app-crear-liga',
@@ -41,6 +42,6 @@ export class CrearLigaComponent {
         this.error = err.error?.message || 'Error al crear la liga';
       }
     });
-    
+
   }
 }

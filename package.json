@@ -25,6 +25,7 @@
     "@capacitor/core": "^7.1.0",
     "@capacitor/ios": "^7.1.0",
     "@stomp/stompjs": "^7.0.1",
+    "animate.css": "^4.1.1",
     "buffer": "^6.0.3",
     "chart.js": "^4.4.9",
     "cloudinary": "^2.5.1",

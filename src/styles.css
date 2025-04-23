@@ -1,4 +1,9 @@
 /* 🌐 Estilo base */
+
+
+@import 'animate.css/animate.min.css';
+
+
 html, body {
   height: 100%;
   margin: 0;

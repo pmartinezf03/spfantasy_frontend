@@ -12,6 +12,7 @@ import { RegisterComponent } from './auth/components/register/register.component
 import { OfertasComponent } from './ofertas/ofertas.component';
 import { LigasComponent } from './ligas/ligas.component';
 import { LigasGuard } from './guards/ligas.guard';
+import { InicioComponent } from './inicio/inicio.component';
 
 const routes: Routes = [
   {path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard]},
@@ -30,7 +31,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'login', pathMatch: 'full' } // Redirección por defecto a login
     ]
   },
-  { path: '', redirectTo: '/mercado', pathMatch: 'full' },
+  { path: '', component: InicioComponent, canActivate: [LigasGuard] },
   { path: '**', redirectTo: 'auth/login' } // Redirige a login si la ruta no existe
 ];
 

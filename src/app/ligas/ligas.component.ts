@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { LigasService, Liga, MiembroLiga } from '../services/ligas.service';
+import { LigasService, MiembroLiga } from '../services/ligas.service';
 import { Router } from '@angular/router';
-
+import { Liga } from '../models/liga.model';
 @Component({
   selector: 'app-ligas',
   templateUrl: './ligas.component.html',
@@ -37,7 +37,7 @@ export class LigasComponent implements OnInit {
             this.authService.setLiga(liga);
             this.ligaActual = liga;
             this.ligaIniciada = liga.iniciada;
-            this.esCreador = liga.creador?.id === this.usuarioId;
+            this.esCreador = liga.creadorId === this.usuarioId;
             this.cargarMiembros();
           } else {
             this.ligaActual = null;
@@ -63,7 +63,7 @@ export class LigasComponent implements OnInit {
           this.authService.setLigaId(liga.id);
           this.ligaActual = liga;
           this.ligaIniciada = liga.iniciada;
-          this.esCreador = liga.creador?.id === this.usuarioId;
+          this.esCreador = liga.creadorId === this.usuarioId;
           this.cargarMiembros();
         }
       },

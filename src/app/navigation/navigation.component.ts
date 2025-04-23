@@ -37,25 +37,25 @@ export class NavigationComponent implements OnInit {
     this.authService.usuarioCompleto$.subscribe(usuario => {
       this.zone.run(() => {
         this.esperandoUsuario = false;
-    
+
         const token = this.authService.getToken();
         this.isUserLoggedIn = !!usuario && !!token;
-    
+
         this.usuarioLogueado = usuario?.username || null;
         this.usuarioDinero = usuario?.dinero ?? 0;
         this.usuarioDineroPendiente = usuario?.dineroPendiente ?? 0;
         this.datosUsuarioCargados = !!usuario;
-    
+
         console.log('✅ Datos del usuario en navbar:');
         console.log('   👤 Username:', this.usuarioLogueado);
         console.log('   💰 Dinero:', this.usuarioDinero);
         console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
-    
+
         this.construirMenu();
         this.cdr.detectChanges(); // forzar por si acaso
       });
     });
-    
+
 
     // 🔔 Verificar si hay ofertas nuevas
     const userId = this.authService.getUserId();

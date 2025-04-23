@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { LigasService, Liga } from '../../services/ligas.service';
-
+import { LigasService } from '../../services/ligas.service';
+import { Liga } from '../../models/liga.model';
 @Component({
   selector: 'app-unirse-liga',
   templateUrl: './unirse-liga.component.html',

@@ -101,13 +101,15 @@
   </div>
 
   <!-- 🪄 Diálogo de oferta -->
-  <app-oferta-dialogo
-    [mostrarDialogo]="mostrarDialogo"
-    [jugadorSeleccionado]="jugadorSeleccionado"
-    [usuarioId]="usuarioId"
-    [usuarioDinero]="usuarioDinero"
-    [totalOfertasEnCurso]="totalOfertasEnCurso"
-    (cerrar)="cerrarDialogoOferta()"
-    (enviarOferta)="enviarOferta($event)">
-  </app-oferta-dialogo>
+<app-oferta-dialogo
+  [mostrarDialogo]="mostrarDialogo"
+  [jugadorSeleccionado]="jugadorSeleccionado"
+  [usuarioId]="usuarioId"
+  [usuarioDinero]="usuarioDinero"
+  [totalOfertasEnCurso]="totalOfertasEnCurso"
+  [modo]="'oferta'"
+  (cerrar)="cerrarDialogoOferta()"
+  (enviarOferta)="enviarOferta($event)">
+</app-oferta-dialogo>
+
 </div>

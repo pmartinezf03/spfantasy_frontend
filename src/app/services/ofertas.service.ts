@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Oferta } from '../models/oferta.model';
-import { AuthService } from '../services/auth.service';  // ✅ Importamos AuthService
+import { AuthService } from '../services/auth.service';
 import { Usuario } from '../models/usuario.model';
 import { environment } from '../../environments/environment';
 
@@ -22,7 +22,7 @@ export class OfertasService {
     const headers = this.authService.getAuthHeaders();
     return this.http.post<Oferta>(`${this.apiUrl}`, oferta, { headers });
   }
-  
+
   obtenerOfertasPorVendedor(vendedorId: number, ligaId: number): Observable<Oferta[]> {
     return this.http.get<Oferta[]>(`${this.apiUrl}/vendedor/${vendedorId}?ligaId=${ligaId}`, this.getAuthHeaders());
   }
@@ -48,18 +48,12 @@ export class OfertasService {
     return this.http.delete<void>(`${this.apiUrl}/rechazar/${id}`, this.getAuthHeaders());
   }
 
-  hacerContraoferta(oferta: Oferta): Observable<Oferta> {
-    const url = `${this.apiUrl}/contraoferta/${oferta.id}`;
-    const payload = {
-      montoOferta: oferta.montoOferta,
-      comprador: oferta.comprador,
-      vendedor: oferta.vendedor,
-      jugador: oferta.jugador,
-      estado: 'CONTRAOFERTA',
-      liga: oferta.liga
-    };
-    return this.http.post<Oferta>(url, payload, this.getAuthHeaders());
-  }
+
+
+
+
+
+
 
 
   tieneOfertasNuevas(vendedorId: number): Observable<{ tieneOfertasNuevas: boolean }> {
@@ -86,10 +80,21 @@ export class OfertasService {
   datosUsuario$ = this.datosUsuarioSubject.asObservable();
 
 
-  obtenerUltimaOferta(usuarioId: number, jugadorId: number) {
-    const ligaId = this.authService.getLigaId(); // o pásalo como argumento si no tienes acceso
-    return this.http.get<Oferta>(`${this.apiUrl}/ultima-oferta/${usuarioId}/${jugadorId}?ligaId=${ligaId}`);
+  obtenerUltimaOferta(compradorId: number, jugadorId: number, ligaId: number) {
+    return this.http.get<Oferta>(`${this.apiUrl}/ultima-oferta/${compradorId}/${jugadorId}?ligaId=${ligaId}`);
   }
   
+
+  hacerContraofertaSimple(ofertaId: number, monto: number): Observable<any> {
+    const dto = {
+      ofertaOriginalId: ofertaId,
+      montoOferta: monto
+    };
+    return this.http.post(`${this.apiUrl}/contraoferta`, dto, this.getAuthHeaders());
+  }
+  
+  
+
+
 
 }

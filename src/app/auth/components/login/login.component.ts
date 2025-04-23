@@ -46,22 +46,22 @@ export class LoginComponent {
       this.mensaje = 'Completa todos los campos';
       return;
     }
-  
+
     this.showModal = true;  // Muestra el modal con el spinner
     this.loading = true;    // Muestra el spinner
-  
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         console.log('Inicio de sesión exitoso:', response);
         this.loading = false;
         this.showModal = false;
         this.mensaje = 'Inicio de sesión exitoso!';
-  
+
         // 🔄 Forzar carga del usuario completo con dinero y dineroPendiente
         this.authService.refreshUsuarioCompleto();
-  
+
         this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate(['/plantilla']);
+          this.router.navigate(['/']);
         });
       },
       error: (error) => {
@@ -73,5 +73,5 @@ export class LoginComponent {
       },
     });
   }
-  
+
 }

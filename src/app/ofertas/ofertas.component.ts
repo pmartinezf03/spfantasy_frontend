@@ -1,367 +1,374 @@
-  import { Component, OnInit } from '@angular/core';
-  import { OfertasService } from '../services/ofertas.service';
-  import { UsuarioService } from '../services/usuario.service';
-  import { AuthService } from '../services/auth.service';
-  import { Oferta } from '../models/oferta.model';
-  import { Jugador } from '../models/jugador.model';
-  import { ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { OfertasService } from '../services/ofertas.service';
+import { UsuarioService } from '../services/usuario.service';
+import { AuthService } from '../services/auth.service';
+import { Oferta } from '../models/oferta.model';
+import { Jugador } from '../models/jugador.model';
+import { ChangeDetectorRef } from '@angular/core';
 import { take } from 'rxjs';
 
 
-  @Component({
-    selector: 'app-ofertas',
-    templateUrl: './ofertas.component.html',
-    styleUrls: ['./ofertas.component.css']
-  })
+@Component({
+  selector: 'app-ofertas',
+  templateUrl: './ofertas.component.html',
+  styleUrls: ['./ofertas.component.css']
+})
 
-  export class OfertasComponent implements OnInit {
-    ofertasRecibidas: Oferta[] = [];
-    ofertasEnviadas: Oferta[] = [];
-    contraofertasRecibidas: Oferta[] = [];
-    contraofertasEnviadas: Oferta[] = [];
-    usuarioId: number = 0;
-    usuarioDinero: number = 0;
+export class OfertasComponent implements OnInit {
+  ofertasRecibidas: Oferta[] = [];
+  ofertasEnviadas: Oferta[] = [];
+  contraofertasRecibidas: Oferta[] = [];
+  contraofertasEnviadas: Oferta[] = [];
+  usuarioId: number = 0;
+  usuarioDinero: number = 0;
 
-    mostrarDialogoOferta: boolean = false;
-    mostrarDialogoContraoferta: boolean = false;
-    ofertaSeleccionada?: Oferta;
-    jugadorSeleccionado?: Jugador;
-    montoOferta: number = 0;
-    montoContraoferta: number = 0;
-    mensajeError: string = '';
-    totalOfertasEnCurso: number = 0;
-    dineroActual: number = 0;
-    dineroPendiente: number = 0;
-    
-    constructor(
-      private ofertasService: OfertasService,
-      private usuarioService: UsuarioService,
-      private authService: AuthService,
-      private cdr: ChangeDetectorRef
-    ) { }
+  mostrarDialogoOferta: boolean = false;
+  mostrarDialogoContraoferta: boolean = false;
+  ofertaSeleccionada?: Oferta;
+  jugadorSeleccionado?: Jugador;
+  montoOferta: number = 0;
+  mensajeError: string = '';
+  totalOfertasEnCurso: number = 0;
+  dineroActual: number = 0;
+  dineroPendiente: number = 0;
 
-    ngOnInit(): void {
-      console.log("📥 Entrando a la pestaña de ofertas...");
-    
-      const user = this.authService.getUser();
-      if (user && user.id) {
-        this.usuarioId = user.id;
-        console.log("🧠 Usuario ID detectado:", this.usuarioId);
-    
-        // ✅ Suscribirse al usuario completo para obtener dinero actualizado
-        this.authService.usuarioCompleto$.subscribe(usuario => {
-          if (usuario) {
-            this.usuarioDinero = usuario.dinero ?? 0;
-            this.dineroActual = usuario.dinero ?? 0;
-            this.dineroPendiente = usuario.dineroPendiente ?? 0;
-    
-            console.log("💰 Dinero actualizado vía observable:", {
-              dinero: this.dineroActual,
-              pendiente: this.dineroPendiente
-            });
-    
-            this.cdr.detectChanges();
-          }
-        });
-    
-        this.authService.refreshUsuarioCompleto(); // Refrescar al cargar
-        this.cargarOfertas();
-    
-        this.ofertasService.marcarOfertasComoLeidas(this.usuarioId).subscribe(() => {
-          console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
-          this.ofertasService.notificarLeido();
-        });
-      } else {
-        console.error("❌ No se encontró el usuario autenticado.");
-      }
-    }
-    
+  constructor(
+    private ofertasService: OfertasService,
+    private usuarioService: UsuarioService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
+  ngOnInit(): void {
+    console.log("📥 Entrando a la pestaña de ofertas...");
 
-    suscribirseAlDinero(): void {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.usuarioId = user.id;
+      console.log("🧠 Usuario ID detectado:", this.usuarioId);
+
+      // ✅ Suscribirse al usuario completo para obtener dinero actualizado
       this.authService.usuarioCompleto$.subscribe(usuario => {
-        this.usuarioDinero = usuario?.dinero ?? 0;
-        this.cdr.detectChanges();
+        if (usuario) {
+          this.usuarioDinero = usuario.dinero ?? 0;
+          this.dineroActual = usuario.dinero ?? 0;
+          this.dineroPendiente = usuario.dineroPendiente ?? 0;
+
+          console.log("💰 Dinero actualizado vía observable:", {
+            dinero: this.dineroActual,
+            pendiente: this.dineroPendiente
+          });
+
+          this.cdr.detectChanges();
+        }
       });
+
+      this.authService.refreshUsuarioCompleto(); // Refrescar al cargar
+      this.cargarOfertas();
+
+      this.ofertasService.marcarOfertasComoLeidas(this.usuarioId).subscribe(() => {
+        console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
+        this.ofertasService.notificarLeido();
+      });
+    } else {
+      console.error("❌ No se encontró el usuario autenticado.");
+    }
+  }
+
+
+
+  suscribirseAlDinero(): void {
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      this.usuarioDinero = usuario?.dinero ?? 0;
+      this.cdr.detectChanges();
+    });
+  }
+
+
+
+
+
+  cargarOfertas(): void {
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.warn("⚠ No hay liga activa para filtrar ofertas.");
+      return;
     }
 
-
-
-
-
-    cargarOfertas(): void {
-      const ligaId = this.authService.getLigaId();
-      if (!ligaId) {
-        console.warn("⚠ No hay liga activa para filtrar ofertas.");
-        return;
+    this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId, ligaId).subscribe(
+      (data) => {
+        console.log("📦 Ofertas recibidas desde backend (como vendedor):", data);
+        this.ofertasRecibidas = data.filter(oferta => oferta.estado === 'PENDIENTE');
+        this.contraofertasRecibidas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
       }
+    );
 
-      this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId, ligaId).subscribe(
-        (data) => {
-          console.log("🎯 Ofertas recibidas (como vendedor):", data);
-          this.ofertasRecibidas = data.filter(oferta => oferta.estado === 'PENDIENTE');
-          this.contraofertasRecibidas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
-        }
-      );
 
-      this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(
-        (data) => {
-          this.ofertasEnviadas = data.filter(o => o.estado === 'PENDIENTE');
-          this.contraofertasEnviadas = data.filter(o => o.estado === 'CONTRAOFERTA');
-        }
-      );
+    this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).subscribe(
+      (data) => {
+        this.ofertasEnviadas = data.filter(o => o.estado === 'PENDIENTE');
+        this.contraofertasEnviadas = data.filter(o => o.estado === 'CONTRAOFERTA');
+      }
+    );
+
+  }
+
+
+
+  retirarOferta(oferta: Oferta): void {
+    this.ofertasService.retirarOferta(oferta.id!).subscribe(() => {
+      console.log("✅ Oferta retirada correctamente.");
+
+      // ✅ Eliminar directamente del array para evitar mostrarla
+      this.ofertasEnviadas = this.ofertasEnviadas.filter(o => o.id !== oferta.id);
+      this.contraofertasEnviadas = this.contraofertasEnviadas.filter(o => o.id !== oferta.id);
+
+      this.authService.refreshUsuarioCompleto();
+    }, error => {
+      console.error("❌ Error al retirar la oferta", error);
+    });
+  }
+
+
+
+  aceptarOferta(oferta: Oferta): void {
+    if (!oferta?.id) {
+      console.error('❌ Oferta no válida: falta el ID');
+      return;
     }
 
+    this.ofertasService.aceptarOferta(oferta.id!).subscribe({
+      next: () => {
+        console.log("✅ Oferta aceptada.");
 
-
-    retirarOferta(oferta: Oferta): void {
-      this.ofertasService.retirarOferta(oferta.id!).subscribe(() => {
-        console.log("✅ Oferta retirada correctamente.");
-
-        // ✅ Eliminar directamente del array para evitar mostrarla
-        this.ofertasEnviadas = this.ofertasEnviadas.filter(o => o.id !== oferta.id);
-        this.contraofertasEnviadas = this.contraofertasEnviadas.filter(o => o.id !== oferta.id);
+        this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
+        this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
 
         this.authService.refreshUsuarioCompleto();
-      }, error => {
-        console.error("❌ Error al retirar la oferta", error);
-      });
-    }
 
+        // 👇 Añadimos esto para actualizar inmediatamente el historial
+        const historialComponent = document.querySelector('app-historial') as any;
+        if (historialComponent?.ngOnInit) historialComponent.ngOnInit();
 
-
-    aceptarOferta(oferta: Oferta): void {
-      if (!oferta?.id) {
-        console.error('❌ Oferta no válida: falta el ID');
-        return;
+        this.cargarOfertas();
+      },
+      error: (error) => {
+        console.error("❌ Error al aceptar la oferta:", error);
       }
-
-      this.ofertasService.aceptarOferta(oferta.id!).subscribe({
-        next: () => {
-          console.log("✅ Oferta aceptada.");
-
-          this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
-          this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
-
-          this.authService.refreshUsuarioCompleto();
-
-          // 👇 Añadimos esto para actualizar inmediatamente el historial
-          const historialComponent = document.querySelector('app-historial') as any;
-          if (historialComponent?.ngOnInit) historialComponent.ngOnInit();
-
-          this.cargarOfertas();
-        },
-        error: (error) => {
-          console.error("❌ Error al aceptar la oferta:", error);
-        }
-      });
-    }
+    });
+  }
 
 
 
 
-    aceptarContraoferta(oferta: Oferta): void {
-      console.log("🔎 Aceptando contraoferta:", oferta);
-    
-      this.authService.usuarioCompleto$.pipe(take(1)).subscribe(usuario => {
-        const dineroDisponible = usuario?.dinero ?? 0;
-        console.log("🔎 Dinero actual del usuario:", dineroDisponible);
-    
-        if (oferta.montoOferta > dineroDisponible) {
-          this.mensajeError = `❌ No puedes aceptar la contraoferta por falta de fondos.
+  aceptarContraoferta(oferta: Oferta): void {
+    console.log("🔎 Aceptando contraoferta:", oferta);
+
+    this.authService.usuarioCompleto$.pipe(take(1)).subscribe(usuario => {
+      const dineroDisponible = usuario?.dinero ?? 0;
+      console.log("🔎 Dinero actual del usuario:", dineroDisponible);
+
+      if (oferta.montoOferta > dineroDisponible) {
+        this.mensajeError = `❌ No puedes aceptar la contraoferta por falta de fondos.
           Fondos disponibles: ${dineroDisponible} €, oferta: ${oferta.montoOferta} €`;
-          alert(this.mensajeError);
-          this.cdr.detectChanges();
-          return;
-        }
-    
-        this.ofertasService.aceptarOferta(oferta.id!).subscribe({
-          next: () => {
-            console.log("✅ Contraoferta aceptada correctamente, ID:", oferta.id);
-    
-            // 🧼 Eliminar oferta del listado
-            this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
-    
-            // 🔁 Refrescar usuario COMPLETO para mostrar bien saldo y pendientes
-            this.authService.refreshUsuarioCompleto();
-    
-            // 🔁 Volver a cargar ofertas
-            this.cargarOfertas();
-          },
-          error: (error) => {
-            console.error("❌ Error al aceptar contraoferta", error);
-          }
-        });
-      });
-    }
-    
-    
-
-
-
-    rechazarOferta(oferta: Oferta): void {
-      this.ofertasService.rechazarOferta(oferta.id!).subscribe({
-        next: () => {
-          console.log("✅ Oferta rechazada.");
-    
-          // ✅ Eliminar directamente del array
-          this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
-          this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
-        },
-        error: (error) => {
-          console.error("❌ Error al rechazar la oferta:", error);
-        }
-      });
-    }
-    
-
-    abrirDialogoOferta(jugador: Jugador): void {
-      this.jugadorSeleccionado = jugador;
-      this.montoOferta = 0;
-      this.mensajeError = '';
-
-      // 🔹 Obtener el dinero antes de abrir el diálogo
-      this.authService.refreshUsuarioCompleto();
-
-      // 🔹 Calcular la suma de todas las ofertas en curso
-      const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
-
-      this.totalOfertasEnCurso = totalOfertasActuales;  // 🔹 Guardamos la suma
-
-      this.mostrarDialogoOferta = true;
-      this.cdr.detectChanges();
-    }
-
-
-
-    enviarOferta(monto: number): void {
-      if (!this.jugadorSeleccionado) {
-        console.error("❌ No se puede enviar la oferta, falta el jugador seleccionado.");
-        return;
-      }
-
-      const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
-      const totalPropuesto = totalOfertasActuales + monto;
-
-      if (totalPropuesto > this.usuarioDinero) {
-        this.mensajeError = `❌ No puedes hacer esta oferta. Tus ofertas totales (${totalPropuesto} €) superan tu dinero disponible (${this.usuarioDinero} €).`;
         alert(this.mensajeError);
         this.cdr.detectChanges();
         return;
       }
 
-      const ligaId = this.authService.getLigaId();
-      if (!ligaId) {
-        console.error("❌ No se pudo enviar la oferta: no hay liga activa.");
-        return;
-      }
-
-      const nuevaOferta: Oferta = {
-        jugador: this.jugadorSeleccionado,
-        comprador: { id: this.usuarioId },
-        vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
-        montoOferta: monto,
-        estado: 'PENDIENTE',
-        liga: { id: ligaId } // 👈 Se añade la liga
-      };
-
-
-      this.ofertasService.crearOferta(nuevaOferta).subscribe({
+      this.ofertasService.aceptarOferta(oferta.id!).subscribe({
         next: () => {
-          console.log("✅ Oferta enviada correctamente.");
+          console.log("✅ Contraoferta aceptada correctamente, ID:", oferta.id);
 
-          // ✅ Actualizar dinero desde backend inmediatamente
-          this.authService.refreshUsuarioCompleto(); // ✅ Nuevo método global
+          // 🧼 Eliminar oferta del listado
+          this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
 
-
-          this.mostrarDialogoOferta = false;
+          // 🔁 Refrescar usuario COMPLETO para mostrar bien saldo y pendientes
           this.authService.refreshUsuarioCompleto();
+
+          // 🔁 Volver a cargar ofertas
           this.cargarOfertas();
         },
         error: (error) => {
-          console.error("❌ Error al enviar la oferta", error);
-          this.mensajeError = "❌ Error al enviar la oferta. Inténtalo nuevamente.";
-          this.cdr.detectChanges();
+          console.error("❌ Error al aceptar contraoferta", error);
         }
       });
-    }
-
-
-
-    abrirDialogoContraoferta(oferta: Oferta): void {
-      this.ofertaSeleccionada = oferta;
-      this.montoContraoferta = oferta.montoOferta;
-      this.mostrarDialogoContraoferta = true;
-      this.mensajeError = '';
-      this.cdr.detectChanges();
-    }
-
-    enviarContraoferta(montoContraoferta: number): void {
-      if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.jugador) {
-        console.error("❌ No se puede enviar la contraoferta, falta el jugador seleccionado.");
-        return;
-      }
-    
-      if (!this.ofertaSeleccionada.id) {
-        console.error("❌ No se puede enviar la contraoferta, falta la oferta seleccionada o su ID.");
-        return;
-      }
-    
-      const ligaId = this.authService.getLigaId();
-      if (!ligaId) {
-        console.error("❌ No se pudo enviar la contraoferta: no hay liga activa.");
-        return;
-      }
-    
-      const nuevaOferta: Oferta = {
-        jugador: this.ofertaSeleccionada.jugador,
-        comprador: { id: this.usuarioId }, // el que acepta la contraoferta
-        montoOferta: montoContraoferta,
-        estado: 'CONTRAOFERTA',
-        liga: { id: ligaId }
-      };
-    
-      console.log("📤 Enviando contraoferta:", nuevaOferta);
-      console.log("🔖 Oferta original seleccionada:", this.ofertaSeleccionada);
-    
-      this.ofertasService.hacerContraoferta({ ...nuevaOferta, id: this.ofertaSeleccionada.id }).subscribe({
-        next: (respuesta) => {
-          console.log("✅ Contraoferta enviada correctamente:", respuesta);
-          this.mostrarDialogoContraoferta = false;
-    
-          // 🟢 Refrescar datos del usuario para mostrar saldo REAL
-          this.authService.refreshUsuarioCompleto();
-    
-          // 🟢 Volver a cargar ofertas
-          this.cargarOfertas();
-        },
-        error: (error) => {
-          console.error("❌ Error al enviar contraoferta", error);
-          this.mensajeError = "❌ Error al enviar la contraoferta. Inténtalo nuevamente.";
-          this.cdr.detectChanges();
-        }
-      });
-    }
-    
-
-    esMovil(): boolean {
-      return window.innerWidth <= 768;
-    }
-
-    obtenerNombreJugador(jugador: any): string {
-      if (!jugador) return '';
-      return jugador.jugadorBase ? jugador.jugadorBase.nombre : jugador.nombre;
-    }
-
-
-
-
-    obtenerJugadorBase(jugador: any): Jugador {
-      return jugador?.jugadorBase ?? jugador;
-    }
-
-
-
-
-
+    });
   }
+
+
+
+
+
+  rechazarOferta(oferta: Oferta): void {
+    this.ofertasService.rechazarOferta(oferta.id!).subscribe({
+      next: () => {
+        console.log("✅ Oferta rechazada.");
+
+        // ✅ Eliminar directamente del array
+        this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
+        this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
+      },
+      error: (error) => {
+        console.error("❌ Error al rechazar la oferta:", error);
+      }
+    });
+  }
+
+
+  abrirDialogoOferta(jugador: Jugador): void {
+    this.jugadorSeleccionado = jugador;
+    this.montoOferta = 0;
+    this.mensajeError = '';
+
+    // 🔹 Obtener el dinero antes de abrir el diálogo
+    this.authService.refreshUsuarioCompleto();
+
+    // 🔹 Calcular la suma de todas las ofertas en curso
+    const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
+
+    this.totalOfertasEnCurso = totalOfertasActuales;  // 🔹 Guardamos la suma
+
+    this.mostrarDialogoOferta = true;
+    this.cdr.detectChanges();
+  }
+
+
+
+  enviarOferta(monto: number): void {
+    if (!this.jugadorSeleccionado) {
+      console.error("❌ No se puede enviar la oferta, falta el jugador seleccionado.");
+      return;
+    }
+
+    const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
+    const totalPropuesto = totalOfertasActuales + monto;
+
+    if (totalPropuesto > this.usuarioDinero) {
+      this.mensajeError = `❌ No puedes hacer esta oferta. Tus ofertas totales (${totalPropuesto} €) superan tu dinero disponible (${this.usuarioDinero} €).`;
+      alert(this.mensajeError);
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.error("❌ No se pudo enviar la oferta: no hay liga activa.");
+      return;
+    }
+
+    const nuevaOferta: Oferta = {
+      jugador: this.jugadorSeleccionado,
+      comprador: { id: this.usuarioId },
+      vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
+      montoOferta: monto,
+      estado: 'PENDIENTE',
+      liga: { id: ligaId } // 👈 Se añade la liga
+    };
+
+
+    this.ofertasService.crearOferta(nuevaOferta).subscribe({
+      next: () => {
+        console.log("✅ Oferta enviada correctamente.");
+
+        // ✅ Actualizar dinero desde backend inmediatamente
+        this.authService.refreshUsuarioCompleto(); // ✅ Nuevo método global
+
+
+        this.mostrarDialogoOferta = false;
+        this.authService.refreshUsuarioCompleto();
+        this.cargarOfertas();
+      },
+      error: (error) => {
+        console.error("❌ Error al enviar la oferta", error);
+        this.mensajeError = "❌ Error al enviar la oferta. Inténtalo nuevamente.";
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+
+
+  abrirDialogoContraoferta(oferta: Oferta): void {
+    this.ofertaSeleccionada = oferta;
+    this.mostrarDialogoContraoferta = true;
+    this.mensajeError = '';
+    this.cdr.detectChanges();
+  }
+  enviarContraoferta({ monto }: { monto: number }): void {
+    console.log("🔥 Método enviarContraoferta ejecutado. Monto recibido:", monto);
+
+    if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.jugador) {
+      console.error("❌ No se puede enviar la contraoferta, falta el jugador seleccionado.");
+      return;
+    }
+
+    if (!this.ofertaSeleccionada.id) {
+      console.error("❌ No se puede enviar la contraoferta, falta la oferta seleccionada o su ID.");
+      return;
+    }
+
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.error("❌ No se pudo enviar la contraoferta: no hay liga activa.");
+      return;
+    }
+
+    const nuevaOferta: Oferta = {
+      jugador: this.ofertaSeleccionada.jugador,
+      comprador: { id: this.usuarioId },
+      montoOferta: monto,
+      estado: 'CONTRAOFERTA',
+      liga: { id: ligaId }
+    };
+
+    console.log("📤 Enviando contraoferta al servicio:", nuevaOferta);
+
+    this.ofertasService.hacerContraofertaSimple(this.ofertaSeleccionada.id!, monto).subscribe({
+      next: (respuesta) => {
+        console.log("✅ Contraoferta enviada correctamente:", respuesta);
+        this.mostrarDialogoContraoferta = false;
+
+        const idOriginal = this.ofertaSeleccionada?.id;
+        if (idOriginal) {
+          this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== idOriginal);
+          this.ofertasEnviadas = this.ofertasEnviadas.filter(o => o.id !== idOriginal);
+          this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== idOriginal);
+          this.contraofertasEnviadas = this.contraofertasEnviadas.filter(o => o.id !== idOriginal);
+        }
+
+        this.authService.refreshUsuarioCompleto();
+        this.cargarOfertas();
+      },
+      error: (error) => {
+        console.error("❌ Error al enviar contraoferta", error);
+        this.mensajeError = "❌ Error al enviar la contraoferta. Inténtalo nuevamente.";
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+
+
+
+  esMovil(): boolean {
+    return window.innerWidth <= 768;
+  }
+
+  obtenerNombreJugador(jugador: any): string {
+    if (!jugador) return '';
+    return jugador.jugadorBase ? jugador.jugadorBase.nombre : jugador.nombre;
+  }
+
+
+
+
+  obtenerJugadorBase(jugador: any): Jugador {
+    return jugador?.jugadorBase ?? jugador;
+  }
+
+
+
+
+
+}

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Liga, LigasService, MiembroLiga } from '../../services/ligas.service';
-
+import { LigasService, MiembroLiga } from '../../services/ligas.service';
+import { Liga } from '../../models/liga.model';
 @Component({
   selector: 'app-esperando-miembros',
   templateUrl: './esperando-miembros.component.html',

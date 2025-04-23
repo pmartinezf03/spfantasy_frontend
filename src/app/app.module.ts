@@ -63,7 +63,8 @@ import { EsperandoMiembrosComponent } from './ligas/esperando-miembros/esperando
 import { FiltroContactosPipe } from './pipes/filtro-contactos.pipe';
 import { HistorialComponent } from './ofertas/historial/historial.component';
 import { NgChartsModule } from 'ng2-charts';
-
+import { InicioComponent } from './inicio/inicio.component';
+import { ChartModule } from 'primeng/chart';
 @NgModule({
   declarations: [
     AppComponent,
@@ -93,6 +94,8 @@ import { NgChartsModule } from 'ng2-charts';
     EsperandoMiembrosComponent,
     FiltroContactosPipe,
     HistorialComponent,
+    InicioComponent,
+    
     
 
   ],
@@ -126,7 +129,7 @@ import { NgChartsModule } from 'ng2-charts';
     RecaptchaModule,
     ProgressSpinnerModule,
     NgChartsModule,
-
+    ChartModule,
   ],
   providers: [
     provideAnimations(),
