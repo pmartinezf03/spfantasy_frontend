@@ -2,38 +2,70 @@
           [(visible)]="mostrarDialogo"
           [modal]="true"
           [closable]="true"
-          [style]="{width: '450px'}">
+          [style]="{width: '100%', maxWidth: '520px'}"
+          [contentStyle]="{'padding': '2rem 1.5rem'}"
+          [styleClass]="'animate__animated animate__zoomIn'">
 
-  <div class="oferta-dialogo-body">
-    <p><b>Jugador:</b> {{ jugadorSeleccionado?.nombre }}</p>
-    <p><b>💰 Tu saldo:</b> {{ usuarioDinero | currency:'EUR' }}</p>
+  <div class="flex flex-column gap-3 oferta-card shadow-4 border-round surface-card">
+    <!-- 📸 Header -->
+    <div class="flex align-items-center gap-3">
+      <img [src]="jugadorSeleccionado?.fotoUrl || 'assets/sin-foto.png'"
+           class="border-circle shadow-3"
+           width="64" height="64"
+           alt="Jugador" />
 
-    <p *ngIf="modo === 'oferta'"><b>📈 Ofertas activas:</b> {{ totalOfertasEnCurso | currency:'EUR' }}</p>
+      <div class="flex flex-column">
+        <span class="text-xl font-bold text-primary">{{ jugadorSeleccionado?.nombre }}</span>
+        <span class="text-sm text-500">{{ jugadorSeleccionado?.posicion }}</span>
+      </div>
+    </div>
 
-    <div class="form-group">
-      <label for="montoOferta">💸 Monto de la {{ modo === 'oferta' ? 'oferta' : 'contraoferta' }}</label>
+    <!-- 📊 Detalles -->
+    <div class="grid mt-3">
+      <div class="col-6 text-left">
+        <p class="m-0 text-sm"><b>💰 Tu saldo:</b></p>
+        <p class="font-semibold text-green-600">{{ usuarioDinero | currency:'EUR' }}</p>
+      </div>
+      <div class="col-6 text-left" *ngIf="modo === 'oferta'">
+        <p class="m-0 text-sm"><b>📈 Ofertas en curso:</b></p>
+        <p class="font-semibold text-orange-600">{{ totalOfertasEnCurso | currency:'EUR' }}</p>
+      </div>
+    </div>
+
+    <!-- 💸 Campo monto -->
+    <div class="mt-2">
+      <label for="montoOferta" class="block font-medium mb-2 text-md">💸 Monto</label>
       <p-inputNumber
         inputId="montoOferta"
         [(ngModel)]="montoOferta"
         [min]="1"
         [showButtons]="true"
-        mode="currency"
         currency="EUR"
+        mode="currency"
         [step]="100000"
         [maxFractionDigits]="0"
         class="w-full">
       </p-inputNumber>
     </div>
 
-    <p *ngIf="mensajeError" class="error-msg">{{ mensajeError }}</p>
+    <!-- ⚠ Error -->
+    <p *ngIf="mensajeError" class="text-red-600 font-semibold text-sm mt-2">{{ mensajeError }}</p>
   </div>
 
+  <!-- Footer -->
   <ng-template pTemplate="footer">
-    <button pButton [label]="modo === 'oferta' ? 'Enviar Oferta' : 'Enviar Contraoferta'"
-            icon="pi pi-check"
-            class="p-button-success"
-            (click)="confirmarOferta()">
-    </button>
-    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="cerrarDialogo()"></button>
+    <div class="flex justify-content-between gap-2 w-full">
+      <button pButton
+              [label]="modo === 'oferta' ? 'Enviar Oferta' : 'Enviar Contraoferta'"
+              icon="pi pi-check"
+              class="p-button-lg p-button-rounded p-button-success animate__animated animate__pulse"
+              (click)="confirmarOferta()">
+      </button>
+      <button pButton label="Cancelar"
+              icon="pi pi-times"
+              class="p-button-lg p-button-rounded p-button-secondary animate__animated animate__fadeIn"
+              (click)="cerrarDialogo()">
+      </button>
+    </div>
   </ng-template>
 </p-dialog>

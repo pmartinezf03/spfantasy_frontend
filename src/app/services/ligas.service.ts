@@ -10,6 +10,16 @@ export interface CrearLigaDTO {
   creadorId: number;
 }
 
+export interface ActividadLiga {
+  id: number;
+  tipo: string;
+  descripcion: string;
+  timestamp: string;
+  usuario: {
+    username: string;
+  };
+}
+
 
 export interface UnirseLigaDTO {
   usuarioId: number;
@@ -85,6 +95,10 @@ export class LigasService {
 
   obtenerTodasLasLigas(): Observable<Liga[]> {
     return this.http.get<Liga[]>(`${this.apiUrl}/todas`);
+  }
+
+  obtenerActividadLiga(ligaId: number): Observable<ActividadLiga[]> {
+    return this.http.get<ActividadLiga[]>(`${this.apiUrl}/${ligaId}/actividad`);
   }
 
 

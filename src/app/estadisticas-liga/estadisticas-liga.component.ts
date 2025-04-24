@@ -32,16 +32,26 @@ export class EstadisticasLigaComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    if (user?.id) {
-      this.usuarioId = user.id;
-      this.obtenerDineroUsuario();
-      this.cargarOfertasUsuario();
-    } else {
+    if (!user?.id) {
       console.error("❌ No se encontró el usuario autenticado.");
+      return;
     }
-
-    this.cargarEstadisticas();
+  
+    this.usuarioId = user.id;
+  
+    // Dinero y ofertas se cargan una vez
+    this.obtenerDineroUsuario();
+    this.cargarOfertasUsuario();
+  
+    // 🔄 Suscribirse a cambios de ligaId para actualizar estadísticas dinámicamente
+    this.authService.getLigaObservable().subscribe(ligaId => {
+      if (ligaId) {
+        this.cargarEstadisticas();
+        this.cdr.detectChanges(); // fuerza actualización visual
+      }
+    });
   }
+  
 
   cargarEstadisticas(): void {
     const ligaId = this.authService.getLigaId();

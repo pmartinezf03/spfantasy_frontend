@@ -1,21 +1,26 @@
-<div class="gestionar-contenedor" *ngIf="esCreador()">
-  <h2>Gestionar Liga: {{ liga.nombre }}</h2>
+<div class="gestionar-panel p-p-4" *ngIf="esCreador()">
+  <h2 class="titulo">🛠️ Panel de Gestión: {{ liga.nombre }}</h2>
 
-  <div class="formulario">
-    <label>Nueva contraseña:</label>
-    <input type="text" [(ngModel)]="nuevaContrasena" placeholder="(opcional)" />
+  <div class="p-fluid p-formgrid p-grid p-mt-3">
+    <div class="p-field p-col-12 p-md-6">
+      <label>🔑 Nueva Contraseña (opcional)</label>
+      <input type="text" pInputText [(ngModel)]="nuevaContrasena" />
+    </div>
 
-    <label>Máx. participantes:</label>
-    <input type="number" [(ngModel)]="nuevoMaxParticipantes" min="2" max="30" />
-
-    <button (click)="guardarCambios()">Guardar Cambios</button>
+    <div class="p-field p-col-12 p-md-6">
+      <label>👥 Máx. Participantes</label>
+      <input type="number" pInputText [(ngModel)]="nuevoMaxParticipantes" min="2" max="30" />
+    </div>
   </div>
 
-  <h3>Miembros</h3>
-  <ul>
-    <li *ngFor="let miembro of miembros">
-      {{ miembro.username }}
-      <button (click)="expulsarUsuario(miembro.id)" *ngIf="miembro.id !== usuarioId">Expulsar</button>
-    </li>
-  </ul>
+  <button pButton icon="pi pi-save" label="💾 Guardar Cambios" class="p-button-success p-mt-3" (click)="guardarCambios()"></button>
+
+  <h3 class="p-mt-4 text-white">Miembros actuales:</h3>
+
+  <div class="p-d-flex p-flex-wrap p-gap-2 p-mt-2">
+    <div class="miembro-card p-p-2" *ngFor="let miembro of miembros">
+      <span>{{ miembro.username }}</span>
+      <button *ngIf="miembro.id !== usuarioId" pButton icon="pi pi-times" class="p-button-sm p-button-danger" (click)="expulsarUsuario(miembro.id)"></button>
+    </div>
+  </div>
 </div>

@@ -1,50 +1,147 @@
-<div class="contenedor-ligas">
-  <ng-container *ngIf="ligaActual as liga">
-    <h2>Estás en la liga: {{ liga.nombre }}</h2>
-    <button class="btn-salir" (click)="salirLiga()">Salir de la liga</button>
-
-    <app-gestionar-liga
-      *ngIf="esCreador && !ligaIniciada"
-      [liga]="liga"
-      [miembros]="miembros"
-      (expulsado)="cargarMiembros()"
-      (ligaIniciada)="ligaIniciada = true"
-    >
-    </app-gestionar-liga>
-
-    <app-esperando-miembros
-      *ngIf="!esCreador || ligaIniciada"
-      [liga]="liga"
-      [miembros]="miembros"
-    >
-    </app-esperando-miembros>
-  </ng-container>
-
-  <div *ngIf="!ligaActual">
-    <ng-container
-      *ngIf="
-        usuario?.role?.toLowerCase() === 'admin' ||
-        usuario?.role?.toLowerCase() === 'vip'
-      "
-    >
-      <button
-        class="btn-crear"
-        *ngIf="usuario?.role === 'admin' || usuario?.role === 'vip'"
-        (click)="mostrarCrear()"
-      >
-        Crear Liga
+<div class="ligas-panel p-p-3">
+  <div *ngIf="ligaActual as liga">
+    <div class="liga-activa-card p-p-4">
+      <h2 class="titulo-liga">
+        🏆 Estás en la liga: <span>{{ liga.nombre }}</span>
+      </h2>
+      <button pButton class="p-button-danger p-mb-3" (click)="salirLiga()">
+        ❌ Salir de la liga
       </button>
-    </ng-container>
+      <!-- 👇 NUEVA SECCIÓN VISUAL DE LA LIGA -->
+      <div class="liga-dashboard p-mt-4">
+        <!-- 🔢 Ranking de la Liga -->
+        <!-- 🔢 Ranking de la Liga -->
+        <div class="ranking-card p-p-3">
+          <h3 class="text-yellow-500 text-center text-xl mb-3">
+            🏆 Clasificación de la Liga
+          </h3>
+          <p-table
+            [value]="ranking"
+            [responsiveLayout]="'scroll'"
+            class="p-datatable-sm"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Puntos</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row let-i="rowIndex">
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>👤 {{ row.nombre }}</td>
+                <td>
+                  <span class="text-green-400 font-bold">{{
+                    row.puntosTotales
+                  }}</span>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
 
-    <button class="btn-unirse" (click)="mostrarUnirse()">Unirse a Liga</button>
+        <!-- 📊 Gráfico de barras de puntos -->
+        <div class="grafico-card p-mt-4">
+          <p-chart
+            type="bar"
+            [data]="graficoPuntos"
+            [options]="graficoOpciones"
+            styleClass="p-mb-4"
+          ></p-chart>
+        </div>
 
-    <app-crear-liga
-      *ngIf="mostrarCrearLiga"
-      (ligaCreada)="onLigaCreada($event)"
-    >
-    </app-crear-liga>
+        <!-- 👥 Miembros de la liga -->
+        <div
+          class="miembros-grid p-d-flex p-flex-wrap p-jc-center p-gap-2 p-mt-4"
+        >
+          <div class="miembro-card" *ngFor="let miembro of miembros">
+            <div class="avatar">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="info">
+              <strong>{{ miembro.username }}</strong>
+              <small>{{ miembro.email }}</small>
+            </div>
+          </div>
+        </div>
+        <!-- 📅 Actividad Reciente -->
+        <div
+          class="actividad-card p-mt-4"
+          *ngIf="actividadReciente && actividadReciente.length > 0"
+        >
+          <h3 class="text-orange-400 text-xl text-center mb-3">
+            📅 Actividad Reciente
+          </h3>
+          <ul class="actividad-list">
+            <li *ngFor="let a of actividadReciente">
+              🕒 {{ a.timestamp | date : "short" }} —
+              <strong>{{ a.usuario.username }}</strong
+              >: {{ a.descripcion }}
+            </li>
+          </ul>
+        </div>
+      </div>
 
-    <app-unirse-liga *ngIf="mostrarUnirseLiga" (unido)="onUnidoALiga($event)">
-    </app-unirse-liga>
+      <app-gestionar-liga
+        *ngIf="esCreador && !ligaIniciada"
+        [liga]="liga"
+        [miembros]="miembros"
+        (expulsado)="cargarMiembros()"
+        (ligaIniciada)="ligaIniciada = true"
+      ></app-gestionar-liga>
+
+      <app-esperando-miembros
+        *ngIf="!esCreador || ligaIniciada"
+        [liga]="liga"
+        [miembros]="miembros"
+      ></app-esperando-miembros>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!ligaActual"
+    class="opciones-liga p-d-flex p-flex-column p-ai-center p-p-3"
+  >
+    <h2 class="text-center p-mb-4 text-2xl text-yellow-500">
+      ⚙️ Gestión de Ligas
+    </h2>
+
+    <div class="p-d-flex p-flex-wrap p-jc-center p-gap-2 botones-liga">
+      <button
+        pButton
+        icon="pi pi-plus"
+        label="🎯 Crear Liga"
+        class="p-button-success p-button-lg"
+        *ngIf="
+          usuario?.role?.toLowerCase() === 'admin' ||
+          usuario?.role?.toLowerCase() === 'vip'
+        "
+        (click)="mostrarCrear()"
+      ></button>
+
+      <button
+        pButton
+        icon="pi pi-sign-in"
+        label="🚀 Unirse a Liga"
+        class="p-button-info p-button-lg"
+        (click)="mostrarUnirse()"
+      ></button>
+    </div>
+
+    <div class="panel-dinamico p-mt-4">
+      <app-crear-liga
+        *ngIf="mostrarCrearLiga"
+        (ligaCreada)="onLigaCreada($event)"
+      ></app-crear-liga>
+      <app-unirse-liga
+        *ngIf="mostrarUnirseLiga"
+        (unido)="onUnidoALiga($event)"
+      ></app-unirse-liga>
+    </div>
   </div>
 </div>
+
+
+
+

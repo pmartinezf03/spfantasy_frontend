@@ -65,6 +65,9 @@ import { HistorialComponent } from './ofertas/historial/historial.component';
 import { NgChartsModule } from 'ng2-charts';
 import { InicioComponent } from './inicio/inicio.component';
 import { ChartModule } from 'primeng/chart';
+import { ChipModule } from 'primeng/chip';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -130,6 +133,7 @@ import { ChartModule } from 'primeng/chart';
     ProgressSpinnerModule,
     NgChartsModule,
     ChartModule,
+    ChipModule,
   ],
   providers: [
     provideAnimations(),

@@ -1,11 +1,22 @@
-.crear-liga-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 300px;
-}
+.crear-liga-panel {
+  background: linear-gradient(to right, #292d5e, #1b1f44);
+  border-radius: 1rem;
+  color: #fff;
+  box-shadow: 0 0 20px #00000099;
 
-.error {
-  color: red;
-  font-weight: bold;
+  .titulo {
+    text-align: center;
+    font-size: 1.7rem;
+    color: #ffd740;
+    margin-bottom: 1.5rem;
+  }
+
+  .mensaje-error {
+    background: #ff5252;
+    color: white;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+  }
 }

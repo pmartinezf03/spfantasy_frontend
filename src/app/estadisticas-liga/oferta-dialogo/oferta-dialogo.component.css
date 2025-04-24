@@ -1,18 +1,33 @@
-.oferta-dialogo-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  font-size: 0.95rem;
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding: 1.5rem;
 }
 
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  display: block;
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
 }
 
-.error-msg {
-  color: #e53935;
-  font-size: 0.85rem;
-  font-weight: bold;
+@media (max-width: 600px) {
+  :host ::ng-deep .p-dialog {
+    width: 90vw !important;
+  }
+}
+.oferta-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f3f5f7 100%);
+  border-left: 5px solid var(--primary-color);
+}
+
+.historial-wrapper {
+  background: #fefefe;
+}
+
+@media (max-width: 600px) {
+  .oferta-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .historial-wrapper {
+    padding: 1rem 0.75rem;
+  }
 }

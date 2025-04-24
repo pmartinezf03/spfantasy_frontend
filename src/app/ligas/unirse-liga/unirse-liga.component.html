@@ -1,13 +1,23 @@
-<div class="unirse-liga-form">
-  <h3>Unirse a una Liga</h3>
+<div class="unirse-panel p-p-4">
+  <h2 class="titulo">🔑 Unirse a una Liga Privada</h2>
 
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="error" class="mensaje-error p-mb-3">
+    ❌ {{ error }}
+  </div>
 
-  <label>Código de invitación:</label>
-  <input type="text" [(ngModel)]="codigo" placeholder="Ej: ABC123" />
+  <div class="p-fluid p-formgrid p-grid">
+    <div class="p-field p-col-12">
+      <label>💌 Código de invitación</label>
+      <input pInputText [(ngModel)]="codigo" placeholder="Ej: FANTASY23" />
+    </div>
 
-  <label>Contraseña:</label>
-  <input type="password" [(ngModel)]="contrasena" placeholder="Contraseña (si aplica)" />
+    <div class="p-field p-col-12">
+      <label>🔒 Contraseña (si aplica)</label>
+      <input pInputText type="password" [(ngModel)]="contrasena" placeholder="Contraseña secreta" />
+    </div>
+  </div>
 
-  <button (click)="unirse()">Unirse</button>
+  <div class="p-d-flex p-jc-center p-mt-3">
+    <button pButton icon="pi pi-sign-in" label="🚀 Unirme" class="p-button-info" (click)="unirse()"></button>
+  </div>
 </div>

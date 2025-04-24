@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { LigasService, MiembroLiga } from '../services/ligas.service';
+import { ActividadLiga, LigasService, MiembroLiga } from '../services/ligas.service';
 import { Router } from '@angular/router';
 import { Liga } from '../models/liga.model';
+
 @Component({
   selector: 'app-ligas',
   templateUrl: './ligas.component.html',
@@ -18,6 +19,7 @@ export class LigasComponent implements OnInit {
   esCreador = false;
   ligaIniciada = false;
   usuario: any = null;
+  actividadReciente: ActividadLiga[] = [];
 
   constructor(
     public authService: AuthService,
@@ -27,18 +29,23 @@ export class LigasComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
+  
     if (user && user.id) {
       this.usuarioId = user.id;
-
+  
       this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
         next: (liga) => {
           if (liga && liga.id) {
             this.authService.setLigaId(liga.id);
             this.authService.setLiga(liga);
+  
             this.ligaActual = liga;
             this.ligaIniciada = liga.iniciada;
             this.esCreador = liga.creadorId === this.usuarioId;
+  
             this.cargarMiembros();
+            this.cargarActividad(liga.id);
+            this.cargarRanking(); // ✅ carga el ranking real
           } else {
             this.ligaActual = null;
           }
@@ -48,11 +55,13 @@ export class LigasComponent implements OnInit {
         }
       });
     }
-
+  
+    // Obtener datos reactivos del usuario completo
     this.authService.usuarioCompleto$.subscribe(user => {
       this.usuario = user;
     });
   }
+  
 
   cargarLigaDelUsuario(): void {
     if (!this.usuarioId) return;
@@ -65,6 +74,7 @@ export class LigasComponent implements OnInit {
           this.ligaIniciada = liga.iniciada;
           this.esCreador = liga.creadorId === this.usuarioId;
           this.cargarMiembros();
+          this.cargarActividad(liga.id); // ✅ NUEVO
         }
       },
       error: () => {
@@ -74,27 +84,11 @@ export class LigasComponent implements OnInit {
     });
   }
 
-  onLigaCreada(liga: Liga): void {
-    this.ligaActual = liga;
-    this.authService.setLigaId(liga.id);
-    this.authService.setLiga(liga);
-    this.mostrarCrearLiga = false;
-    this.esCreador = true;
-    this.ligaIniciada = false;
-    this.cargarMiembros();
-    this.router.navigate(['/mercado']);
-    this.authService.refreshUsuarioCompleto(); // refresca datos del usuario
-  }
-
-  onUnidoALiga(liga: Liga): void {
-    this.ligaActual = liga;
-    this.authService.setLigaId(liga.id);
-    this.authService.setLiga(liga);
-    this.mostrarUnirseLiga = false;
-    this.esCreador = false;
-    this.ligaIniciada = false;
-    this.cargarMiembros();
-    this.router.navigate(['/mercado']);
+  cargarActividad(ligaId: number): void {
+    this.ligasService.obtenerActividadLiga(ligaId).subscribe({
+      next: (actividad) => this.actividadReciente = actividad,
+      error: (err) => console.error('❌ Error al cargar actividad:', err)
+    });
   }
 
   cargarMiembros(): void {
@@ -134,4 +128,86 @@ export class LigasComponent implements OnInit {
     this.mostrarUnirseLiga = true;
     this.mostrarCrearLiga = false;
   }
+
+  onLigaCreada(liga: Liga): void {
+    this.ligaActual = liga;
+    this.authService.setLigaId(liga.id);
+    this.authService.setLiga(liga);
+    this.mostrarCrearLiga = false;
+    this.esCreador = true;
+    this.ligaIniciada = false;
+    this.cargarMiembros();
+    this.cargarActividad(liga.id); // ✅ NUEVO
+    this.router.navigate(['/mercado']);
+    this.authService.refreshUsuarioCompleto();
+  }
+
+  onUnidoALiga(liga: Liga): void {
+    this.ligaActual = liga;
+    this.authService.setLigaId(liga.id);
+    this.authService.setLiga(liga);
+    this.mostrarUnirseLiga = false;
+    this.esCreador = false;
+    this.ligaIniciada = false;
+    this.cargarMiembros();
+    this.cargarActividad(liga.id); // ✅ NUEVO
+    this.router.navigate(['/mercado']);
+  }
+
+  cargarRanking(): void {
+    if (!this.ligaActual?.id) return;
+  
+    this.ligasService.obtenerRanking(this.ligaActual.id).subscribe({
+      next: ranking => {
+        this.ranking = ranking;
+        this.graficoPuntos = {
+          labels: ranking.map(r => r.nombre),
+          datasets: [
+            {
+              label: 'Puntos Totales',
+              backgroundColor: ['#fbc02d', '#4caf50', '#2196f3', '#ff5722', '#9c27b0'],
+              data: ranking.map(r => r.puntosTotales)
+            }
+          ]
+        };
+        
+      },
+      error: err => console.error('❌ Error al cargar ranking:', err)
+    });
+  }
+  
+
+  // Datos de ejemplo para el gráfico
+  ranking: any[] = [];
+
+
+  graficoPuntos = {
+    labels: this.ranking.map(r => r.Usuario),
+    datasets: [
+      {
+        label: 'Puntos Totales',
+        backgroundColor: ['#fbc02d', '#4caf50', '#2196f3', '#ff5722', '#9c27b0'],
+        data: this.ranking.map(r => r.Puntos)
+      }
+    ]
+  };
+
+  graficoOpciones = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: true }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: '#ffffff' },
+        grid: { color: '#444' }
+      },
+      x: {
+        ticks: { color: '#ffffff' },
+        grid: { display: false }
+      }
+    }
+  };
 }

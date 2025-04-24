@@ -1,13 +1,18 @@
-<div class="esperando-contenedor">
-  <h2>Esperando a que se unan más jugadores...</h2>
+<div class="esperando-wrapper p-p-4">
+  <h2 class="text-center text-yellow-400">⏳ Esperando a más jugadores...</h2>
 
-  <p *ngIf="esCreador()">
-    Cuando estés listo, puedes comenzar la liga.
-    <button (click)="iniciarLiga()">Iniciar Liga</button>
+  <p class="text-center p-mt-2 text-white">
+    ¡Prepara tu equipo, el juego comenzará pronto! 🎮🔥
   </p>
 
-  <h3>Miembros actuales:</h3>
-  <ul>
-    <li *ngFor="let m of miembros">{{ m.username }}</li>
-  </ul>
+  <div class="p-d-flex p-flex-wrap p-jc-center p-mt-4 miembros-lista">
+    <div *ngFor="let m of miembros" class="miembro-card p-p-3">
+      <i class="pi pi-user"></i>
+      <span>{{ m.username }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="esCreador()" class="p-mt-4 p-d-flex p-jc-center">
+    <button pButton icon="pi pi-play" label="🚀 Iniciar Liga" class="p-button-warning" (click)="iniciarLiga()"></button>
+  </div>
 </div>

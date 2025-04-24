@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef,NgZone  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
 import { UsuarioService } from '../services/usuario.service';
@@ -28,7 +28,7 @@ export class NavigationComponent implements OnInit {
     private ofertasService: OfertasService,
     private cdr: ChangeDetectorRef,
     private zone: NgZone
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     console.log('📍 NavigationComponent inicializado');
@@ -79,7 +79,17 @@ export class NavigationComponent implements OnInit {
     const user = this.authService.getUser();
     if (user?.id) {
       this.authService.refreshUsuarioCompleto();
+
+      // Nos aseguramos de que la liga esté también disponible
+      this.authService.getLigaObservable().subscribe(ligaId => {
+        if (ligaId) {
+          console.log('📌 Liga detectada al iniciar navbar:', ligaId);
+          this.construirMenu(); // ⚠️ Reconstruimos el menú completo cuando esté lista la liga
+          this.cdr.detectChanges(); // 🔄 Forzamos update visual si era necesario
+        }
+      });
     }
+
   }
 
   construirMenu(): void {
@@ -89,12 +99,12 @@ export class NavigationComponent implements OnInit {
       { label: '📰 Noticias', routerLink: '/noticias' },
       ...(this.isUserLoggedIn
         ? [
-            { label: '🛒 Mercado', routerLink: '/mercado' },
-            { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
-            { label: '🏆 Ligas', routerLink: '/ligas' },
-            { label: '💬 Chat', routerLink: '/chat' },
-            { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' }
-          ]
+          { label: '🛒 Mercado', routerLink: '/mercado' },
+          { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
+          { label: '🏆 Ligas', routerLink: '/ligas' },
+          { label: '💬 Chat', routerLink: '/chat' },
+          { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' }
+        ]
         : []),
       {
         label: this.isUserLoggedIn ? '🚪 Cerrar Sesión' : '🔑 Iniciar sesión',

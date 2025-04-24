@@ -3,6 +3,7 @@ import { Jugador } from '../models/jugador.model';
 import { UsuarioService } from '../services/usuario.service';
 import { AuthService } from '../services/auth.service';
 import { JugadorService } from '../services/jugador.service'; // Asegúrate de importar el servicio de jugadores
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-mi-plantilla',
@@ -23,28 +24,28 @@ export class MiPlantillaComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private jugadorService: JugadorService // Asegúrate de inyectar el servicio
+    private jugadorService: JugadorService,
+    private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const user = this.authService.getUser();
     if (!user || !user.username) {
       console.error('⚠ No hay usuario logueado o falta el username.');
       return;
     }
-
+  
     this.username = user.username;
-    const token = this.authService.getToken();
-    if (!token) {
-      console.error('⚠ No hay token disponible.');
-      return;
-    }
-
-    // Llamar a cargar jugadores al inicio para obtener los datos correctos
-    this.cargarJugadores();
-    this.cargarDinero(); // Nuevo método solo para el dinero
-    
+  
+    this.authService.getLigaObservable().subscribe(ligaId => {
+      if (ligaId && user.id) {
+        this.cargarJugadores();
+        this.cargarDinero(); 
+        this.cdr.detectChanges(); 
+      }
+    });
   }
+  
 
   obtenerDatosUsuario() {
     const token = this.authService.getToken();

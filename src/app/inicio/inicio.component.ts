@@ -102,15 +102,22 @@ export class InicioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Suscribirse a cambios en el usuario
     this.authService.usuarioCompleto$.subscribe(usuario => {
       this.usuario = usuario;
-      const liga = this.authService.getLiga();
-      if (usuario?.id && liga?.id) {
-        this.ligaId = liga.id;
-        this.cargarDatos(liga.id, usuario.id);
+    });
+  
+    // 🔄 Reaccionar a cambios en el ID de liga (ej: al loguearse o recalcular)
+    this.authService.getLigaObservable().subscribe(ligaId => {
+      const usuarioId = this.authService.getUserId();
+  
+      if (ligaId && usuarioId) {
+        this.ligaId = ligaId;
+        this.cargarDatos(ligaId, usuarioId);
       }
     });
   }
+  
 
   cargarDatos(ligaId: number, usuarioId: number): void {
     this.estadisticasService.getRanking(ligaId).subscribe(data => this.ranking = data.slice(0, 5));

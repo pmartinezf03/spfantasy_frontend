@@ -1,57 +1,125 @@
-.contenedor-ligas {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
-  background-color: #101820;
-  border-radius: 16px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+.ligas-panel {
+  background: linear-gradient(to bottom right, #101540, #1e264f);
   color: white;
-  font-family: 'Segoe UI', sans-serif;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+  max-width: 100%;
+  margin: auto;
+  animation: fadeInScale 0.6s ease-out;
 }
 
-h2, h3 {
-  margin-bottom: 16px;
-  color: #f4c542;
+.liga-activa-card {
+  background-color: #18234e;
+  border-left: 8px solid #fbc02d;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
   text-align: center;
+  box-shadow: inset 0 0 10px #00000066;
 }
 
-button {
-  display: inline-block;
-  background-color: #f4c542;
-  color: #101820;
-  font-weight: bold;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 30px;
-  margin: 8px 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.titulo-liga {
+  font-size: 1.8rem;
+  color: #fdd835;
+  text-shadow: 1px 1px 3px black;
+
+  span {
+    color: #ffffff;
+    font-weight: bold;
+  }
 }
 
-button:hover {
-  background-color: #ffd700;
+.botones-liga {
+  button {
+    min-width: 220px;
+    font-size: 1.1rem;
+  }
 }
 
-ul {
-  list-style: none;
-  padding: 0;
+.panel-dinamico {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 1.5rem;
 }
 
-li {
-  background-color: #1a2433;
-  margin: 8px 0;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #2f3b4e;
+@keyframes fadeInScale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
+.liga-dashboard {
+  color: white;
 
-@media (max-width: 600px) {
-  .contenedor-ligas {
-    padding: 12px;
+  .ranking-card {
+    background: #1a237e;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px #0006;
+    padding: 1.5rem;
   }
 
-  button {
-    width: 100%;
-    margin: 8px 0;
+  .grafico-card {
+    background: #283593;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px #0005;
+    padding: 2rem;
+  }
+
+  .miembros-grid {
+    .miembro-card {
+      background: #3949ab;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 250px;
+      box-shadow: 0 0 10px #0006;
+
+      .avatar {
+        font-size: 2rem;
+        background: #fff3;
+        padding: 0.6rem;
+        border-radius: 50%;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+.actividad-card {
+  background: linear-gradient(to bottom, #1a1f4a, #121530);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #fff;
+  box-shadow: 0 0 20px #0005;
+  margin-top: 2rem;
+
+  .actividad-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.6rem;
+      border-bottom: 1px solid #ffffff22;
+      font-size: 0.95rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      strong {
+        color: #ffd740;
+      }
+    }
   }
 }

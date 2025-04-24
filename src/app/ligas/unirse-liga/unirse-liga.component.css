@@ -1,11 +1,21 @@
-.unirse-liga-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 300px;
-}
+.unirse-panel {
+  background: linear-gradient(to bottom, #1e1e3f, #0e0f2c);
+  border-radius: 1rem;
+  color: #fff;
+  box-shadow: 0 0 20px #00000088;
 
-.error {
-  color: red;
-  font-weight: bold;
+  .titulo {
+    text-align: center;
+    font-size: 1.6rem;
+    color: #40c4ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .mensaje-error {
+    background: #e53935;
+    color: white;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+  }
 }

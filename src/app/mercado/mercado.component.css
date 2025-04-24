@@ -1,74 +1,73 @@
 .mercado-container {
-  width: 90%;
-  max-width: 1000px;
+  width: 95%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
-  text-align: center;
+  padding: 1.5rem 1rem;
 }
 
-.jugadores-mercado {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.jugador-card {
+.cardJugador {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 1.2rem;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  width: 100%;
-  max-width: 500px;
+  gap: 1rem;
+  transition: transform 0.3s;
 }
 
-.jugador-card img {
-  width: 64px;
-  height: 64px;
+.cardJugador:hover {
+  transform: translateY(-5px);
+}
+
+.fotoJugador {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 1rem;
+  border: 3px solid #3f51b5;
 }
 
-.jugador-card .info {
+.contenido {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  text-align: left;
 }
 
-.jugador-card .info h4 {
-  margin: 0;
-  font-size: 1.1rem;
+.nombreJugador {
+  margin: 0 0 0.25rem;
 }
 
-.jugador-card .info p {
-  margin: 2px 0;
+.posicion, .precio, .propietario {
   font-size: 0.9rem;
+  margin: 0.15rem 0;
 }
 
-.jugador-card button {
-  margin-top: 6px;
-  font-size: 0.85rem;
+.acciones button {
+  margin: 0.25rem 0.5rem 0 0;
 }
 
-/* Responsive para pantallas pequeñas */
 @media (max-width: 600px) {
-  .jugador-card {
+  .cardJugador {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .jugador-card img {
-    margin-right: 0;
-    margin-bottom: 0.5rem;
+  .contenido {
+    align-items: center;
   }
 
-  .jugador-card .info {
+  .acciones {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+  }
+
+  .acciones button {
+    width: 100%;
+    margin: 0.25rem 0;
   }
 }

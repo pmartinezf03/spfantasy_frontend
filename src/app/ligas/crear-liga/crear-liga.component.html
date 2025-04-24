@@ -1,13 +1,21 @@
-  <div class="crear-liga-form">
-    <h3>Crear Nueva Liga</h3>
+<div class="crear-liga-panel p-p-4">
+  <h2 class="titulo">🏗️ Crear Nueva Liga</h2>
 
-    <div *ngIf="error" class="error">{{ error }}</div>
-
-    <label>Nombre:</label>
-    <input type="text" [(ngModel)]="nombre" placeholder="Nombre de la liga" />
-
-    <label>Código de invitación:</label>
-    <input type="text" [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" />
-
-    <button (click)="crearLiga()">Crear</button>
+  <div *ngIf="error" class="mensaje-error p-mb-3">
+    ❌ {{ error }}
   </div>
+
+  <div class="p-fluid p-formgrid p-grid p-mb-3">
+    <div class="p-field p-col-12 p-md-6">
+      <label for="nombre">🏀 Nombre de la Liga</label>
+      <input id="nombre" type="text" pInputText [(ngModel)]="nombre" placeholder="Ej: Los Increíbles 🧠" />
+    </div>
+
+    <div class="p-field p-col-12 p-md-6">
+      <label for="codigo">🔐 Código de Invitación</label>
+      <input id="codigo" type="text" pInputText [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" />
+    </div>
+  </div>
+
+  <button pButton type="button" icon="pi pi-star" label="🎯 Crear Liga" class="p-button-success" (click)="crearLiga()"></button>
+</div>
