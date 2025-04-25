@@ -1,42 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { LoaderService } from '../../../shared/loader.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   mensaje: string = '';
   errorMessage: string = '';
   recaptchaResponse: string = '';
-  loading: boolean = false;
-  showModal: boolean = false;
-
-  // 👉 Esta variable permite activar o desactivar el captcha
   activarCaptcha: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
       recaptcha: [
         '',
-        this.activarCaptcha ? Validators.required : [] // ✅ Solo es obligatorio si está activo
+        this.activarCaptcha ? Validators.required : []
       ],
     });
   }
 
-  // ✅ Método que recibe la respuesta del reCAPTCHA
+  ngOnInit(): void {
+    this.loaderService.showBarraCarga();
+    setTimeout(() => {
+      this.loaderService.hideBarraCarga();
+    }, 1200); // Opcional, puedes ajustar
+  }
+
   resolved(captchaResponse: string | null): void {
-    if (!this.activarCaptcha) return; // ✅ Ignora si está desactivado
+    if (!this.activarCaptcha) return;
     this.recaptchaResponse = captchaResponse || '';
     this.loginForm.controls['recaptcha'].setValue(this.recaptchaResponse);
   }
@@ -47,31 +51,21 @@ export class LoginComponent {
       return;
     }
 
-    this.showModal = true;  // Muestra el modal con el spinner
-    this.loading = true;    // Muestra el spinner
+    this.loaderService.showSpinner(); // ✅ Usamos el spinner del LoaderService
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: (response) => {
-        console.log('Inicio de sesión exitoso:', response);
-        this.loading = false;
-        this.showModal = false;
-        this.mensaje = 'Inicio de sesión exitoso!';
-
-        // 🔄 Forzar carga del usuario completo con dinero y dineroPendiente
+      next: () => {
         this.authService.refreshUsuarioCompleto();
-
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        setTimeout(() => {
+          this.loaderService.hideSpinner(); // ✅ Ocultamos spinner tras carga
           this.router.navigate(['/']);
-        });
+        }, 1000); // Puedes ajustar el tiempo para que se vea
       },
-      error: (error) => {
-        console.error('Error al iniciar sesión:', error);
-        this.loading = false;
-        this.showModal = false;
+      error: () => {
+        this.loaderService.hideSpinner();
         this.errorMessage = '⚠ Credenciales incorrectas. Intenta de nuevo.';
         this.mensaje = 'Credenciales incorrectas';
       },
     });
   }
-
 }

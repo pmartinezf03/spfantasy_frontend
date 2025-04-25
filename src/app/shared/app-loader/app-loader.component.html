@@ -1,0 +1,16 @@
+<!-- 🔵 BARRA DE CARGA INICIAL -->
+<div class="barra-inicial" *ngIf="barraVisible">
+  <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="logo" />
+  <div class="barra-fondo">
+    <div class="barra-progreso" [style.width.%]="progreso"></div>
+  </div>
+</div>
+
+<!-- 🔄 SPINNER FLOTANTE PERSONALIZADO -->
+<div class="spinner-overlay" *ngIf="spinnerVisible">
+  <div class="spinner-box">
+    <img src="https://i.imgur.com/YLu7obR.png" alt="Cargando..." class="spinner-logo" />
+    <div class="custom-spinner"></div>
+    <p class="spinner-text">Procesando...</p>
+  </div>
+</div>

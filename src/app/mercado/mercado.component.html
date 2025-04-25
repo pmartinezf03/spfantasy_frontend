@@ -1,4 +1,9 @@
-<div class="mercado-container fadeIn animate__animated animate__fadeIn">
+
+
+<!-- ✅ CONTENIDO PRINCIPAL: solo se muestra cuando cargandoInicial es false -->
+<div *ngIf="!cargandoInicial" class="mercado-container fadeIn animate__animated animate__fadeIn">
+  <p-confirmDialog></p-confirmDialog>
+  <p-toast></p-toast>
 
   <!-- 🎯 TÍTULO -->
   <div class="text-center mb-4">
@@ -12,31 +17,43 @@
     <div class="col-12 md:col-8">
       <div class="flex flex-wrap justify-center gap-3">
         <div *ngFor="let jugador of jugadores" class="cardJugador animate__animated animate__fadeInUp">
-          <img [src]="jugador.fotoUrl" class="fotoJugador shadow-4" [alt]="obtenerNombreJugador(jugador)" />
-          
+          <img
+            [src]="jugador.fotoUrl"
+            class="fotoJugador shadow-4"
+            [alt]="obtenerNombreJugador(jugador)" />
+
           <div class="contenido">
-            <h4 class="nombreJugador text-xl font-bold text-primary">{{ obtenerNombreJugador(jugador) }}</h4>
+            <h4 class="nombreJugador text-xl font-bold text-primary">
+              {{ obtenerNombreJugador(jugador) }}
+            </h4>
             <p class="posicion">{{ jugador.posicion }}</p>
-            <p class="precio"><strong>💰</strong> {{ jugador.precioVenta | currency: 'EUR' }}</p>
-            <p class="propietario"><strong>👤</strong> {{ jugador.propietarioUsername || 'Libre' }}</p>
+            <p class="precio">
+              <strong>💰</strong> {{ jugador.precioVenta | currency : "EUR" }}
+            </p>
+            <p class="propietario">
+              <strong>👤</strong> {{ jugador.propietarioUsername || "Libre" }}
+            </p>
 
             <!-- ACCIONES -->
             <div class="acciones mt-2">
-              <button *ngIf="!jugador.propietarioId"
-                      class="p-button p-button-success animate__animated animate__pulse"
-                      (click)="comprarJugador(jugador)">
+              <button
+                *ngIf="!jugador.propietarioId"
+                class="p-button p-button-success animate__animated animate__pulse"
+                (click)="comprarJugador(jugador)">
                 Comprar
               </button>
 
-              <button *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
-                      class="p-button p-button-info animate__animated animate__pulse"
-                      (click)="abrirDialogoOferta(jugador)">
+              <button
+                *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
+                class="p-button p-button-info animate__animated animate__pulse"
+                (click)="abrirDialogoOferta(jugador)">
                 Hacer Oferta
               </button>
 
-              <button *ngIf="ofertasEnCurso[jugador.id]"
-                      class="p-button p-button-danger animate__animated animate__shakeX"
-                      (click)="cancelarOferta(jugador.id)">
+              <button
+                *ngIf="ofertasEnCurso[jugador.id]"
+                class="p-button p-button-danger animate__animated animate__shakeX"
+                (click)="cancelarOferta(jugador.id)">
                 Cancelar Oferta
               </button>
             </div>
@@ -57,9 +74,8 @@
 
     <!-- 🟨 COLUMNA DERECHA -->
     <div class="col-12 md:col-4">
-      <h3 class="text-2xl font-bold text-secondary mb-2 animate__animated animate__fadeInRight">📜 Historial de Transacciones</h3>
+
       <app-historial></app-historial>
     </div>
   </div>
-
 </div>

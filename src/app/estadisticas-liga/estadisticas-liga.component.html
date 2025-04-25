@@ -1,13 +1,24 @@
-<div class="estadisticas-liga">
-  <h2 class="titulo-liga">📊 Estadísticas de la Liga</h2>
+<div class="estadisticas-liga p-4">
+  <!-- 🏀 Encabezado -->
+  <div class="text-center mb-4">
+    <h2 class="text-2xl font-bold text-primary">📊 Estadísticas de la Liga</h2>
+    <p class="text-gray-600">
+      Compara el rendimiento y haz ofertas inteligentes
+    </p>
+  </div>
 
-  <!-- 🌐 Tabla PrimeNG solo en escritorio -->
-  <div class="tabla-escritorio">
-    <p-table [value]="jugadores" [scrollable]="true" scrollHeight="500px" responsiveLayout="scroll">
+  <!-- 📊 Tabla para escritorio -->
+  <div class="hidden md:block mb-5">
+    <p-table
+      [value]="jugadores"
+      [scrollable]="true"
+      scrollHeight="550px"
+      responsiveLayout="scroll"
+      styleClass="shadow-4"
+    >
       <ng-template pTemplate="header">
         <tr>
-          <th>Foto</th>
-          <th>Nombre</th>
+          <th>Jugador</th>
           <th>Posición</th>
           <th>Pts</th>
           <th>Min</th>
@@ -19,11 +30,17 @@
           <th>Acción</th>
         </tr>
       </ng-template>
-
       <ng-template pTemplate="body" let-jugador>
         <tr>
-          <td><img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" class="jugador-foto"></td>
-          <td>{{ jugador.nombre }}</td>
+          <td class="flex align-items-center gap-2">
+            <img
+              [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
+              class="rounded shadow"
+              width="38"
+              height="38"
+            />
+            <span class="font-medium">{{ jugador.nombre }}</span>
+          </td>
           <td>{{ jugador.posicion }}</td>
           <td>{{ jugador.pts }}</td>
           <td>{{ jugador.min }}</td>
@@ -32,84 +49,141 @@
           <td>{{ jugador.t3 }}</td>
           <td>{{ jugador.fp }}</td>
           <td>
-            <span *ngIf="jugador.propietarioUsername; else libre" class="propietario-tag">{{ jugador.propietarioUsername }}</span>
+            <ng-container
+              *ngIf="jugador.propietarioUsername !== 'Libre'; else libre"
+            >
+              <span class="text-primary font-semibold">{{
+                jugador.propietarioUsername
+              }}</span>
+            </ng-container>
             <ng-template #libre>
               <p-tag value="Libre" severity="success"></p-tag>
             </ng-template>
           </td>
           <td>
-            <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
-                    pButton type="button" icon="pi pi-dollar" label="Hacer Oferta"
-                    class="p-button-sm p-button-success"
-                    (click)="abrirDialogoOferta(jugador)">
-            </button>
-
-            <button *ngIf="ofertasEnCurso[jugador.id]"
-                    pButton type="button" icon="pi pi-times" label="Cancelar"
-                    class="p-button-sm p-button-danger"
-                    (click)="cancelarOferta(jugador.id)">
-            </button>
+            <button
+              *ngIf="
+                !ofertasEnCurso[jugador.id] &&
+                jugador.propietarioId &&
+                jugador.propietarioId !== usuarioId
+              "
+              pButton
+              icon="pi pi-dollar"
+              label="Ofertar"
+              class="p-button-sm p-button-success"
+              (click)="abrirDialogoOferta(jugador)"
+            ></button>
+            <button
+              *ngIf="ofertasEnCurso[jugador.id]"
+              pButton
+              icon="pi pi-times"
+              label="Cancelar"
+              class="p-button-sm p-button-danger"
+              (click)="cancelarOferta(jugador.id)"
+            ></button>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </div>
+  <!-- 🎯 Radar de Mejores Jugadores -->
+  <div class="mt-5">
+    <p-card class="shadow-3">
+      <ng-template pTemplate="header">
+        <h4 class="text-xl font-bold text-indigo-700 text-center">
+          📡 Comparativa de los 3 Mejores Jugadores
+        </h4>
+      </ng-template>
 
-  <!-- 📱 Fichas responsive estilo LaLiga Fantasy -->
-  <div class="fichas-jugadores">
-    <div *ngFor="let jugador of jugadores" class="ficha-jugador">
-      <div class="header-ficha">
-        <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}">
-        <div class="info-basica">
-          <div class="nombre">{{ jugador.nombre }}</div>
-          <div class="posicion">{{ jugador.posicion }}</div>
+      <ng-template pTemplate="content">
+        <div class="flex justify-content-center">
+          <p-chart
+            type="radar"
+            [data]="radarTopData"
+            [options]="radarTopOptions"
+            style="min-height: 380px; max-width: 680px"
+            class="w-full"
+          ></p-chart>
         </div>
-        <div class="puntos">{{ jugador.pts }} pts</div>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <!-- 📱 Fichas estilo Fantasy para móviles -->
+  <div class="md:hidden grid gap-3">
+    <div
+      *ngFor="let jugador of jugadores"
+      class="surface-card shadow-2 p-3 border-round animate__animated animate__fadeIn"
+    >
+      <div class="flex justify-content-between align-items-center">
+        <div class="flex gap-2 align-items-center">
+          <img
+            [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
+            class="rounded shadow"
+            width="42"
+            height="42"
+          />
+          <div>
+            <div class="font-bold">{{ jugador.nombre }}</div>
+            <div class="text-sm text-500">{{ jugador.posicion }}</div>
+          </div>
+        </div>
+        <p-tag
+          *ngIf="jugador.propietarioUsername !== 'Libre'"
+          [value]="jugador.propietarioUsername"
+          severity="info"
+        ></p-tag>
+        <p-tag
+          *ngIf="jugador.propietarioUsername === 'Libre'"
+          value="Libre"
+          severity="success"
+        ></p-tag>
       </div>
 
-      <div class="stats">
-        <div>Min: {{ jugador.min }}</div>
-        <div>TL: {{ jugador.tl }}</div>
-        <div>T2: {{ jugador.t2 }}</div>
-        <div>T3: {{ jugador.t3 }}</div>
-        <div>Fp: {{ jugador.fp }}</div>
+      <div class="grid text-sm text-600 mt-3">
+        <div class="col-4">Pts: {{ jugador.pts }}</div>
+        <div class="col-4">Min: {{ jugador.min }}</div>
+        <div class="col-4">Fp: {{ jugador.fp }}</div>
+        <div class="col-4">TL: {{ jugador.tl }}</div>
+        <div class="col-4">T2: {{ jugador.t2 }}</div>
+        <div class="col-4">T3: {{ jugador.t3 }}</div>
       </div>
 
-      <div class="propietario">
-        <ng-container *ngIf="jugador.propietarioUsername; else libreMovil">
-          👤 {{ jugador.propietarioUsername }}
-        </ng-container>
-        <ng-template #libreMovil>
-          <p-tag value="Libre" severity="success"></p-tag>
-        </ng-template>
-      </div>
-
-      <div class="acciones">
-        <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
-                pButton type="button" icon="pi pi-dollar" label="Ofertar"
-                class="p-button-sm p-button-success"
-                (click)="abrirDialogoOferta(jugador)">
-        </button>
-
-        <button *ngIf="ofertasEnCurso[jugador.id]"
-                pButton type="button" icon="pi pi-times" label="Cancelar"
-                class="p-button-sm p-button-danger"
-                (click)="cancelarOferta(jugador.id)">
-        </button>
+      <div class="flex justify-content-end mt-3 gap-2">
+        <button
+          *ngIf="
+            !ofertasEnCurso[jugador.id] &&
+            jugador.propietarioId &&
+            jugador.propietarioId !== usuarioId
+          "
+          pButton
+          icon="pi pi-dollar"
+          label="Ofertar"
+          class="p-button-sm p-button-success"
+          (click)="abrirDialogoOferta(jugador)"
+        ></button>
+        <button
+          *ngIf="ofertasEnCurso[jugador.id]"
+          pButton
+          icon="pi pi-times"
+          label="Cancelar"
+          class="p-button-sm p-button-danger"
+          (click)="cancelarOferta(jugador.id)"
+        ></button>
       </div>
     </div>
   </div>
 
-  <!-- 🪄 Diálogo de oferta -->
-<app-oferta-dialogo
-  [mostrarDialogo]="mostrarDialogo"
-  [jugadorSeleccionado]="jugadorSeleccionado"
-  [usuarioId]="usuarioId"
-  [usuarioDinero]="usuarioDinero"
-  [totalOfertasEnCurso]="totalOfertasEnCurso"
-  [modo]="'oferta'"
-  (cerrar)="cerrarDialogoOferta()"
-  (enviarOferta)="enviarOferta($event)">
-</app-oferta-dialogo>
-
+  <!-- 📥 Diálogo -->
+  <app-oferta-dialogo
+    [mostrarDialogo]="mostrarDialogo"
+    [jugadorSeleccionado]="jugadorSeleccionado"
+    [usuarioId]="usuarioId"
+    [usuarioDinero]="usuarioDinero"
+    [totalOfertasEnCurso]="totalOfertasEnCurso"
+    [modo]="'oferta'"
+    (cerrar)="cerrarDialogoOferta()"
+    (enviarOferta)="enviarOferta($event)"
+  >
+  </app-oferta-dialogo>
 </div>

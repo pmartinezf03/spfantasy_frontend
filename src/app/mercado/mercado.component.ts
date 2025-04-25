@@ -6,6 +6,8 @@ import { Jugador } from '../models/jugador.model';
 import { AuthService } from '../services/auth.service';
 import { Oferta } from '../models/oferta.model';
 import { WebSocketService } from '../services/websocket.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { LoaderService } from '../shared/loader.service';
 
 @Component({
   selector: 'app-mercado',
@@ -22,46 +24,79 @@ export class MercadoComponent implements OnInit {
   mostrarDialogo: boolean = false;
   mensajeError: string = '';
 
+  cargandoInicial: boolean = true;  // Para ocultar todo al inicio
+  saltarseSpinnerWs: boolean = false;
+  primeraCargaRealizada: boolean = false;
+
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
     private estadisticasService: EstadisticasService,
     private ofertasService: OfertasService,
     private cdr: ChangeDetectorRef,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private loaderService: LoaderService
   ) { }
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    if (!user || !user.id) return;
+    if (!user || !user.id) {
+      console.warn('❌ Usuario no encontrado, cancelando carga.');
+      this.loaderService.hideBarraCarga();
+      this.cargandoInicial = false; // <- asegúrate de esto también
+      return;
+    }
+  
+    const ligaId = this.authService.getLigaId();
+    if (!ligaId) {
+      console.warn('❌ Liga no encontrada, cancelando carga.');
+      this.loaderService.hideBarraCarga();
+      this.cargandoInicial = false; // <- igual aquí
+      return;
+    }
+  
+    this.loaderService.showBarraCarga();
   
     this.usuarioId = user.id;
     this.username = user.username;
   
+    console.log('[ngOnInit] Usuario y liga válidos. Comienza carga...');
     this.suscribirseAlDinero();
   
-    // ✅ Esperamos a que se haya refrescado correctamente el usuario y la liga
-    this.authService.usuarioCompleto$.subscribe(usuario => {
-      const ligaId = this.authService.getLigaId();
-  
-      if (ligaId) {
-        this.cargarJugadores(ligaId);         // ✅ Jugadores actualizados
-        this.cargarOfertasUsuario();          // ✅ Ofertas pendientes
-        this.webSocketService.subscribeToOfertas(this.usuarioId); // ✅ WebSocket
-  
-        // 🧠 Escuchar ofertas en tiempo real una vez esté el socket listo
-        this.webSocketService.getOfertas().subscribe((oferta: Oferta) => {
-          const jugadorId = oferta.jugador?.id;
-          const ofertaId = oferta.id;
-  
-          if (typeof jugadorId === 'number' && typeof ofertaId === 'number') {
-            this.ofertasEnCurso[jugadorId] = ofertaId;
-            this.cargarJugadores(ligaId);
-            this.authService.refreshUsuarioCompleto();
-            this.cdr.detectChanges();
+    Promise.all([
+      this.estadisticasService.getJugadoresDeLiga(ligaId).toPromise().then(j => j ?? []),
+      this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).toPromise().then(o => o ?? [])
+    ])
+      .then(([jugadores, ofertas]) => {
+        this.jugadores = jugadores;
+        this.ofertasEnCurso = {};
+        ofertas.forEach(oferta => {
+          if (oferta.jugador?.id && oferta.id && oferta.estado === 'PENDIENTE') {
+            this.ofertasEnCurso[oferta.jugador.id] = oferta.id;
           }
         });
-      }
+  
+        this.primeraCargaRealizada = true;
+        this.cdr.detectChanges();
+  
+        this.loaderService.hideBarraCarga();
+        this.cargandoInicial = false; // ✅ IMPORTANTE PARA MOSTRAR LA VISTA
+  
+        console.log('[ngOnInit] Datos iniciales cargados. Vista mostrada.');
+        this.suscribirseAWebSocket();
+      })
+      .catch(err => {
+        console.error('❌ Error al cargar datos iniciales:', err);
+        this.loaderService.hideBarraCarga();
+        this.cargandoInicial = false; // ✅ mostrar aunque haya error
+      });
+  
+    this.authService.usuarioCompleto$.subscribe(usuario => {
+      console.log('[usuarioCompleto$] Usuario actualizado. Dinero actualizado:', usuario?.dinero);
+      this.usuarioDinero = usuario?.dinero ?? 0;
+      this.cdr.detectChanges();
     });
   }
   
@@ -76,7 +111,8 @@ export class MercadoComponent implements OnInit {
   }
 
 
-  cargarJugadores(ligaId: number): void {
+  cargarJugadores(ligaId: number, mostrarSpinner: boolean = false): void {
+
     this.estadisticasService.getJugadoresDeLiga(ligaId).subscribe({
       next: (jugadores: Jugador[]) => {
         this.jugadores = jugadores;
@@ -87,6 +123,8 @@ export class MercadoComponent implements OnInit {
       }
     });
   }
+
+
 
 
   cargarOfertasUsuario(): void {
@@ -109,29 +147,75 @@ export class MercadoComponent implements OnInit {
 
   }
 
+
   comprarJugador(jugador: Jugador): void {
+    console.log('[comprarJugador] Iniciando compra de:', jugador.nombre);
+
     const token = this.authService.getToken();
     const ligaId = this.authService.getLigaId();
     if (!token || !ligaId || !jugador?.id) return;
 
-    const jugadorBaseId = jugador.id;
+    this.confirmationService.confirm({
+      message: `¿Estás seguro de que deseas comprar a <strong>${this.obtenerNombreJugador(jugador)}</strong> por <strong>${jugador.precioVenta.toLocaleString('es-ES')} €</strong>?`,
+      header: 'Confirmar compra',
+      icon: 'pi pi-shopping-cart',
+      acceptLabel: 'Sí, comprar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.loaderService.showSpinner();
 
-    this.usuarioService.comprarJugadorDeLiga(this.username, jugadorBaseId, ligaId, token).subscribe({
-      next: (response) => {
-        if (response?.status === 'success') {
-          this.usuarioDinero = response.dinero;
-          this.authService.refreshUsuarioCompleto();
-          this.cargarJugadores(ligaId);
-        } else {
-          alert(response.mensaje || '⚠ Error al comprar el jugador.');
-        }
-      },
-      error: (err) => {
-        console.error('❌ Error al comprar jugador de liga:', err);
-        alert('⚠ Error al comprar el jugador.');
+        console.log('[comprarJugador] Compra confirmada');
+
+        this.usuarioService.comprarJugadorDeLiga(this.username, jugador.id, ligaId, token).subscribe({
+          next: (response) => {
+            this.loaderService.hideSpinner();
+
+
+            if (response?.status === 'success') {
+              console.log('[comprarJugador] Compra exitosa. Actualizando estado del usuario...');
+              this.usuarioDinero = response.dinero;
+              this.saltarseSpinnerWs = true;
+
+              this.authService.refreshUsuarioCompleto();
+              this.cargarJugadores(ligaId, false);
+
+              setTimeout(() => {
+                this.saltarseSpinnerWs = false;
+                console.log('[comprarJugador] Fin de protección de spinner WebSocket');
+              }, 2000);
+
+              this.messageService.add({
+                severity: 'success',
+                summary: '¡Compra exitosa!',
+                detail: `🎉 Enhorabuena, compraste a ${this.obtenerNombreJugador(jugador)}. Ya está disponible en tu plantilla.`,
+                life: 6000
+              });
+            } else {
+              console.warn('[comprarJugador] Compra fallida:', response?.mensaje);
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'Compra fallida',
+                detail: response.mensaje || '⚠ No se pudo completar la compra.'
+              });
+            }
+          },
+          error: (err) => {
+            console.error('❌ Error al comprar jugador de liga:', err);
+            this.loaderService.hideSpinner();
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: '⚠ Ocurrió un error al intentar comprar el jugador.'
+            });
+          }
+        });
       }
     });
   }
+
+
+
+
 
 
 
@@ -178,6 +262,7 @@ export class MercadoComponent implements OnInit {
     // ✅ Mostramos botón de "Cancelar oferta" al instante
     this.ofertasEnCurso[jugadorId] = -1;
     this.cdr.detectChanges();
+    this.loaderService.showSpinner();
 
     // 🔁 Enviamos la oferta real al backend
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
@@ -188,6 +273,8 @@ export class MercadoComponent implements OnInit {
             if (oferta?.id) {
               this.ofertasEnCurso[jugadorId] = oferta.id;
               this.cdr.detectChanges();
+              this.loaderService.hideSpinner();
+
             }
           },
           error: (err) => {
@@ -200,14 +287,15 @@ export class MercadoComponent implements OnInit {
         });
 
         this.authService.refreshUsuarioCompleto();
-        this.cargarJugadores(ligaId);
+        this.cargarJugadores(ligaId, false);
       },
       error: err => {
         console.error('❌ Error al enviar oferta:', err);
-        // Volvemos a mostrar botón de oferta si falló
         delete this.ofertasEnCurso[jugadorId];
         this.cdr.detectChanges();
+        this.loaderService.hideSpinner(); // 👈 AÑADE ESTO
       }
+      
     });
   }
 
@@ -220,18 +308,19 @@ export class MercadoComponent implements OnInit {
     // ✅ Ocultar botón al instante
     delete this.ofertasEnCurso[jugadorId];
     this.cdr.detectChanges(); // 🔄 Refrescar vista para que aparezca "Hacer Oferta"
+    this.loaderService.showSpinner();
 
     // 🔁 Confirmar cancelación en el backend
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
-      // Opcional: volver a verificar con el backend si quieres seguridad
-      // this.cargarOfertasUsuario();
-      this.authService.refreshUsuarioCompleto(); // Actualizar dinero tras cancelación
+      this.authService.refreshUsuarioCompleto(); // ✅
+      this.loaderService.hideSpinner();          // 👈 AÑADE ESTO AQUÍ
     }, error => {
       console.error('❌ Error al cancelar oferta:', error);
-      // En caso de error, volvemos a marcarla como activa
       this.ofertasEnCurso[jugadorId] = ofertaId;
       this.cdr.detectChanges();
+      this.loaderService.hideSpinner(); // ✅ ya está aquí
     });
+    
   }
 
 
@@ -242,4 +331,33 @@ export class MercadoComponent implements OnInit {
   obtenerJugadorBase(jugador: any): Jugador {
     return jugador?.jugadorBase ?? jugador;
   }
+
+
+  private suscribirseAWebSocket(): void {
+    console.log('[WebSocket] Suscribiéndose a ofertas en vivo...');
+
+    this.webSocketService.subscribeToOfertas(this.usuarioId);
+
+    this.webSocketService.getOfertas().subscribe((oferta: Oferta) => {
+      console.log('[WebSocket] Nueva oferta detectada:', oferta);
+
+      const jugadorId = oferta.jugador?.id;
+      const ofertaId = oferta.id;
+      if (jugadorId && ofertaId) {
+        this.ofertasEnCurso[jugadorId] = ofertaId;
+
+        const ligaId = this.authService.getLigaId();
+        if (!ligaId) return;
+
+        const mostrarSpinner = !this.saltarseSpinnerWs;
+        console.log('[WebSocket] Recargando jugadores. mostrarSpinner:', mostrarSpinner);
+
+        this.cargarJugadores(ligaId, mostrarSpinner);
+
+        this.authService.refreshUsuarioCompleto();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
 }

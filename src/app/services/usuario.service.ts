@@ -52,12 +52,12 @@ export class UsuarioService {
     if (!username || !jugadorLigaId || !ligaId || !token) {
       return throwError(() => new Error('❌ Faltan datos para comprar jugador desde la liga.'));
     }
-  
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-  
+
     const url = `${this.apiUrl}/${username}/comprar-liga?jugadorLigaId=${jugadorLigaId}&ligaId=${ligaId}`;
     return this.http.post<any>(url, {}, { headers }).pipe(
       tap(response => console.log('✅ Compra desde liga realizada:', response)),
@@ -67,7 +67,7 @@ export class UsuarioService {
       })
     );
   }
-  
+
 
 
   guardarPlantilla(username: string, plantillaData: { titulares: number[], suplentes: number[] }, token: string): Observable<any> {
@@ -98,7 +98,7 @@ export class UsuarioService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-  
+
     return this.http.post<any>(
       `${this.apiUrl}/${username}/vender-jugador-liga/${jugadorLigaId}`,
       {},
@@ -108,7 +108,7 @@ export class UsuarioService {
       }
     );
   }
-  
+
 
   obtenerUsuarioCompleto(usuarioId: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${usuarioId}`);
@@ -127,5 +127,12 @@ export class UsuarioService {
       })
     );
   }
+
+
+  obtenerPuntosSemanales(username: string, token: string): Observable<{ [jugadorId: number]: string }> {
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get<{ [jugadorId: number]: string }>(`${environment.apiUrl}/api/usuarios/${username}/puntos-semana`, { headers });
+  }
+
 
 }

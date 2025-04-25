@@ -50,3 +50,33 @@
 :host ::ng-deep .p-button {
   font-size: 0.85rem;
 }
+
+@media (max-width: 768px) {
+  .p-table {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .fichas-jugadores {
+    display: none !important;
+  }
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: #1e293b;
+  color: #f8fafc;
+  font-size: 0.9rem;
+  text-align: center;
+}
+/* Radar y gráficos */
+:host ::ng-deep .p-chart {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+:host ::ng-deep .p-chart canvas {
+  background-color: #f9fafb !important;
+  border-radius: 8px;
+}

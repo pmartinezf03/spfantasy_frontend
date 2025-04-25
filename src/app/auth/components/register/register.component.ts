@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { LoaderService } from '../../../shared/loader.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   captchaToken: string | null = null;
   captchaInvalido: boolean = false;
@@ -16,7 +17,11 @@ export class RegisterComponent {
   loading: boolean = false;
   showModal: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private loaderService: LoaderService
+  ) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
@@ -29,6 +34,13 @@ export class RegisterComponent {
         ]
       ]
     });
+  }
+
+  ngOnInit(): void {
+    this.loaderService.showBarraCarga();
+    setTimeout(() => {
+      this.loaderService.hideBarraCarga();
+    }, 1200);
   }
 
   onCaptchaResolved(token: string) {
@@ -58,18 +70,14 @@ export class RegisterComponent {
 
     this.authService.register(datos).subscribe({
       next: response => {
-        console.log('✅ Usuario registrado correctamente:', response);
         this.loading = false;
         this.showModal = false;
         this.mensaje = '🎉 Registro exitoso. Ahora puedes iniciar sesión.';
-
-        // 🔁 Limpia cualquier rastro previo por seguridad
         this.authService.logout();
         this.registerForm.reset();
         this.captchaToken = null;
       },
       error: error => {
-        console.error('❌ Error al registrar usuario:', error);
         this.loading = false;
         this.showModal = false;
         this.mensaje = '⚠ Error en el registro. Inténtalo nuevamente.';

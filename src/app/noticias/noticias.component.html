@@ -1,23 +1,25 @@
 <div class="noticias-container">
 
-  <!-- Carrusel de titulares destacados -->
-  <p-carousel *ngIf="noticias.length > 0"
-              [value]="noticias"
-              [numVisible]="1"
-              [numScroll]="1"
-              [circular]="true"
-              [autoplayInterval]="6000">
-    <ng-template pTemplate="item" let-noticia>
-      <p-card class="carousel-card" [header]="noticia.title">
-        <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
-        <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
-        <a pButton label="Leer más" icon="pi pi-external-link" class="p-button-text p-button-sm"
-           [href]="noticia.url" target="_blank"></a>
-      </p-card>
-    </ng-template>
-  </p-carousel>
+  <h2 style="text-align:center; font-size: 2rem; margin-bottom: 1rem;">🗞️ Titulares destacados</h2>
+  <section>
+    <p-carousel *ngIf="noticias.length > 0"
+                [value]="noticias"
+                [numVisible]="1"
+                [numScroll]="1"
+                [circular]="true"
+                [autoplayInterval]="6000">
+      <ng-template pTemplate="item" let-noticia>
+        <p-card class="carousel-card" [header]="noticia.title">
+          <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
+          <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
+          <a pButton label="Leer más" icon="pi pi-external-link" class="p-button-text p-button-sm"
+             [href]="noticia.url" target="_blank"></a>
+        </p-card>
+      </ng-template>
+    </p-carousel>
+  </section>
 
-  <!-- Grid de noticias -->
+  <h2 style="text-align:center; font-size: 2rem; margin-top: 2rem;">📰 Más Noticias</h2>
   <div class="noticias-grid">
     <p-card *ngFor="let noticia of noticias" class="noticia-card-grid" [header]="noticia.title">
       <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="grid-img" />

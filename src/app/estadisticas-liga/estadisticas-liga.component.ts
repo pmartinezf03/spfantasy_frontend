@@ -5,6 +5,7 @@ import { UsuarioService } from '../../app/services/usuario.service';
 import { Jugador } from '../../app/models/jugador.model';
 import { Oferta } from '../../app/models/oferta.model';
 import { AuthService } from '../services/auth.service';
+import { ChartData, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-estadisticas-liga',
@@ -36,31 +37,33 @@ export class EstadisticasLigaComponent implements OnInit {
       console.error("❌ No se encontró el usuario autenticado.");
       return;
     }
-  
+
     this.usuarioId = user.id;
-  
+
     // Dinero y ofertas se cargan una vez
     this.obtenerDineroUsuario();
     this.cargarOfertasUsuario();
-  
+
     // 🔄 Suscribirse a cambios de ligaId para actualizar estadísticas dinámicamente
     this.authService.getLigaObservable().subscribe(ligaId => {
       if (ligaId) {
         this.cargarEstadisticas();
+        this.construirRadarJugadoresTop(); // ✅ Generar radar dinámico
+
         this.cdr.detectChanges(); // fuerza actualización visual
       }
     });
   }
-  
+
 
   cargarEstadisticas(): void {
     const ligaId = this.authService.getLigaId();
-  
+
     if (!ligaId) {
       console.warn("⚠ No se pudo cargar estadísticas: no hay ligaId.");
       return;
     }
-  
+
     this.estadisticasService.getJugadoresDeLiga(ligaId).subscribe({
       next: (data: Jugador[]) => {
         this.jugadores = data.map((jugador: Jugador) => ({
@@ -76,7 +79,7 @@ export class EstadisticasLigaComponent implements OnInit {
       }
     });
   }
-  
+
 
   obtenerDineroUsuario(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
@@ -199,6 +202,55 @@ export class EstadisticasLigaComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
+
+  radarTopData: ChartData<'radar'> = { labels: [], datasets: [] };
+  radarTopOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { color: '#0f172a' } },
+      title: { display: true, text: '📡 Comparativa Top Jugadores', color: '#2563eb' }
+    },
+    scales: {
+      r: {
+        pointLabels: { color: '#1f2937' },
+        ticks: { color: '#6b7280' },
+        grid: { color: 'rgba(0,0,0,0.1)' }
+      }
+    }
+  };
+
+  construirRadarJugadoresTop(): void {
+    const topJugadores = this.jugadores
+      .filter(j => j.fp && j.min && j.t3) // asegurarse de que haya datos
+      .sort((a, b) => (b.fp ?? 0) - (a.fp ?? 0))
+      .slice(0, 3); // top 3 por FP
+
+    this.radarTopData = {
+      labels: ['TL', 'T2', 'T3', 'Min', 'FP'],
+      datasets: topJugadores.map(j => ({
+        label: j.nombre,
+        data: [
+          j.tl ?? 0,
+          j.t2 ?? 0,
+          j.t3 ?? 0,
+          j.min ?? 0,
+          j.fp ?? 0
+        ],
+        fill: true,
+        borderColor: this.getColor(j.nombre),
+        backgroundColor: this.getColor(j.nombre, 0.2),
+        pointBackgroundColor: this.getColor(j.nombre)
+      }))
+    };
+  }
+  getColor(nombre: string, alpha: number = 1): string {
+    const colores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    const index = nombre.length % colores.length;
+    const color = colores[index];
+    return alpha === 1 ? color : color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+  }
+
 
 
 }

@@ -66,6 +66,10 @@ import { NgChartsModule } from 'ng2-charts';
 import { InicioComponent } from './inicio/inicio.component';
 import { ChartModule } from 'primeng/chart';
 import { ChipModule } from 'primeng/chip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { AppLoaderComponent } from './shared/app-loader/app-loader.component';
+
 
 
 @NgModule({
@@ -98,8 +102,9 @@ import { ChipModule } from 'primeng/chip';
     FiltroContactosPipe,
     HistorialComponent,
     InicioComponent,
-    
-    
+    AppLoaderComponent,
+
+
 
   ],
   imports: [
@@ -134,11 +139,14 @@ import { ChipModule } from 'primeng/chip';
     NgChartsModule,
     ChartModule,
     ChipModule,
+    ConfirmDialogModule,
   ],
   providers: [
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     PrimeNGConfig,
+    ConfirmationService,
+    MessageService
 
   ],
   bootstrap: [AppComponent]

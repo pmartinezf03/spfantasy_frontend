@@ -1,0 +1,102 @@
+/* 🔵 Pantalla de carga inicial con barra y logo */
+.barra-inicial {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 90px;
+  height: auto;
+  margin-bottom: 20px;
+  animation: pulse 1.2s infinite;
+}
+
+.barra-fondo {
+  width: 60%;
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.barra-progreso {
+  height: 100%;
+  background-color: #3b82f6;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+
+/* 🔄 Spinner flotante superpuesto */
+.spinner-overlay {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.spinner {
+  width: 70px;
+  height: 70px;
+}
+
+/* Caja visual para spinner con logo */
+.spinner-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  animation: bounceIn 0.4s ease;
+}
+
+.spinner-text {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.spinner-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite;
+}
+
+
+/* 🔁 Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
