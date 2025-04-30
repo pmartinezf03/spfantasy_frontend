@@ -1,39 +1,41 @@
-<div class="alineacion-container">
-  <p-panel header="🏀 Tu Alineación de Jugadores" [toggleable]="false" [collapsed]="false">
-    <p class="descripcion mb-3">
-      Gestiona tu equipo: selecciona tu quinteto titular y reserva en el banquillo. ¡Optimiza para ganar puntos como un verdadero GM! 🧠🔥
-    </p>
+<!-- =============== CANCHA HORIZONTAL (1 línea) =============== -->
+<div class="cancha-zona fila-horizontal">
+  <ng-container *ngFor="let posicion of ['base', 'alero', 'alaPivot', 'escolta', 'pivot']">
+    <div class="slot-cancha" [id]="'drop-' + posicion"
+      cdkDropList
+      [cdkDropListData]="jugadoresPorPosicion[posicion]"
+      [cdkDropListConnectedTo]="idDropLists"
+      (cdkDropListDropped)="onDropEnSlot($event, posicion)">
 
-    <p-divider align="center">
-      <span class="p-tag p-tag-rounded p-tag-primary">Titulares</span>
-    </p-divider>
+      <div class="slot-label">{{ posicion | titlecase }}</div>
 
-    <div class="jugadores-grid">
-      <app-jugador-card
-        *ngFor="let jugador of jugadores"
-        [jugador]="jugador"
-        [tipo]="'titular'"
-        (mover)="moverJugador(jugador, 'banquillo')"
-        (mostrarInfo)="mostrarInformacion($event)"
-        (vender)="venderJugador($event)">
-      </app-jugador-card>
+      <div *ngFor="let jugador of jugadoresPorPosicion[posicion]" class="jugador-slot" cdkDrag [cdkDragData]="jugador">
+        <app-jugador-card
+          [jugador]="jugador"
+          [tipo]="'titular'"
+          (mostrarInfo)="mostrarInformacion($event)"
+          (vender)="venderJugador($event)">
+        </app-jugador-card>
+      </div>
     </div>
-
-    <p-divider align="center">
-      <span class="p-tag p-tag-rounded p-tag-warning">Banquillo</span>
-    </p-divider>
-
-    <div class="jugadores-grid">
-      <app-jugador-card
-        *ngFor="let jugador of banquillo"
-        [jugador]="jugador"
-        [tipo]="'banquillo'"
-        (mover)="moverJugador(jugador, 'titular')"
-        (mostrarInfo)="mostrarInformacion($event)"
-        (vender)="venderJugador($event)">
-      </app-jugador-card>
-    </div>
-  </p-panel>
+  </ng-container>
 </div>
 
+<!-- =============== BANQUILLO HORIZONTAL SCROLLABLE =============== -->
+<div class="banquillo" id="banquillo"
+  cdkDropList
+  [cdkDropListData]="banquillo"
+  [cdkDropListConnectedTo]="idDropLists"
+  (cdkDropListDropped)="onDropBanquillo($event)">
 
+  <div class="slot-label">Banquillo</div>
+
+  <div *ngFor="let jugador of banquillo" class="jugador-slot" cdkDrag [cdkDragData]="jugador">
+    <app-jugador-card
+      [jugador]="jugador"
+      [tipo]="'banquillo'"
+      (mostrarInfo)="mostrarInformacion($event)"
+      (vender)="venderJugador($event)">
+    </app-jugador-card>
+  </div>
+</div>

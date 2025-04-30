@@ -108,3 +108,59 @@
     padding: 5px;
   }
 }
+.jugador-card {
+  width: 140px;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.jugador-card:hover {
+  transform: scale(1.05);
+}
+
+.jugador-overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  padding: 0.3rem;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.jugador-menu-overlay {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+  border-radius: 8px;
+  width: 160px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.jugador-menu button {
+  width: 100%;
+  background-color: #4f46e5;
+  color: white;
+  padding: 6px;
+  margin: 4px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.jugador-menu button.cerrar-menu {
+  background-color: #ef4444;
+}

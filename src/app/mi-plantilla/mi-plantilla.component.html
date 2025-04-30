@@ -44,8 +44,8 @@
         ></app-tarjeta-informacion>
 
         <app-alineacion
-          [jugadores]="jugadoresTitulares"
-          [banquillo]="jugadoresBanquillo"
+        [jugadoresPorPosicion]="jugadoresPorPosicion"
+        [banquillo]="jugadoresBanquillo"
           (cambiarJugador)="moverJugador($event)"
           (vender)="venderJugador($event)"
           (mostrarInfo)="mostrarInformacion($event)"

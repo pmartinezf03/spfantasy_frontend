@@ -31,8 +31,8 @@ export class MiPlantillaComponent implements OnInit {
 
   graficoRendimiento: ChartData<'line'> = { labels: [], datasets: [] };
   graficoPorcentajes: ChartData<'radar'> = { labels: [], datasets: [] };
-
   graficoRendimientoOptions: ChartOptions<'line'> = {};
+  jugadoresPorPosicion: { [posicion: string]: Jugador[] } = {};
 
 
   constructor(
@@ -49,7 +49,7 @@ export class MiPlantillaComponent implements OnInit {
     // 🧩 loader start
     this.loaderService.showBarraCarga();
     // 🧩 loader end
-  
+
     this.fechaActual = new Date().toLocaleString('es-ES', {
       weekday: 'short',
       day: 'numeric',
@@ -57,19 +57,19 @@ export class MiPlantillaComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
-  
+
     const user = this.authService.getUser();
     if (!user || !user.username) {
       console.error('⚠ No hay usuario logueado o falta el username.');
       this.loaderService.hideBarraCarga(); // 🧩 importante ocultar en error también
       return;
     }
-  
+
     this.username = user.username;
-  
+
     this.authService.getLigaObservable().subscribe(ligaId => {
       if (ligaId && user.id) {
-        this.obtenerDatosUsuario(); // ✅ SOLO ESTA
+        this.obtenerDatosUsuario();
         this.cargarDinero();
         this.cdr.detectChanges();
       } else {
@@ -77,42 +77,62 @@ export class MiPlantillaComponent implements OnInit {
       }
     });
   }
-  
-
 
 
   obtenerDatosUsuario() {
     const token = this.authService.getToken();
     if (!token) {
-      this.loaderService.hideBarraCarga(); // 🧩
+      this.loaderService.hideBarraCarga();
       return;
     }
-  
+
     this.usuarioService.obtenerUsuario(this.username, token).subscribe(usuario => {
       if (usuario) {
         this.usuarioDinero = usuario.dinero;
+
+        // 1. Cargar titulares
         this.jugadoresTitulares = (usuario.titulares || []).map((j: any) => ({
           ...j,
           idLiga: j.id,
           esTitular: true
         }));
-  
+
+        // 2. Cargar suplentes
         this.jugadoresBanquillo = (usuario.suplentes || []).map((j: any) => ({
           ...j,
           idLiga: j.id,
           esTitular: false
         }));
-  
+
+        // 3. Agrupar titulares por posición
+        this.jugadoresPorPosicion = {
+          base: [],
+          escolta: [],
+          alero: [],
+          alaPivot: [],
+          pivot: []
+        };
+
+        this.jugadoresTitulares.forEach(j => {
+          const key = this.normalizarPosicion(j.posicion); // genera 'pivot', 'alapivot', etc.
+          if (this.jugadoresPorPosicion[key]) {
+            this.jugadoresPorPosicion[key].push(j);
+          } else {
+            console.warn(`⚠ Posición no mapeada: "${j.posicion}" → "${key}"`);
+          }
+
+        });
+
+
+
         console.log("✅ Plantilla recuperada correctamente:");
         this.generarGraficosTitulares();
-  
-        // 🧩 Ocultamos barra de carga cuando termina todo lo necesario
         this.loaderService.hideBarraCarga();
       } else {
-        this.loaderService.hideBarraCarga(); // 🧩
+        this.loaderService.hideBarraCarga();
       }
     });
-  
+
     this.usuarioService.obtenerPuntosSemanales(this.username, token).subscribe({
       next: puntos => {
         this.puntosSemanales = puntos;
@@ -123,7 +143,7 @@ export class MiPlantillaComponent implements OnInit {
       }
     });
   }
-  
+
 
   cargarDinero() {
     const token = this.authService.getToken();
@@ -205,24 +225,13 @@ export class MiPlantillaComponent implements OnInit {
   }
 
   moverJugador(evento: { jugador: Jugador; tipo: string }) {
-    if (evento.tipo === 'titular') {
-      if (this.jugadoresTitulares.length >= 5) {
-        alert('❌ Solo puedes tener 5 titulares.');
-        return;
-      }
-      evento.jugador.esTitular = true;
-      this.jugadoresTitulares.push(evento.jugador);
-      this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== evento.jugador.id);
-    } else {
-      if (this.jugadoresBanquillo.length >= 5) {
-        alert('❌ Solo puedes tener 5 jugadores en el banquillo.');
-        return;
-      }
-      evento.jugador.esTitular = false;
-      this.jugadoresBanquillo.push(evento.jugador);
-      this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== evento.jugador.id);
-    }
+    evento.jugador.esTitular = evento.tipo === 'titular';
+
+    // 🔁 Siempre actualiza el array de titulares a partir del mapa por posición
+    this.jugadoresTitulares = Object.values(this.jugadoresPorPosicion).flat();
   }
+
+
 
 
   venderJugador(jugador: Jugador): void {
@@ -235,27 +244,27 @@ export class MiPlantillaComponent implements OnInit {
       accept: () => {
         const token = this.authService.getToken();
         if (!token || !this.username) return;
-  
+
         if (!jugador.idLiga) {
           console.error("❌ El jugador no tiene un idLiga definido:", jugador);
           alert("❌ Error: Este jugador no tiene un ID válido en la liga.");
           return;
         }
-  
+
         this.loaderService.showSpinner(); // 🧩 mostrar spinner
-  
+
         this.usuarioService.venderJugadorDeLiga(this.username, jugador.idLiga, token)
           .subscribe({
             next: (response) => {
               console.log("✅ [FRONT] Respuesta correcta del backend:", response);
-  
+
               this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
               this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
               this.authService.refreshUsuarioCompleto();
               this.cargarJugadores();
-  
+
               this.loaderService.hideSpinner(); // 🧩 ocultar spinner
-  
+
               // ✅ Notificación de éxito
               this.messageService.add({
                 severity: 'success',
@@ -267,7 +276,7 @@ export class MiPlantillaComponent implements OnInit {
             error: (err) => {
               console.error("❌ [FRONT] Error al vender jugador:", err);
               this.loaderService.hideSpinner();
-  
+
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error en la venta',
@@ -279,8 +288,8 @@ export class MiPlantillaComponent implements OnInit {
       }
     });
   }
-  
-  
+
+
 
 
 
@@ -302,28 +311,28 @@ export class MiPlantillaComponent implements OnInit {
       accept: () => {
         const token = this.authService.getToken();
         const ligaId = this.authService.getLigaId();
-  
+
         if (!token || !this.username || !ligaId) {
           console.error("⚠ Faltan datos para comprar jugador.");
           return;
         }
-  
+
         if (this.usuarioDinero < jugador.precioVenta) {
           alert('❌ No tienes suficiente dinero para comprar este jugador.');
           return;
         }
-  
+
         // 🧩 Spinner superpuesto
         this.loaderService.showSpinner();
-  
+
         this.usuarioService.comprarJugadorDeLiga(this.username, jugador.id, ligaId, token).subscribe({
           next: () => {
             console.log('✅ Jugador comprado correctamente');
             this.authService.refreshUsuarioCompleto();
             this.cargarJugadores();
-  
+
             this.loaderService.hideSpinner(); // 🧩 ocultar spinner
-  
+
             // ✅ Mensaje de éxito
             alert(`✅ Has comprado a ${jugador.nombre}. Ya está disponible en tu plantilla.`);
           },
@@ -336,8 +345,8 @@ export class MiPlantillaComponent implements OnInit {
       }
     });
   }
-  
-  
+
+
 
 
 
@@ -348,18 +357,26 @@ export class MiPlantillaComponent implements OnInit {
       return;
     }
 
-    if (this.jugadoresTitulares.length !== 5) {
-      alert("❌ Debes seleccionar exactamente 5 jugadores titulares antes de guardar.");
+    // 🔄 1. Obtener titulares desde las posiciones
+    const titulares: Jugador[] = Object.values(this.jugadoresPorPosicion).flat();
+
+    // ❗ Validar exactamente 5 titulares
+    const idsTitulares = new Set(titulares.map(j => j.idLiga ?? j.id));
+    if (idsTitulares.size !== 5) {
+      alert("❌ Debes tener exactamente 5 jugadores titulares únicos.");
       return;
     }
 
-    // Asegurar que todos tienen ID de JugadorLiga
-    const titularesIds = this.jugadoresTitulares.map(j => j.idLiga ?? j.id); // preferimos idLiga si existe
-    const suplentesIds = this.jugadoresBanquillo.map(j => j.idLiga ?? j.id);
+    // 🔄 2. Calcular suplentes automáticamente
+    const idsTitularesSet = new Set(titulares.map(j => j.id));
+    const todosJugadores = [...titulares, ...this.jugadoresBanquillo];
 
+    const suplentes: Jugador[] = todosJugadores.filter(j => !idsTitularesSet.has(j.id));
+
+    // ✅ 3. Guardar estructura limpia
     const plantillaData = {
-      titulares: titularesIds,
-      suplentes: suplentesIds
+      titulares: titulares.map(j => j.idLiga ?? j.id),
+      suplentes: suplentes.map(j => j.idLiga ?? j.id)
     };
 
     console.log("📤 Enviando plantilla a guardar:", plantillaData);
@@ -368,7 +385,7 @@ export class MiPlantillaComponent implements OnInit {
       next: (res) => {
         if (res.status === "success") {
           alert("✅ Plantilla guardada correctamente.");
-          this.authService.refreshUsuarioCompleto(); // opcional
+          this.authService.refreshUsuarioCompleto();
           this.cargarEstadisticas();
         } else {
           alert("❌ No se pudo guardar la plantilla.");
@@ -380,6 +397,7 @@ export class MiPlantillaComponent implements OnInit {
       }
     });
   }
+
 
 
   mostrarInformacion(jugador: Jugador): void {
@@ -583,6 +601,15 @@ export class MiPlantillaComponent implements OnInit {
     };
   }
 
+
+  private normalizarPosicion(pos: string): string {
+    return pos
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // quita tildes
+      .toLowerCase()
+      .replace(/\s|-/g, '') // elimina espacios y guiones
+      .replace('alapivot', 'alaPivot'); // deja esta como camelCase
+  }
 
 
 
