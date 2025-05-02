@@ -5,7 +5,7 @@ import { UsuarioService } from '../../app/services/usuario.service';
 import { Jugador } from '../../app/models/jugador.model';
 import { Oferta } from '../../app/models/oferta.model';
 import { AuthService } from '../services/auth.service';
-import { ChartData, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions, Chart } from 'chart.js';
 
 @Component({
   selector: 'app-estadisticas-liga',
@@ -22,6 +22,23 @@ export class EstadisticasLigaComponent implements OnInit {
   mostrarDialogo: boolean = false;
   jugadorSeleccionado?: Jugador;
   mensajeError: string = '';
+
+  radarTopData: ChartData<'radar'> = { labels: [], datasets: [] };
+  radarTopOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { color: '#0f172a' } },
+      title: { display: true, text: '📡 Comparativa Top Jugadores', color: '#2563eb' }
+    },
+    scales: {
+      r: {
+        pointLabels: { color: '#1f2937' },
+        ticks: { color: '#6b7280' },
+        grid: { color: 'rgba(0,0,0,0.1)' }
+      }
+    }
+  };
 
   constructor(
     private estadisticasService: EstadisticasService,
@@ -55,7 +72,6 @@ export class EstadisticasLigaComponent implements OnInit {
     });
   }
 
-
   cargarEstadisticas(): void {
     const ligaId = this.authService.getLigaId();
 
@@ -79,7 +95,6 @@ export class EstadisticasLigaComponent implements OnInit {
       }
     });
   }
-
 
   obtenerDineroUsuario(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
@@ -113,7 +128,6 @@ export class EstadisticasLigaComponent implements OnInit {
       console.error("❌ Error al obtener ofertas en curso", error);
     });
   }
-
 
   abrirDialogoOferta(jugador: Jugador): void {
     this.jugadorSeleccionado = jugador;
@@ -183,8 +197,6 @@ export class EstadisticasLigaComponent implements OnInit {
     });
   }
 
-
-
   cancelarOferta(jugadorId: number): void {
     const ofertaId = this.ofertasEnCurso[jugadorId] ?? 0;
     if (!ofertaId) return;
@@ -203,23 +215,7 @@ export class EstadisticasLigaComponent implements OnInit {
     });
   }
 
-  radarTopData: ChartData<'radar'> = { labels: [], datasets: [] };
-  radarTopOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top', labels: { color: '#0f172a' } },
-      title: { display: true, text: '📡 Comparativa Top Jugadores', color: '#2563eb' }
-    },
-    scales: {
-      r: {
-        pointLabels: { color: '#1f2937' },
-        ticks: { color: '#6b7280' },
-        grid: { color: 'rgba(0,0,0,0.1)' }
-      }
-    }
-  };
-
+  // Método para construir el gráfico radar con los 3 mejores jugadores
   construirRadarJugadoresTop(): void {
     const topJugadores = this.jugadores
       .filter(j => j.fp && j.min && j.t3) // asegurarse de que haya datos
@@ -243,14 +239,23 @@ export class EstadisticasLigaComponent implements OnInit {
         pointBackgroundColor: this.getColor(j.nombre)
       }))
     };
+
+    this.createRadarChart();
   }
+
+  createRadarChart() {
+    const ctx = document.getElementById('radarChart') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'radar',
+      data: this.radarTopData,
+      options: this.radarTopOptions
+    });
+  }
+
   getColor(nombre: string, alpha: number = 1): string {
     const colores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
     const index = nombre.length % colores.length;
     const color = colores[index];
     return alpha === 1 ? color : color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
   }
-
-
-
 }

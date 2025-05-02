@@ -1,26 +1,27 @@
-<div class="gestionar-panel p-p-4" *ngIf="esCreador()">
-  <h2 class="titulo">🛠️ Panel de Gestión: {{ liga.nombre }}</h2>
+<div class="gestionar-panel bg-gradient-to-t from-black-800 to-black-700 text-white rounded-lg shadow-xl p-6">
+  <h2 class="titulo text-2xl text-center text-yellow-400 mb-6">🛠️ Panel de Gestión: {{ liga.nombre }}</h2>
 
-  <div class="p-fluid p-formgrid p-grid p-mt-3">
+  <div class="p-fluid p-formgrid p-grid p-mt-4">
     <div class="p-field p-col-12 p-md-6">
       <label>🔑 Nueva Contraseña (opcional)</label>
-      <input type="text" pInputText [(ngModel)]="nuevaContrasena" />
+      <input type="text" pInputText [(ngModel)]="nuevaContrasena" class="p-inputtext p-component rounded-lg" />
     </div>
 
     <div class="p-field p-col-12 p-md-6">
       <label>👥 Máx. Participantes</label>
-      <input type="number" pInputText [(ngModel)]="nuevoMaxParticipantes" min="2" max="30" />
+      <input type="number" pInputText [(ngModel)]="nuevoMaxParticipantes" min="2" max="30" class="p-inputtext p-component rounded-lg" />
     </div>
   </div>
 
-  <button pButton icon="pi pi-save" label="💾 Guardar Cambios" class="p-button-success p-mt-3" (click)="guardarCambios()"></button>
+  <button pButton icon="pi pi-save" label="💾 Guardar Cambios" class="p-button-success p-button-lg mt-4 w-52 hover:bg-green-600 transition-all duration-300" (click)="guardarCambios()"></button>
 
-  <h3 class="p-mt-4 text-white">Miembros actuales:</h3>
+  <h3 class="text-white mt-6">Miembros actuales:</h3>
 
-  <div class="p-d-flex p-flex-wrap p-gap-2 p-mt-2">
-    <div class="miembro-card p-p-2" *ngFor="let miembro of miembros">
+  <div class="flex flex-wrap gap-6 mt-4">
+    <!-- Aquí usamos *ngFor para recorrer la lista de miembros -->
+    <div *ngFor="let miembro of miembros" class="miembro-card bg-black-200 text-white p-4 flex justify-between items-center w-56 rounded-lg shadow-lg">
       <span>{{ miembro.username }}</span>
-      <button *ngIf="miembro.id !== usuarioId" pButton icon="pi pi-times" class="p-button-sm p-button-danger" (click)="expulsarUsuario(miembro.id)"></button>
+      <button *ngIf="miembro.id !== usuarioId" pButton icon="pi pi-times" class="p-button-sm p-button-danger rounded-full" (click)="expulsarUsuario(miembro.id)"></button>
     </div>
   </div>
 </div>

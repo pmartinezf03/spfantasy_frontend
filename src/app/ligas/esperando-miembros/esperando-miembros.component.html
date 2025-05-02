@@ -1,18 +1,18 @@
-<div class="esperando-wrapper p-p-4">
-  <h2 class="text-center text-yellow-400">⏳ Esperando a más jugadores...</h2>
+<div class="esperando-wrapper bg-gradient-to-b from-[#1e1e3f] to-[#0e0f2c] rounded-xl text-white p-6">
+  <h2 class="text-center text-yellow-400 text-2xl mb-4">⏳ Esperando a más jugadores...</h2>
 
-  <p class="text-center p-mt-2 text-white">
+  <p class="text-center mt-2 text-white">
     ¡Prepara tu equipo, el juego comenzará pronto! 🎮🔥
   </p>
 
-  <div class="p-d-flex p-flex-wrap p-jc-center p-mt-4 miembros-lista">
-    <div *ngFor="let m of miembros" class="miembro-card p-p-3">
-      <i class="pi pi-user"></i>
-      <span>{{ m.username }}</span>
+  <div class="flex flex-wrap justify-center mt-6 miembros-lista">
+    <div *ngFor="let m of miembros" class="miembro-card bg-[#3949ab] text-white p-4 rounded-xl shadow-lg flex items-center gap-4 w-64 mb-4">
+      <i class="pi pi-user text-2xl"></i>
+      <span class="ml-2">{{ m.username }}</span>
     </div>
   </div>
 
-  <div *ngIf="esCreador()" class="p-mt-4 p-d-flex p-jc-center">
-    <button pButton icon="pi pi-play" label="🚀 Iniciar Liga" class="p-button-warning" (click)="iniciarLiga()"></button>
+  <div *ngIf="esCreador()" class="mt-6 flex justify-center">
+    <button pButton icon="pi pi-play" label="🚀 Iniciar Liga" class="p-button-warning py-2 px-6 rounded-lg" (click)="iniciarLiga()"></button>
   </div>
 </div>

@@ -1,66 +1,68 @@
-
-
-<!-- ✅ CONTENIDO PRINCIPAL: solo se muestra cuando cargandoInicial es false -->
-<div *ngIf="!cargandoInicial" class="mercado-container fadeIn animate__animated animate__fadeIn">
+<div *ngIf="!cargandoInicial" class="w-full max-w-screen-2xl mx-auto p-6 animate__animated animate__fadeIn">
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>
 
-  <!-- 🎯 TÍTULO -->
-  <div class="text-center mb-4">
-    <h2 class="text-3xl font-bold text-primary animate__animated animate__fadeInDown">
+  <!-- 🛒 Título -->
+  <div class="text-center mb-10">
+    <h2 class="text-4xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]">
       🛒 Mercado de Jugadores
     </h2>
   </div>
 
-  <div class="grid">
-    <!-- 🟦 COLUMNA IZQUIERDA -->
-    <div class="col-12 md:col-8">
-      <div class="flex flex-wrap justify-center gap-3">
-        <div *ngFor="let jugador of jugadores" class="cardJugador animate__animated animate__fadeInUp">
-          <img
-            [src]="jugador.fotoUrl"
-            class="fotoJugador shadow-4"
-            [alt]="obtenerNombreJugador(jugador)" />
+  <!-- 🟩 Distribución en 2 columnas (mitad y mitad) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-screen-2xl mx-auto">
+    <!-- 🎮 Zona izquierda - Mercado -->
+    <div class="overflow-y-auto h-full">
+      <div *ngFor="let jugador of jugadores" class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] rounded-xl p-5 shadow-xl flex flex-col md:flex-row items-center gap-5 border border-fantasyBlue hover:scale-[1.02] transition-transform duration-200">
+        <!-- Foto -->
+        <img [src]="jugador.fotoUrl"
+             class="w-20 h-20 rounded-full border-4 border-fantasyGold object-contain shadow-inner"
+             [alt]="obtenerNombreJugador(jugador)" />
 
-          <div class="contenido">
-            <h4 class="nombreJugador text-xl font-bold text-primary">
-              {{ obtenerNombreJugador(jugador) }}
-            </h4>
-            <p class="posicion">{{ jugador.posicion }}</p>
-            <p class="precio">
-              <strong>💰</strong> {{ jugador.precioVenta | currency : "EUR" }}
-            </p>
-            <p class="propietario">
-              <strong>👤</strong> {{ jugador.propietarioUsername || "Libre" }}
-            </p>
+        <!-- Info -->
+        <div class="flex-1 text-white text-center md:text-left">
+          <h4 class="text-2xl font-bold text-fantasyGold mb-1">{{ obtenerNombreJugador(jugador) }}</h4>
+          <p class="text-sm text-fantasyBlue mb-1">{{ jugador.posicion }}</p>
+          <p class="text-sm text-green-400 mb-1">💰 {{ jugador.precioVenta | currency : 'EUR' }}</p>
+          <p class="text-sm text-gray-400 mb-2">👤 {{ jugador.propietarioUsername || 'Libre' }}</p>
 
-            <!-- ACCIONES -->
-            <div class="acciones mt-2">
-              <button
-                *ngIf="!jugador.propietarioId"
-                class="p-button p-button-success animate__animated animate__pulse"
-                (click)="comprarJugador(jugador)">
-                Comprar
-              </button>
+          <!-- Botones personalizados -->
+          <div class="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
 
-              <button
-                *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
-                class="p-button p-button-info animate__animated animate__pulse"
-                (click)="abrirDialogoOferta(jugador)">
-                Hacer Oferta
-              </button>
+            <!-- Comprar -->
+            <button
+              *ngIf="!jugador.propietarioId"
+              pButton
+              label="Comprar"
+              icon="pi pi-shopping-cart"
+              class="border-none bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-green-400 transition-all"
+              (click)="comprarJugador(jugador)">
+            </button>
 
-              <button
-                *ngIf="ofertasEnCurso[jugador.id]"
-                class="p-button p-button-danger animate__animated animate__shakeX"
-                (click)="cancelarOferta(jugador.id)">
-                Cancelar Oferta
-              </button>
-            </div>
+            <!-- Hacer Oferta -->
+            <button
+              *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
+              pButton
+              label="Hacer Oferta"
+              icon="pi pi-dollar"
+              class="border-none bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-blue-400 transition-all"
+              (click)="abrirDialogoOferta(jugador)">
+            </button>
+
+            <!-- Cancelar Oferta -->
+            <button
+              *ngIf="ofertasEnCurso[jugador.id]"
+              pButton
+              label="Cancelar Oferta"
+              icon="pi pi-times"
+              class="border-none bg-gradient-to-br from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-red-400 transition-all"
+              (click)="cancelarOferta(jugador.id)">
+            </button>
           </div>
         </div>
       </div>
 
+      <!-- Diálogo de oferta -->
       <app-oferta-dialogo
         [mostrarDialogo]="mostrarDialogo"
         [jugadorSeleccionado]="obtenerJugadorBase(jugadorSeleccionado)"
@@ -72,9 +74,8 @@
       </app-oferta-dialogo>
     </div>
 
-    <!-- 🟨 COLUMNA DERECHA -->
-    <div class="col-12 md:col-4">
-
+    <!-- 📜 Historial lateral -->
+    <div class="overflow-y-auto h-full">
       <app-historial></app-historial>
     </div>
   </div>

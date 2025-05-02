@@ -1,6 +1,5 @@
-// inicio.component.ts COMPLETO Y CORREGIDO
 import { Component, OnInit } from '@angular/core';
-import { ChartData, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions, ChartType } from 'chart.js';  // Importa ChartType
 import { AuthService } from '../services/auth.service';
 import { NoticiasService } from '../services/noticias.service';
 import { EstadisticasService } from '../services/estadisticas.service';
@@ -95,6 +94,12 @@ export class InicioComponent implements OnInit {
     options: ChartOptions
   }[] = [];
 
+  // Modal state
+  isModalOpen: boolean = false;
+  selectedChartData: any = null;
+  selectedChartType: ChartType = 'bar';  // Definir el tipo correcto
+  selectedChartOptions: any = null;
+
   constructor(
     private authService: AuthService,
     private estadisticasService: EstadisticasService,
@@ -115,6 +120,7 @@ export class InicioComponent implements OnInit {
       }
     });
   }
+  
 
   cargarDatos(ligaId: number, usuarioId: number): void {
     this.estadisticasService.getRanking(ligaId).subscribe(data => this.ranking = data.slice(0, 5));
@@ -235,5 +241,20 @@ export class InicioComponent implements OnInit {
         { titulo: '🎯 Puntos Fantasy', data: this.chartPuntos, label: 'Puntos FP', tipo: 'bar', options: this.chartOptions }
       ];
     });
+  }
+
+  // Modal open/close
+  openModal(chartData: any, chartType: ChartType, chartOptions: any) {
+    this.selectedChartData = chartData;
+    this.selectedChartType = chartType;
+    this.selectedChartOptions = chartOptions;
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.selectedChartData = null;
+    this.selectedChartType = 'bar'; // Default chart type
+    this.selectedChartOptions = null;
   }
 }

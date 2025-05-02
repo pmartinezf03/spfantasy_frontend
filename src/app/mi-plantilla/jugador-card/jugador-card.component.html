@@ -1,17 +1,27 @@
-<div class="jugador-card" (click)="toggleMenu($event)" [ngStyle]="{'background-image': 'url(' + jugador.fotoUrl + ')'}">
-  <div class="jugador-overlay">
-    <div class="nombre">{{ jugador.nombre }}</div>
-  </div>
-
-  <!-- Menú flotante -->
-<!-- ✅ Menú flotante limpio -->
-<div class="jugador-menu-overlay" *ngIf="menuVisible">
-  <div class="jugador-menu">
-    <h3>{{ jugador.nombre }}</h3>
-    <button (click)="verInformacion($event)">📌 Ver Información</button>
-    <button (click)="venderJugador($event)">💸 Vender Jugador</button>
-    <button class="cerrar-menu" (click)="toggleMenu($event)">❌ Cerrar</button>
+<div class="jugador-card relative w-64 h-96 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105" 
+  [ngStyle]="{'background-image': 'url(' + jugador.fotoUrl + ')'}" (click)="abrirMenu()">
+  
+  <!-- Overlay con fondo oscuro y texto -->
+  <div class="jugador-overlay absolute bottom-0 w-full p-3 bg-gradient-to-t from-black to-transparent text-white text-center font-semibold rounded-b-xl">
+    <span class="text-lg">{{ jugador.nombre }}</span>
+    <button class="boton-menu absolute right-2 top-2 p-2 rounded-full bg-white/80 shadow-md hover:bg-white transition-all" 
+            (click)="abrirMenu(); $event.stopPropagation()">⋮</button>
   </div>
 </div>
 
-</div>
+<!-- Diálogo del menú con opciones -->
+<p-dialog [(visible)]="menuVisible" [modal]="true" [closable]="false" [style]="{ width: '300px' }" 
+          [baseZIndex]="10000" [draggable]="false" [dismissableMask]="true">
+  
+  <ng-template pTemplate="header">
+    <h3 class="text-center text-xl text-yellow-500">Opciones para {{ jugador.nombre }}</h3>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="flex flex-col gap-3">
+      <button pButton label="📌 Ver Información" (click)="verInformacion($event)" class="p-button-info w-full rounded-md p-2 shadow-md hover:bg-blue-700 transition-all"></button>
+      <button pButton label="💸 Vender Jugador" (click)="venderJugador($event)" class="p-button-danger w-full rounded-md p-2 shadow-md hover:bg-red-700 transition-all"></button>
+      <button pButton label="❌ Cerrar" (click)="cerrarMenu()" class="p-button-secondary w-full rounded-md p-2 shadow-md hover:bg-gray-700 transition-all"></button>
+    </div>
+  </ng-template>
+</p-dialog>

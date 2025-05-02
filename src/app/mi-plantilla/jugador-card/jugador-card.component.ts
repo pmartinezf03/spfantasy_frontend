@@ -16,29 +16,30 @@ export class JugadorCardComponent {
 
   menuVisible: boolean = false;
 
-  toggleMenu(event: Event): void {
+  abrirMenu(): void {
+    this.menuVisible = true;
+  }
+
+  cerrarMenu(): void {
+    this.menuVisible = false;
+  }
+
+  verInformacion(event: Event): void {
     event.stopPropagation();
-    this.menuVisible = !this.menuVisible;
+    this.mostrarInfo.emit(this.jugador);
+    this.cerrarMenu();
+  }
+
+  venderJugador(event: Event): void {
+    event.stopPropagation();
+    this.vender.emit(this.jugador);
+    this.cerrarMenu();
   }
 
   moverJugador(event: Event): void {
     event.stopPropagation();
     const nuevoTipo = this.tipo === 'titular' ? 'banquillo' : 'titular';
     this.mover.emit({ jugador: this.jugador, tipo: nuevoTipo });
-    this.menuVisible = false;
-  }
-
-
-  verInformacion(event: Event): void {
-    event.stopPropagation();
-    this.mostrarInfo.emit(this.jugador);
-    this.menuVisible = false;
-  }
-
-  venderJugador(event: Event): void {
-    event.stopPropagation();
-    console.log("📤 Emitiendo evento de venta desde JugadorCardComponent:", this.jugador);
-    this.vender.emit(this.jugador);
-    this.menuVisible = false;
+    this.cerrarMenu();
   }
 }

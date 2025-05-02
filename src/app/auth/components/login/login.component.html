@@ -1,37 +1,45 @@
-<div class="auth-container">
-  <div class="background-image"></div>
+<div class="relative min-h-screen flex items-center justify-center font-futuristic overflow-hidden px-4">
+  <!-- Fondo animado desenfocado -->
+  <div
+  class="absolute inset-0 -z-10 bg-cover bg-center blur-sm opacity-40"
+  style="background-image: url('assets/inicio.gif');">
 
-  <div class="auth-box">
-    <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" height="100" style="margin-bottom: 1rem;" />
+</div>
 
-    <h2>Iniciar Sesión</h2>
 
-    <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
-      <div class="form-group">
-        <label>Nombre de usuario:</label>
-        <input type="text" formControlName="username" />
+  <!-- Caja de login -->
+  <div class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl px-8 py-10 space-y-6 animate-fade-in">
+    <div class="text-center">
+      <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-20 mx-auto mb-4" />
+      <h2 class="text-2xl text-fantasyDark font-bold">Iniciar Sesión</h2>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()" class="space-y-4">
+      <div>
+        <label class="block text-gray-700 font-semibold mb-1">Usuario</label>
+        <input type="text" formControlName="username" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
       </div>
 
-      <div class="form-group">
-        <label>Contraseña:</label>
-        <input type="password" formControlName="password" />
+      <div>
+        <label class="block text-gray-700 font-semibold mb-1">Contraseña</label>
+        <input type="password" formControlName="password" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
       </div>
 
-      <button
-        type="submit"
-        class="btn"
-        [disabled]="loginForm.invalid || (activarCaptcha && !recaptchaResponse)">
-        Ingresar
+      <button type="submit" [disabled]="loginForm.invalid || (activarCaptcha && !recaptchaResponse)"
+        class="w-full bg-fantasyRed hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition">
+        🚀 Ingresar
       </button>
 
-      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      <p *ngIf="errorMessage" class="text-sm text-red-600 font-semibold mt-2 text-center">
+        {{ errorMessage }}
+      </p>
 
-      <p class="auth-footer">
+      <p class="text-center text-sm mt-4 text-gray-600">
         ¿No tienes cuenta?
-        <a routerLink="/auth/register">Regístrate</a>
+        <a routerLink="/auth/register" class="text-fantasyBlue hover:underline font-bold">Regístrate</a>
       </p>
     </form>
 
-    <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
+    <p *ngIf="mensaje" class="text-green-600 text-center font-semibold mt-4">{{ mensaje }}</p>
   </div>
 </div>

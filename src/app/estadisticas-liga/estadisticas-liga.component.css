@@ -1,82 +1,28 @@
-.estadisticas-liga {
-  max-width: 1200px;
-  margin: auto;
-  padding: 2rem 1rem;
-  font-family: 'Segoe UI', sans-serif;
+/* Especificamos el fondo y los colores para asegurar una visibilidad adecuada */
+table {
+  background-color: #1f2937;
 }
 
-.titulo-liga {
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #2c3e50;
+thead {
+  background-color: #0f172a;
 }
 
-/* Imágenes redondas */
-.jugador-foto {
-  width: 48px;
-  height: 48px;
-  border-radius: 6px;
+td, th {
+  color: #ffffff !important;
+  padding: 0.75rem;
+}
+
+/* Estilo para la imagen */
+img {
   object-fit: cover;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  border-radius: 50%;
+  width: 56px; /* Tamaño estándar para todas las fotos */
+  height: 56px;
 }
 
-/* Propietario etiqueta */
-.propietario-tag {
-  font-weight: bold;
-  color: #2c3e50;
-  background-color: #ecf0f1;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: inline-block;
-  font-size: 0.85rem;
-}
-
-/* Estética para PrimeNG table */
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background: #34495e;
-  color: white;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-:host ::ng-deep .p-button {
-  font-size: 0.85rem;
-}
-
-@media (max-width: 768px) {
-  .p-table {
-    display: none !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .fichas-jugadores {
-    display: none !important;
-  }
-}
-
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background: #1e293b;
-  color: #f8fafc;
-  font-size: 0.9rem;
-  text-align: center;
-}
-/* Radar y gráficos */
-:host ::ng-deep .p-chart {
-  background: white;
+/* Estilos adicionales para el radar */
+.p-chart {
+  background-color: #0f172a !important;
   border-radius: 8px;
-  padding: 1rem;
-}
-
-:host ::ng-deep .p-chart canvas {
-  background-color: #f9fafb !important;
-  border-radius: 8px;
+  padding: 16px;
 }

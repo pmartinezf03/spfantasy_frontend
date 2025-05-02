@@ -1,49 +1,63 @@
-<div class="historial-wrapper animate__animated animate__fadeInUp surface-card shadow-3 border-round p-3">
-  <h3 class="text-2xl font-bold text-primary mb-3 text-center">📜 Historial de Transacciones</h3>
+<div class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] text-white rounded-xl shadow-2xl p-6 h-[600px] overflow-y-auto">
+  <h3 class="text-3xl font-extrabold text-fantasyGold text-center mb-6 drop-shadow-[0_2px_8px_rgba(255,215,0,0.8)]">
+    📜 Historial de Transacciones
+  </h3>
 
   <!-- 🔍 Filtro -->
-  <div class="flex justify-content-center mb-4">
-    <span class="p-input-icon-left w-full sm:w-8 md:w-6">
-      <i class="pi pi-search"></i>
+  <div class="flex justify-center mb-6">
+    <span class="relative w-full max-w-md">
+      <i class="pi pi-search absolute top-1/2 left-3 -translate-y-1/2 text-white/70"></i>
       <input pInputText type="text" placeholder="Buscar jugador..."
              [(ngModel)]="filtroNombre"
-             (input)="filtrar()" class="w-full p-inputtext-lg" />
+             (input)="filtrar()"
+             class="w-full bg-white/10 text-white px-10 py-3 rounded-lg border border-fantasyBlue placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-fantasyGold" />
     </span>
   </div>
 
-  <!-- 🧾 Tabla con estilo pro -->
-  <p-table [value]="historialFiltrado" responsiveLayout="scroll" class="p-datatable-gridlines p-datatable-striped p-datatable-sm">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Jugador</th>
-        <th>Comprador</th>
-        <th>Vendedor</th>
-        <th>💰 Precio</th>
-        <th>🕒 Fecha</th>
-      </tr>
-    </ng-template>
+  <!-- 🧾 Tabla con estilo y scroll interno -->
+  <div class="rounded-xl border border-fantasyBlue shadow-inner">
+    <p-table [value]="historialFiltrado"
+             responsiveLayout="scroll"
+             class="p-datatable-sm p-datatable-gridlines text-white">
+             
+      <ng-template pTemplate="header">
+        <tr class="bg-gradient-to-r from-[#0f172a] to-[#1f2937] text-fantasyGold text-sm uppercase tracking-wide">
+          <th>Jugador</th>
+          <th>Comprador</th>
+          <th>Vendedor</th>
+          <th>💰 Precio</th>
+          <th>🕒 Fecha</th>
+        </tr>
+      </ng-template>
 
-    <ng-template pTemplate="body" let-rowData>
-      <tr>
-        <td class="flex align-items-center gap-2">
-          <img [src]="rowData.fotoUrl || 'assets/sin-foto.png'" class="border-circle shadow-2" width="32" height="32" />
-          <span class="text-sm font-bold">{{ rowData.nombreJugador }}</span>
-        </td>
-        <td>
-          <p-chip *ngIf="rowData.compradorUsername" [label]="rowData.compradorUsername" class="bg-green-100 text-green-800" />
-          <span *ngIf="!rowData.compradorUsername">—</span>
-        </td>
-        <td>
-          <p-chip *ngIf="rowData.vendedorUsername" [label]="rowData.vendedorUsername" class="bg-orange-100 text-orange-800" />
-          <span *ngIf="!rowData.vendedorUsername">Mercado libre</span>
-        </td>
-        <td>
-          <span class="font-bold text-blue-700">{{ rowData.precio | currency:'EUR' }}</span>
-        </td>
-        <td>
-          <span class="text-500 text-sm">{{ rowData.fecha | date:'short' }}</span>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <ng-template pTemplate="body" let-rowData>
+        <tr class="hover:bg-white/5 transition duration-150 ease-in-out text-sm">
+          <td class="flex items-center gap-2 py-3">
+            <img [src]="rowData.fotoUrl || 'assets/sin-foto.png'"
+                 class="w-8 h-8 rounded-full border-2 border-fantasyGold shadow-md" />
+            <span class="font-semibold text-white">{{ rowData.nombreJugador }}</span>
+          </td>
+          <td>
+            <p-chip *ngIf="rowData.compradorUsername"
+                    [label]="rowData.compradorUsername"
+                    class="bg-green-500/20 text-green-300 font-medium px-2 py-1 rounded" />
+            <span *ngIf="!rowData.compradorUsername">—</span>
+          </td>
+          <td>
+            <p-chip *ngIf="rowData.vendedorUsername"
+                    [label]="rowData.vendedorUsername"
+                    class="bg-pink-500/20 text-pink-300 font-medium px-2 py-1 rounded" />
+            <span *ngIf="!rowData.vendedorUsername" class="italic text-gray-400">Mercado libre</span>
+          </td>
+          <td>
+            <span class="font-bold text-blue-400">{{ rowData.precio | currency:'EUR' }}</span>
+          </td>
+          <td>
+            <span class="text-sm text-gray-400">{{ rowData.fecha | date:'short' }}</span>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
 </div>

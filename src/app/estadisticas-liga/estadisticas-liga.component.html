@@ -1,175 +1,131 @@
-<div class="estadisticas-liga p-4">
+<div class="estadisticas-liga p-6">
   <!-- 🏀 Encabezado -->
-  <div class="text-center mb-4">
-    <h2 class="text-2xl font-bold text-primary">📊 Estadísticas de la Liga</h2>
-    <p class="text-gray-600">
-      Compara el rendimiento y haz ofertas inteligentes
-    </p>
+  <div class="text-center mb-6">
+    <h2 class="text-3xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]">
+      📊 Estadísticas de la Liga
+    </h2>
+    <p class="text-gray-300">Compara el rendimiento y haz ofertas inteligentes</p>
   </div>
 
   <!-- 📊 Tabla para escritorio -->
-  <div class="hidden md:block mb-5">
-    <p-table
-      [value]="jugadores"
-      [scrollable]="true"
-      scrollHeight="550px"
-      responsiveLayout="scroll"
-      styleClass="shadow-4"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Jugador</th>
-          <th>Posición</th>
-          <th>Pts</th>
-          <th>Min</th>
-          <th>TL</th>
-          <th>T2</th>
-          <th>T3</th>
-          <th>Fp</th>
-          <th>Propietario</th>
-          <th>Acción</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-jugador>
-        <tr>
-          <td class="flex align-items-center gap-2">
-            <img
-              [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
-              class="rounded shadow"
-              width="38"
-              height="38"
-            />
-            <span class="font-medium">{{ jugador.nombre }}</span>
-          </td>
-          <td>{{ jugador.posicion }}</td>
-          <td>{{ jugador.pts }}</td>
-          <td>{{ jugador.min }}</td>
-          <td>{{ jugador.tl }}</td>
-          <td>{{ jugador.t2 }}</td>
-          <td>{{ jugador.t3 }}</td>
-          <td>{{ jugador.fp }}</td>
-          <td>
-            <ng-container
-              *ngIf="jugador.propietarioUsername !== 'Libre'; else libre"
-            >
-              <span class="text-primary font-semibold">{{
-                jugador.propietarioUsername
-              }}</span>
-            </ng-container>
-            <ng-template #libre>
-              <p-tag value="Libre" severity="success"></p-tag>
-            </ng-template>
-          </td>
-          <td>
-            <button
-              *ngIf="
-                !ofertasEnCurso[jugador.id] &&
-                jugador.propietarioId &&
-                jugador.propietarioId !== usuarioId
-              "
-              pButton
-              icon="pi pi-dollar"
-              label="Ofertar"
-              class="p-button-sm p-button-success"
-              (click)="abrirDialogoOferta(jugador)"
-            ></button>
-            <button
-              *ngIf="ofertasEnCurso[jugador.id]"
-              pButton
-              icon="pi pi-times"
-              label="Cancelar"
-              class="p-button-sm p-button-danger"
-              (click)="cancelarOferta(jugador.id)"
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="hidden md:block mb-5 overflow-x-auto">
+    <div class="bg-[#1f2937] rounded-xl p-5 shadow-xl">
+      <table class="min-w-full text-left text-sm text-gray-300">
+        <thead class="bg-gradient-to-r from-[#0f172a] to-[#1f2937]">
+          <tr>
+            <th class="px-4 py-2">Jugador</th>
+            <th class="px-4 py-2">Posición</th>
+            <th class="px-4 py-2">Pts</th>
+            <th class="px-4 py-2">Min</th>
+            <th class="px-4 py-2">TL</th>
+            <th class="px-4 py-2">T2</th>
+            <th class="px-4 py-2">T3</th>
+            <th class="px-4 py-2">Fp</th>
+            <th class="px-4 py-2">Propietario</th>
+            <th class="px-4 py-2">Acción</th>
+          </tr>
+        </thead>
+        <tbody class="bg-[#111827]">
+          <tr *ngFor="let jugador of jugadores" class="hover:bg-gray-700 transition duration-200">
+            <td class="px-4 py-3 flex items-center gap-2">
+              <img
+                [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
+                class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md"
+              />
+              <span class="font-semibold text-white">{{ jugador.nombre }}</span>
+            </td>
+            <td class="px-4 py-3 text-white">{{ jugador.posicion }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.pts }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.min }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.tl }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.t2 }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.t3 }}</td>
+            <td class="px-4 py-3 text-white">{{ jugador.fp }}</td>
+            <td class="px-4 py-3 text-white">
+              <ng-container *ngIf="jugador.propietarioUsername !== 'Libre'; else libre">
+                <span class="text-primary font-semibold">{{ jugador.propietarioUsername }}</span>
+              </ng-container>
+              <ng-template #libre>
+                <span class="text-green-400 font-semibold">Libre</span>
+              </ng-template>
+            </td>
+            <td class="px-4 py-3">
+              <button
+                *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                (click)="abrirDialogoOferta(jugador)"
+                class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+              >
+                Ofertar
+              </button>
+              <button
+                *ngIf="ofertasEnCurso[jugador.id]"
+                (click)="cancelarOferta(jugador.id)"
+                class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+              >
+                Cancelar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
   <!-- 🎯 Radar de Mejores Jugadores -->
   <div class="mt-5">
-    <p-card class="shadow-3">
-      <ng-template pTemplate="header">
-        <h4 class="text-xl font-bold text-indigo-700 text-center">
-          📡 Comparativa de los 3 Mejores Jugadores
-        </h4>
-      </ng-template>
-
-      <ng-template pTemplate="content">
-        <div class="flex justify-content-center">
-          <p-chart
-            type="radar"
-            [data]="radarTopData"
-            [options]="radarTopOptions"
-            style="min-height: 380px; max-width: 680px"
-            class="w-full"
-          ></p-chart>
-        </div>
-      </ng-template>
-    </p-card>
+    <div class="bg-[#1f2937] p-6 rounded-xl shadow-lg">
+      <h4 class="text-xl font-bold text-indigo-500 text-center mb-5">📡 Comparativa de los 3 Mejores Jugadores</h4>
+      <div class="flex justify-center">
+        <p-chart
+          type="radar"
+          [data]="radarTopData"
+          [options]="radarTopOptions"
+          style="min-height: 380px; max-width: 680px"
+          class="w-full"
+        ></p-chart>
+      </div>
+    </div>
   </div>
 
   <!-- 📱 Fichas estilo Fantasy para móviles -->
   <div class="md:hidden grid gap-3">
-    <div
-      *ngFor="let jugador of jugadores"
-      class="surface-card shadow-2 p-3 border-round animate__animated animate__fadeIn"
-    >
-      <div class="flex justify-content-between align-items-center">
-        <div class="flex gap-2 align-items-center">
-          <img
-            [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
-            class="rounded shadow"
-            width="42"
-            height="42"
-          />
+    <div *ngFor="let jugador of jugadores" class="bg-gradient-to-r from-[#1f2937] to-[#0f172a] text-white rounded-xl p-4 shadow-xl hover:scale-105 transition-transform duration-200">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <img [src]="jugador.fotoUrl || 'assets/sin-foto.png'" class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md" />
           <div>
             <div class="font-bold">{{ jugador.nombre }}</div>
-            <div class="text-sm text-500">{{ jugador.posicion }}</div>
+            <div class="text-sm">{{ jugador.posicion }}</div>
           </div>
         </div>
-        <p-tag
-          *ngIf="jugador.propietarioUsername !== 'Libre'"
-          [value]="jugador.propietarioUsername"
-          severity="info"
-        ></p-tag>
-        <p-tag
-          *ngIf="jugador.propietarioUsername === 'Libre'"
-          value="Libre"
-          severity="success"
-        ></p-tag>
+        <span *ngIf="jugador.propietarioUsername !== 'Libre'" class="text-primary font-semibold">{{ jugador.propietarioUsername }}</span>
+        <span *ngIf="jugador.propietarioUsername === 'Libre'" class="text-green-400 font-semibold">Libre</span>
       </div>
 
-      <div class="grid text-sm text-600 mt-3">
-        <div class="col-4">Pts: {{ jugador.pts }}</div>
-        <div class="col-4">Min: {{ jugador.min }}</div>
-        <div class="col-4">Fp: {{ jugador.fp }}</div>
-        <div class="col-4">TL: {{ jugador.tl }}</div>
-        <div class="col-4">T2: {{ jugador.t2 }}</div>
-        <div class="col-4">T3: {{ jugador.t3 }}</div>
+      <div class="grid grid-cols-2 gap-4 mt-3">
+        <div class="text-sm">Pts: {{ jugador.pts }}</div>
+        <div class="text-sm">Min: {{ jugador.min }}</div>
+        <div class="text-sm">Fp: {{ jugador.fp }}</div>
+        <div class="text-sm">TL: {{ jugador.tl }}</div>
+        <div class="text-sm">T2: {{ jugador.t2 }}</div>
+        <div class="text-sm">T3: {{ jugador.t3 }}</div>
       </div>
 
-      <div class="flex justify-content-end mt-3 gap-2">
+      <div class="flex justify-end gap-2 mt-3">
         <button
-          *ngIf="
-            !ofertasEnCurso[jugador.id] &&
-            jugador.propietarioId &&
-            jugador.propietarioId !== usuarioId
-          "
-          pButton
-          icon="pi pi-dollar"
-          label="Ofertar"
-          class="p-button-sm p-button-success"
+          *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
           (click)="abrirDialogoOferta(jugador)"
-        ></button>
+          class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+        >
+          Ofertar
+        </button>
         <button
           *ngIf="ofertasEnCurso[jugador.id]"
-          pButton
-          icon="pi pi-times"
-          label="Cancelar"
-          class="p-button-sm p-button-danger"
           (click)="cancelarOferta(jugador.id)"
-        ></button>
+          class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+        >
+          Cancelar
+        </button>
       </div>
     </div>
   </div>

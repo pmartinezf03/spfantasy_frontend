@@ -24,7 +24,7 @@ export class NavigationComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
-    private router: Router,
+    public router: Router,
     private ofertasService: OfertasService,
     private cdr: ChangeDetectorRef,
     private zone: NgZone

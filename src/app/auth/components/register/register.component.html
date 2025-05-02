@@ -1,56 +1,57 @@
-<div class="auth-container">
-  <div class="background-image"></div>
+<div class="relative min-h-screen flex items-center justify-center font-futuristic overflow-hidden px-4">
+  <!-- Fondo animado desenfocado -->
+  <div
+  class="absolute inset-0 -z-10 bg-cover bg-center blur-sm opacity-40"
+  style="background-image: url('assets/inicio.gif');">
+</div>
 
-  <div class="auth-box">
-    <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" height="100" style="margin-bottom: 1rem;" />
+  <!-- Caja de registro -->
+  <div class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl px-8 py-10 space-y-6 animate-fade-in">
+    <div class="text-center">
+      <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-20 mx-auto mb-4" />
+      <h2 class="text-2xl text-fantasyDark font-bold">Registro</h2>
+    </div>
 
-    <h2>Registro</h2>
-
-    <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()">
-      <div class="form-group">
-        <label>Nombre de usuario:</label>
-        <input type="text" formControlName="username" />
-        <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-          Debe tener al menos 4 caracteres.
-        </small>
+    <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()" class="space-y-4">
+      <!-- Usuario -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-1">Nombre de usuario</label>
+        <input type="text" formControlName="username" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
+        <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="text-xs text-red-500">Debe tener al menos 4 caracteres.</small>
       </div>
 
-      <div class="form-group">
-        <label>Correo electrónico:</label>
-        <input type="email" formControlName="email" />
-        <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-          Ingresa un correo válido.
-        </small>
+      <!-- Email -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-1">Correo electrónico</label>
+        <input type="email" formControlName="email" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
+        <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-xs text-red-500">Ingresa un correo válido.</small>
       </div>
 
-      <div class="form-group">
-        <label>Contraseña:</label>
-        <input type="password" formControlName="password" />
-        <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-          Debe tener al menos 8 caracteres, incluir mayúscula, minúscula y un número.
-        </small>
+      <!-- Contraseña -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-1">Contraseña</label>
+        <input type="password" formControlName="password" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
+        <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-xs text-red-500">Debe tener al menos 8 caracteres, incluir mayúscula, minúscula y un número.</small>
       </div>
 
-      <div class="form-group">
-        <re-captcha
-          (resolved)="onCaptchaResolved($event!)"
-          [siteKey]="recaptchaSiteKey">
-        </re-captcha>
-        <small *ngIf="captchaInvalido" class="captcha-error">
-          Por favor, verifica que no eres un robot.
-        </small>
+      <!-- reCAPTCHA -->
+      <div>
+        <re-captcha (resolved)="onCaptchaResolved($event!)" [siteKey]="recaptchaSiteKey"></re-captcha>
+        <small *ngIf="captchaInvalido" class="text-xs text-red-500">Por favor, verifica que no eres un robot.</small>
       </div>
 
-      <button type="submit" class="btn" [disabled]="registerForm.invalid">
-        Registrarse
+      <!-- Botón -->
+      <button type="submit" [disabled]="registerForm.invalid"
+        class="w-full bg-fantasyRed hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition">
+        ✅ Registrarse
       </button>
     </form>
 
-    <p>
+    <p class="text-center text-sm mt-4 text-gray-600">
       ¿Ya tienes una cuenta?
-      <a routerLink="/auth/login">Iniciar Sesión</a>
+      <a routerLink="/auth/login" class="text-fantasyBlue hover:underline font-bold">Iniciar Sesión</a>
     </p>
 
-    <p *ngIf="mensaje" class="mensaje">{{ mensaje }}</p>
+    <p *ngIf="mensaje" class="text-green-600 text-center font-semibold mt-4">{{ mensaje }}</p>
   </div>
 </div>
