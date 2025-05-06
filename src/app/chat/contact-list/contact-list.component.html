@@ -1,53 +1,61 @@
-<div class="panel-whatsapp contactos-panel">
-  <h2 class="seccion-titulo flex justify-between items-center">👥 Contactos</h2>
+<div class="flex flex-col h-full bg-gray-100 text-gray-800 rounded-xl shadow-lg p-5 border border-gray-300">
 
-  <!-- 🔍 Buscador de contactos -->
-  <div class="buscador mb-2">
+  <!-- 👥 Título -->
+  <h2 class="text-xl font-bold text-fantasyGold mb-5">👥 Contactos</h2>
+
+  <!-- 🔍 Buscador -->
+  <div class="mb-3">
     <input
       type="text"
       [(ngModel)]="filtroContacto"
       placeholder="Buscar alias o nombre..."
-      class="input w-full"
+      class="w-full px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 shadow focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
     />
   </div>
 
-  <!-- ➕ Añadir contacto por alias -->
-  <div class="add-contact">
+  <!-- ➕ Añadir contacto -->
+  <div class="flex flex-col gap-2 mb-5">
     <input
       type="text"
       [(ngModel)]="nuevoContactoAlias"
       placeholder="Alias del contacto..."
-      class="input"
+      class="w-full px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 shadow focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
     />
-    <button (click)="agregarContacto()" class="boton">➕ Añadir</button>
-    <p
-      class="mensaje-info"
-      [ngClass]="{
-        'mensaje-exito': mensaje.startsWith('✅'),
-        'mensaje-error': mensaje.startsWith('❌') || mensaje.startsWith('⚠️')
-      }"
+    <button
+      (click)="agregarContacto()"
+      class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150"
     >
+      ➕ Añadir
+    </button>
+    <p class="text-sm mt-1"
+       [ngClass]="{
+         'text-green-600': mensaje.startsWith('✅'),
+         'text-red-600': mensaje.startsWith('❌') || mensaje.startsWith('⚠️'),
+         'text-gray-500': !mensaje.startsWith('✅') && !mensaje.startsWith('❌') && !mensaje.startsWith('⚠️')
+       }">
       {{ mensaje }}
     </p>
   </div>
 
   <!-- 📋 Lista de contactos -->
-  <ul class="lista-contactos">
+  <ul class="flex-1 overflow-y-auto space-y-2 pr-1">
     <li
       *ngFor="let usuario of usuarios | filtroContactos: filtroContacto; trackBy: trackByUsuarioId"
       (click)="seleccionarContacto(usuario.id)"
-      class="contacto-item"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 cursor-pointer transition duration-150"
     >
-      <div class="avatar">
-        {{ usuario.username.charAt(0).toUpperCase() }}
+      <!-- Avatar -->
+      <div class="w-10 h-10 rounded-full bg-fantasyBlue text-white flex items-center justify-center font-bold text-sm uppercase shadow-inner">
+        {{ usuario.username.charAt(0) }}
       </div>
 
-      <div class="datos">
-        <div class="nombre">
+      <!-- Datos -->
+      <div class="flex flex-col overflow-hidden">
+        <div class="font-semibold text-sm truncate">
           {{ usuario.username }}
-          <small *ngIf="usuario.alias" class="alias">{{ "@" + usuario.alias }}</small>
+          <small *ngIf="usuario.alias" class="ml-1 text-gray-500 text-xs">{{ ('@' + usuario.alias) }}</small>
         </div>
-        <div class="email">{{ usuario.email }}</div>
+        <div class="text-xs text-gray-500 truncate">{{ usuario.email }}</div>
       </div>
     </li>
   </ul>

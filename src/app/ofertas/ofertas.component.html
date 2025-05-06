@@ -1,109 +1,194 @@
-<div class="ofertas-container">
-  <h2>💰 Ofertas Recibidas</h2>
+<div
+  class="ofertas-container bg-gray-950 min-h-screen px-6 py-12 text-white space-y-16"
+>
+  <!-- OFERTAS RECIBIDAS EN FORMATO TARJETA -->
+  <div class="bg-gray-900 rounded-2xl border border-gray-700 shadow-lg p-6">
+    <h2 class="text-2xl font-bold mb-6 uppercase tracking-wide">
+      Ofertas Recibidas
+    </h2>
 
-  <p-table [value]="ofertasRecibidas">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Jugador</th>
-        <th>Oferta (€)</th>
-        <th>Ofertante</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-oferta>
-      <tr>
-        <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
-        <td>{{ oferta.compradorUsername }}</td>
-        <td class="acciones">
+    <div
+      *ngIf="ofertasRecibidas.length > 0; else sinOfertasRecibidas"
+      class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+    >
+      <div
+        *ngFor="let oferta of ofertasRecibidas"
+        class="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-2xl border border-gray-700 shadow-md hover:shadow-2xl transition transform hover:-translate-y-1"
+      >
+        <!-- Imagen y nombre -->
+        <div class="flex items-center gap-4 mb-4">
+          <img
+            [src]="
+              obtenerJugadorBase(oferta.jugador)?.fotoUrl ||
+              'assets/sin-foto.png'
+            "
+            alt="Jugador"
+            class="w-16 h-16 rounded-full border-4 border-blue-500 shadow-lg object-cover"
+          />
+
+          <div>
+            <p class="text-lg font-semibold text-white">
+              {{ obtenerNombreJugador(oferta.jugador) }}
+            </p>
+            <p class="text-sm text-gray-400">
+              {{
+                obtenerJugadorBase(oferta.jugador)?.posicion ||
+                  "Posición desconocida"
+              }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Detalles oferta -->
+        <div class="text-sm text-gray-300 space-y-1 mb-4">
+          <p>
+            <span class="text-gray-400">Oferta:</span>
+            <span class="text-green-400 font-bold">{{
+              oferta.montoOferta | currency : "EUR"
+            }}</span>
+          </p>
+          <p>
+            <span class="text-gray-400">Ofertante:</span>
+            <span class="text-blue-400">{{ oferta.compradorUsername }}</span>
+          </p>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-2">
           <button
             pButton
             icon="pi pi-check"
-            class="p-button-success p-button-sm"
+            class="btn-custom-success"
             (click)="aceptarOferta(oferta)"
             title="Aceptar oferta"
           ></button>
           <button
             pButton
             icon="pi pi-times"
-            class="p-button-danger p-button-sm"
+            class="btn-custom-danger"
             (click)="rechazarOferta(oferta)"
             title="Rechazar oferta"
           ></button>
           <button
             pButton
             icon="pi pi-refresh"
-            class="p-button-warning p-button-sm"
+            class="btn-custom-warning"
             (click)="abrirDialogoContraoferta(oferta)"
             title="Hacer contraoferta"
           ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+        </div>
+      </div>
+    </div>
 
-  <h2>📨 Ofertas Enviadas</h2>
-  <p-table [value]="ofertasEnviadas">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Jugador</th>
-        <th>Oferta (€)</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
+    <!-- Mensaje si vacío -->
+    <ng-template #sinOfertasRecibidas>
+      <div class="text-center text-gray-400 py-6">
+        No hay ofertas recibidas aún. Sigue activo en el mercado.
+      </div>
     </ng-template>
-    <ng-template pTemplate="body" let-oferta>
-      <tr>
-        <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
-        <td>{{ oferta.estado }}</td>
-        <td class="acciones">
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-danger p-button-sm"
-            (click)="retirarOferta(oferta)"
-            title="Retirar oferta"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  </div>
 
-  <h2>🔄 Contraofertas</h2>
-  <p-table [value]="contraofertasRecibidas">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Jugador</th>
-        <th>Oferta (€)</th>
-        <th>Ofertante</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-oferta>
-      <tr>
-        <td>{{ obtenerNombreJugador(oferta.jugador) }}</td>
-        <td>{{ oferta.montoOferta | currency : "EUR" }}</td>
-        <td>{{ oferta.compradorUsername }}</td>
-        <td class="acciones">
-          <button
-            pButton
-            icon="pi pi-check"
-            class="p-button-success p-button-sm"
-            (click)="aceptarContraoferta(oferta)"
-            title="Aceptar contraoferta"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-times"
-            class="p-button-danger p-button-sm"
-            (click)="rechazarOferta(oferta)"
-            title="Rechazar contraoferta"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+<!-- OFERTAS ENVIADAS -->
+<div class="bg-gray-900 rounded-2xl border border-gray-700 shadow-lg p-6">
+  <h2 class="text-2xl font-bold mb-6 uppercase tracking-wide">
+    Ofertas Enviadas
+  </h2>
+
+  <div *ngIf="ofertasEnviadas.length > 0; else sinOfertasEnviadas" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div *ngFor="let oferta of ofertasEnviadas"
+         class="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-2xl border border-gray-700 shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
+
+      <!-- Imagen y nombre -->
+      <div class="flex items-center gap-4 mb-4">
+        <img [src]="obtenerJugadorBase(oferta.jugador)?.fotoUrl || 'assets/sin-foto.png'"
+             alt="Jugador"
+             class="w-16 h-16 rounded-full border-4 border-purple-500 shadow-lg object-cover"/>
+
+        <div>
+          <p class="text-lg font-semibold text-white">{{ obtenerNombreJugador(oferta.jugador) }}</p>
+          <p class="text-sm text-gray-400">{{ obtenerJugadorBase(oferta.jugador)?.posicion || 'Posición desconocida' }}</p>
+        </div>
+      </div>
+
+      <!-- Detalles oferta -->
+      <div class="text-sm text-gray-300 space-y-1 mb-4">
+        <p>
+          <span class="text-gray-400">Oferta:</span>
+          <span class="text-green-400 font-bold">{{ oferta.montoOferta | currency : "EUR" }}</span>
+        </p>
+        <p>
+          <span class="text-gray-400">Estado:</span>
+          <span [ngClass]="{
+            'text-orange-400 font-semibold': oferta.estado === 'PENDIENTE',
+            'text-yellow-400 font-semibold': oferta.estado === 'CONTRAOFERTA'
+          }">{{ oferta.estado }}</span>
+        </p>
+      </div>
+
+      <!-- Botón -->
+      <div class="flex justify-end">
+        <button pButton icon="pi pi-trash" class="btn-custom-danger" (click)="retirarOferta(oferta)" title="Retirar oferta"></button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #sinOfertasEnviadas>
+    <div class="text-center text-gray-400 py-6">
+      No has enviado ninguna oferta todavía.
+    </div>
+  </ng-template>
+</div>
+
+
+<!-- CONTRAOFERTAS RECIBIDAS -->
+<div class="bg-gray-900 rounded-2xl border border-gray-700 shadow-lg p-6">
+  <h2 class="text-2xl font-bold mb-6 uppercase tracking-wide">
+    Contraofertas Recibidas
+  </h2>
+
+  <div *ngIf="contraofertasRecibidas.length > 0; else sinContraofertas" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div *ngFor="let oferta of contraofertasRecibidas"
+         class="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-2xl border border-gray-700 shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
+
+      <!-- Imagen y nombre -->
+      <div class="flex items-center gap-4 mb-4">
+        <img [src]="obtenerJugadorBase(oferta.jugador)?.fotoUrl || 'assets/sin-foto.png'"
+             alt="Jugador"
+             class="w-16 h-16 rounded-full border-4 border-yellow-500 shadow-lg object-cover"/>
+
+        <div>
+          <p class="text-lg font-semibold text-white">{{ obtenerNombreJugador(oferta.jugador) }}</p>
+          <p class="text-sm text-gray-400">{{ obtenerJugadorBase(oferta.jugador)?.posicion || 'Posición desconocida' }}</p>
+        </div>
+      </div>
+
+      <!-- Detalles contraoferta -->
+      <div class="text-sm text-gray-300 space-y-1 mb-4">
+        <p>
+          <span class="text-gray-400">Contraoferta:</span>
+          <span class="text-yellow-400 font-bold">{{ oferta.montoOferta | currency : "EUR" }}</span>
+        </p>
+        <p>
+          <span class="text-gray-400">Ofertante:</span>
+          <span class="text-blue-400">{{ oferta.compradorUsername }}</span>
+        </p>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-end gap-2">
+        <button pButton icon="pi pi-check" class="btn-custom-success" (click)="aceptarContraoferta(oferta)" title="Aceptar contraoferta"></button>
+        <button pButton icon="pi pi-times" class="btn-custom-danger" (click)="rechazarOferta(oferta)" title="Rechazar contraoferta"></button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #sinContraofertas>
+    <div class="text-center text-gray-400 py-6">
+      No tienes contraofertas en este momento.
+    </div>
+  </ng-template>
+</div>
+
 
   <app-oferta-dialogo
     [mostrarDialogo]="mostrarDialogoContraoferta"
@@ -114,6 +199,5 @@
     [totalOfertasEnCurso]="0"
     (cerrar)="mostrarDialogoContraoferta = false"
     (enviarContraoferta)="enviarContraoferta($event)"
-  >
-  </app-oferta-dialogo>
+  ></app-oferta-dialogo>
 </div>

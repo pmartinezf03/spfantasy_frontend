@@ -1,40 +1,40 @@
-<p-dialog [header]="modo === 'oferta' ? '🏀 Hacer Oferta' : '🔁 Enviar Contraoferta'"
-          [(visible)]="mostrarDialogo"
-          [modal]="true"
-          [closable]="true"
-          [style]="{width: '100%', maxWidth: '520px'}"
-          [contentStyle]="{'padding': '2rem 1.5rem'}"
-          [styleClass]="'animate__animated animate__zoomIn'">
+<p-dialog
+  [(visible)]="mostrarDialogo"
+  [modal]="true"
+  [closable]="true"
+  [style]="{width: '100%', maxWidth: '520px'}"
+  [contentStyle]="{'padding': '2rem 1.5rem', 'background-color': '#1e1e2f'}"
+  [styleClass]="'rounded-xl shadow-xl border border-gray-700 animate__animated animate__zoomIn text-white'">
 
-  <div class="flex flex-column gap-3 oferta-card shadow-4 border-round surface-card">
-    <!-- 📸 Header -->
-    <div class="flex align-items-center gap-3">
+  <!-- Tarjeta del Jugador -->
+  <div class="flex flex-col gap-4">
+    <!-- Imagen + nombre -->
+    <div class="flex items-center gap-4">
       <img [src]="jugadorSeleccionado?.fotoUrl || 'assets/sin-foto.png'"
-           class="border-circle shadow-3"
-           width="64" height="64"
-           alt="Jugador" />
+           alt="Jugador"
+           class="w-20 h-20 rounded-full border-4 border-blue-500 shadow-md object-cover"/>
 
-      <div class="flex flex-column">
-        <span class="text-xl font-bold text-primary">{{ jugadorSeleccionado?.nombre }}</span>
-        <span class="text-sm text-500">{{ jugadorSeleccionado?.posicion }}</span>
+      <div class="flex flex-col">
+        <h2 class="text-xl font-bold text-white">{{ jugadorSeleccionado?.nombre }}</h2>
+        <p class="text-sm text-gray-400">{{ jugadorSeleccionado?.posicion }}</p>
       </div>
     </div>
 
-    <!-- 📊 Detalles -->
-    <div class="grid mt-3">
-      <div class="col-6 text-left">
-        <p class="m-0 text-sm"><b>💰 Tu saldo:</b></p>
-        <p class="font-semibold text-green-600">{{ usuarioDinero | currency:'EUR' }}</p>
+    <!-- Datos económicos -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <p class="text-sm text-gray-400">Tu saldo:</p>
+        <p class="text-green-400 font-semibold">{{ usuarioDinero | currency:'EUR' }}</p>
       </div>
-      <div class="col-6 text-left" *ngIf="modo === 'oferta'">
-        <p class="m-0 text-sm"><b>📈 Ofertas en curso:</b></p>
-        <p class="font-semibold text-orange-600">{{ totalOfertasEnCurso | currency:'EUR' }}</p>
+      <div *ngIf="modo === 'oferta'">
+        <p class="text-sm text-gray-400">Ofertas en curso:</p>
+        <p class="text-orange-400 font-semibold">{{ totalOfertasEnCurso | currency:'EUR' }}</p>
       </div>
     </div>
 
-    <!-- 💸 Campo monto -->
-    <div class="mt-2">
-      <label for="montoOferta" class="block font-medium mb-2 text-md">💸 Monto</label>
+    <!-- Campo de Monto -->
+    <div>
+      <label for="montoOferta" class="block text-sm font-medium text-black mb-2">Monto a ofrecer</label>
       <p-inputNumber
         inputId="montoOferta"
         [(ngModel)]="montoOferta"
@@ -44,26 +44,30 @@
         mode="currency"
         [step]="100000"
         [maxFractionDigits]="0"
-        class="w-full">
+        class="w-full bg-gray-900 rounded text-white">
       </p-inputNumber>
     </div>
 
-    <!-- ⚠ Error -->
-    <p *ngIf="mensajeError" class="text-red-600 font-semibold text-sm mt-2">{{ mensajeError }}</p>
+    <!-- Mensaje de error -->
+    <p *ngIf="mensajeError" class="text-red-500 font-semibold text-sm mt-2">
+      {{ mensajeError }}
+    </p>
   </div>
 
   <!-- Footer -->
   <ng-template pTemplate="footer">
-    <div class="flex justify-content-between gap-2 w-full">
+    <div class="flex justify-between items-center gap-4 mt-4">
       <button pButton
               [label]="modo === 'oferta' ? 'Enviar Oferta' : 'Enviar Contraoferta'"
               icon="pi pi-check"
-              class="p-button-lg p-button-rounded p-button-success animate__animated animate__pulse"
+              class="btn-confirm"
               (click)="confirmarOferta()">
       </button>
-      <button pButton label="Cancelar"
+
+      <button pButton
+              label="Cancelar"
               icon="pi pi-times"
-              class="p-button-lg p-button-rounded p-button-secondary animate__animated animate__fadeIn"
+              class="btn-cancel"
               (click)="cerrarDialogo()">
       </button>
     </div>

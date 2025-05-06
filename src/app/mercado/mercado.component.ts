@@ -48,7 +48,7 @@ export class MercadoComponent implements OnInit {
       this.cargandoInicial = false; // <- asegúrate de esto también
       return;
     }
-  
+
     const ligaId = this.authService.getLigaId();
     if (!ligaId) {
       console.warn('❌ Liga no encontrada, cancelando carga.');
@@ -56,15 +56,15 @@ export class MercadoComponent implements OnInit {
       this.cargandoInicial = false; // <- igual aquí
       return;
     }
-  
+
     this.loaderService.showBarraCarga();
-  
+
     this.usuarioId = user.id;
     this.username = user.username;
-  
+
     console.log('[ngOnInit] Usuario y liga válidos. Comienza carga...');
     this.suscribirseAlDinero();
-  
+
     Promise.all([
       this.estadisticasService.getJugadoresDeLiga(ligaId).toPromise().then(j => j ?? []),
       this.ofertasService.obtenerOfertasPorComprador(this.usuarioId, ligaId).toPromise().then(o => o ?? [])
@@ -77,13 +77,13 @@ export class MercadoComponent implements OnInit {
             this.ofertasEnCurso[oferta.jugador.id] = oferta.id;
           }
         });
-  
+
         this.primeraCargaRealizada = true;
         this.cdr.detectChanges();
-  
+
         this.loaderService.hideBarraCarga();
         this.cargandoInicial = false; // ✅ IMPORTANTE PARA MOSTRAR LA VISTA
-  
+
         console.log('[ngOnInit] Datos iniciales cargados. Vista mostrada.');
         this.suscribirseAWebSocket();
       })
@@ -92,14 +92,14 @@ export class MercadoComponent implements OnInit {
         this.loaderService.hideBarraCarga();
         this.cargandoInicial = false; // ✅ mostrar aunque haya error
       });
-  
+
     this.authService.usuarioCompleto$.subscribe(usuario => {
       console.log('[usuarioCompleto$] Usuario actualizado. Dinero actualizado:', usuario?.dinero);
       this.usuarioDinero = usuario?.dinero ?? 0;
       this.cdr.detectChanges();
     });
   }
-  
+
 
 
 
@@ -272,18 +272,22 @@ export class MercadoComponent implements OnInit {
           next: (oferta) => {
             if (oferta?.id) {
               this.ofertasEnCurso[jugadorId] = oferta.id;
-              this.cdr.detectChanges();
-              this.loaderService.hideSpinner();
-
+            } else {
+              console.warn('⚠️ Oferta recibida sin ID. No se actualiza ofertasEnCurso.');
             }
-          },
+            this.loaderService.hideSpinner();  // ✅ SIEMPRE SE OCULTA
+            this.cdr.detectChanges();
+          }
+          ,
           error: (err) => {
             if (err.status === 404) {
               console.log('ℹ️ No hay ofertas previas para este jugador (aún).');
             } else {
               console.error('❌ Error al obtener última oferta:', err);
             }
+            this.loaderService.hideSpinner(); // ✅ AÑADIDO AQUÍ
           }
+
         });
 
         this.authService.refreshUsuarioCompleto();
@@ -295,7 +299,7 @@ export class MercadoComponent implements OnInit {
         this.cdr.detectChanges();
         this.loaderService.hideSpinner(); // 👈 AÑADE ESTO
       }
-      
+
     });
   }
 
@@ -320,7 +324,7 @@ export class MercadoComponent implements OnInit {
       this.cdr.detectChanges();
       this.loaderService.hideSpinner(); // ✅ ya está aquí
     });
-    
+
   }
 
 

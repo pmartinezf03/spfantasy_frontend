@@ -1,39 +1,66 @@
-<div class="panel-whatsapp grupos-panel">
+<div class="flex flex-col h-full bg-gray-100 text-gray-800 rounded-xl shadow-lg p-5 border border-gray-300">
 
-  <div class="flex justify-between items-center mb-2">
-    <h2 class="titulo">📢 Grupos</h2>
-
+  <!-- 📢 Encabezado -->
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-fantasyGold">📢 Grupos</h2>
   </div>
 
-  <ul class="grupo-lista">
+  <!-- 📋 Lista de grupos -->
+  <ul class="space-y-3 mb-6 overflow-y-auto flex-1">
     <li
       *ngFor="let grupo of grupos"
-      class="grupo-item"
       (click)="emitirGrupoSeleccionado(grupo.id)"
+      class="p-3 rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer transition flex flex-col"
     >
-      <strong>
+      <div class="flex items-center gap-2 font-semibold text-sm text-gray-900">
         {{ grupo.nombre }}
-        <span *ngIf="grupo.nombre.startsWith('liga-')" class="badge-liga">🏀 Liga</span>
-      </strong>
-      <p class="descripcion">{{ grupo.descripcion }}</p>
+        <span *ngIf="grupo.nombre.startsWith('liga-')" class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-sm">
+          🏀 Liga
+        </span>
+      </div>
+      <p class="text-xs text-gray-600 mt-1">{{ grupo.descripcion }}</p>
     </li>
   </ul>
-  
 
-  <!-- SOLO PARA ADMINISTRADORES -->
-  <div class="crear-grupo" *ngIf="esAdmin">
-    <h3 class="subtitulo">➕ Nuevo Grupo</h3>
+  <!-- ➕ Crear grupo (solo admin) -->
+  <div *ngIf="esAdmin" class="border-t border-gray-300 pt-4">
+    <h3 class="text-lg font-bold mb-4 text-fantasyGold">➕ Nuevo Grupo</h3>
 
-    <input type="text" [(ngModel)]="nuevoGrupo.nombre" placeholder="Nombre" class="input" />
-    <input type="text" [(ngModel)]="nuevoGrupo.descripcion" placeholder="Descripción" class="input" />
-    <input type="password" [(ngModel)]="nuevoGrupo.passwordGrupo" placeholder="Contraseña (opcional)" class="input" />
+    <input
+      type="text"
+      [(ngModel)]="nuevoGrupo.nombre"
+      placeholder="Nombre"
+      class="w-full mb-3 px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
+    />
 
-    <label class="text-sm font-medium block mb-1">Participantes</label>
-    <select multiple [(ngModel)]="nuevoGrupo.participantesIds" class="input h-24">
+    <input
+      type="text"
+      [(ngModel)]="nuevoGrupo.descripcion"
+      placeholder="Descripción"
+      class="w-full mb-3 px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
+    />
+
+    <input
+      type="password"
+      [(ngModel)]="nuevoGrupo.passwordGrupo"
+      placeholder="Contraseña (opcional)"
+      class="w-full mb-3 px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
+    />
+
+    <label class="block text-sm font-medium mb-2">Participantes</label>
+    <select
+      multiple
+      [(ngModel)]="nuevoGrupo.participantesIds"
+      class="w-full h-28 px-3 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyBlue mb-4"
+    >
       <option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.username }}</option>
     </select>
 
-    <button (click)="crearGrupo()" class="boton">Crear</button>
+    <button
+      (click)="crearGrupo()"
+      class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg shadow transition"
+    >
+      Crear
+    </button>
   </div>
-
 </div>

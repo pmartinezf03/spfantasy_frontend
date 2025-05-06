@@ -1,3 +1,5 @@
+// 🔧 COMPLETO: chat.component.ts con scroll automático y mensajes agrupados por día
+
 import { Component, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { WebSocketService } from '../../app/services/websocket.service';
 import { AuthService } from '../services/auth.service';
@@ -71,7 +73,6 @@ export class ChatComponent implements OnInit, OnChanges {
         error: (err) => console.error("Error al precargar mensajes:", err)
       });
 
-      // 🔔 SUSCRIBIRSE a todos los grupos del usuario (chat de liga incluido)
       this.http.get<GrupoChat[]>(`${environment.apiUrl}/api/grupos`, { headers }).subscribe(grupos => {
         grupos.forEach(grupo => {
           this.webSocketService.subscribeToChannel(
@@ -80,7 +81,6 @@ export class ChatComponent implements OnInit, OnChanges {
         });
       });
 
-      // 🔔 SUSCRIBIRSE a todos los posibles chats privados por alias
       this.usuarioService.obtenerUsuarios().subscribe(usuarios => {
         this.usuarios = usuarios.filter(u => u.id !== this.currentUser!.id);
 
@@ -92,7 +92,6 @@ export class ChatComponent implements OnInit, OnChanges {
         });
       });
 
-      // 🔁 ESCUCHAR MENSAJES ENTRANTES
       this.webSocketService.getMessages().subscribe((message: Message) => {
         const clave = this.getClaveConversacion(message);
         if (!this.mensajesPorConversacion.has(clave)) {
@@ -100,7 +99,12 @@ export class ChatComponent implements OnInit, OnChanges {
         }
 
         const mensajes = this.mensajesPorConversacion.get(clave)!;
-        if (!mensajes.some(m => m.id === message.id)) {
+        const yaExiste = mensajes.some(m =>
+          m.id && message.id ? m.id === message.id :
+          m.timestamp === message.timestamp && m.contenido === message.contenido && m.remitenteId === message.remitenteId
+        );
+
+        if (!yaExiste) {
           mensajes.push(message);
           if (clave === this.getClaveActual()) {
             this.messages = [...mensajes];
@@ -114,7 +118,6 @@ export class ChatComponent implements OnInit, OnChanges {
     });
   }
 
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedGroupId'] || changes['selectedUserId']) {
       this.loadMessages();
@@ -125,7 +128,6 @@ export class ChatComponent implements OnInit, OnChanges {
     this.usuarioService.obtenerUsuarios().subscribe((usuarios: Usuario[]) => {
       this.usuarios = usuarios.filter((u: Usuario) => u.id !== this.currentUser!.id);
     });
-
   }
 
   loadGruposDelUsuario(): void {
@@ -155,13 +157,20 @@ export class ChatComponent implements OnInit, OnChanges {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
     if (this.selectedGroupId) {
       this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/grupo/${this.selectedGroupId}/dto`, { headers })
-      .subscribe(data => this.messages = data);
+        .subscribe(data => {
+          this.messages = data;
+          this.scrollChatToBottom();
+        });
     } else if (this.selectedUserId) {
       const clave = this.generarClavePrivada(this.currentUser!.id, this.selectedUserId);
       this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/privado/${this.currentUser!.id}/${this.selectedUserId}/dto`, { headers })
-      .subscribe(data => this.messages = data);
+        .subscribe(data => {
+          this.messages = data;
+          this.scrollChatToBottom();
+        });
     }
   }
+
   sendMessage(contenido: string): void {
     if (!contenido.trim() || !this.currentUser) return;
 
@@ -173,6 +182,16 @@ export class ChatComponent implements OnInit, OnChanges {
       timestamp: new Date().toISOString()
     };
 
+    // 👇 Añadir mensaje localmente para mostrarlo de inmediato
+    const clave = this.getClaveActual();
+    if (!this.mensajesPorConversacion.has(clave)) {
+      this.mensajesPorConversacion.set(clave, []);
+    }
+    this.mensajesPorConversacion.get(clave)!.push(mensaje);
+    this.messages = [...this.mensajesPorConversacion.get(clave)!];
+    this.changeDetector.detectChanges();
+
+    // 📤 Enviar mensaje por WebSocket
     if (this.selectedGroupId) {
       const canalGrupo = this.webSocketService.getCanalGrupo(this.selectedGroupId);
       this.webSocketService.publishMessage(canalGrupo, mensaje);
@@ -188,13 +207,18 @@ export class ChatComponent implements OnInit, OnChanges {
   }
 
 
-
-
+  private scrollChatToBottom(): void {
+    setTimeout(() => {
+      const el = document.querySelector('.chat-window-scroll') as HTMLElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 100);
+  }
 
   private refreshVistaActual(): void {
     const clave = this.getClaveActual();
     this.messages = this.mensajesPorConversacion.get(clave) || [];
     this.changeDetector.detectChanges();
+    this.scrollChatToBottom();
   }
 
   private generarClavePrivada(id1: number, id2: number): string {

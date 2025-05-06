@@ -27,3 +27,43 @@
   color: blue;
   font-weight: bold;
 }
+/* === BOTONES TIPO VIDEOJUEGO PARA PRIMENG === */
+
+.btn-custom-success {
+  @apply bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-2 rounded-lg shadow transition;
+}
+.btn-custom-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-2 rounded-lg shadow transition;
+}
+.btn-custom-warning {
+  @apply bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-3 py-2 rounded-lg shadow transition;
+}
+
+.ofertas-container ::ng-deep .p-table {
+  @apply w-full text-sm text-white;
+}
+
+.ofertas-container ::ng-deep th,
+.ofertas-container ::ng-deep td {
+  @apply px-4 py-3 border-b border-gray-700;
+}
+
+.ofertas-container ::ng-deep thead {
+  @apply bg-gray-800 text-left uppercase tracking-wider text-xs;
+}
+
+.ofertas-container ::ng-deep tr:hover {
+  @apply bg-gray-800 transition;
+}
+:host ::ng-deep img {
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-button .pi {
+  font-size: 1rem;
+}
+
+:host ::ng-deep .p-button {
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
