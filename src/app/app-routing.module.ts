@@ -13,22 +13,34 @@ import { OfertasComponent } from './ofertas/ofertas.component';
 import { LigasComponent } from './ligas/ligas.component';
 import { LigasGuard } from './guards/ligas.guard';
 import { InicioComponent } from './inicio/inicio.component';
+import { RedirigirSiLogueadoGuard } from './guards/redirigir-si-logueado.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { NoLigaGuard } from './guards/noliga.guard';
 
 const routes: Routes = [
-  {path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard]},
-  { path: 'estadisticas-liga', component: EstadisticasLigaComponent },
-  { path: 'plantilla', component: MiPlantillaComponent,   canActivate: [LigasGuard]},
-  { path: 'noticias', component: NoticiasComponent },
-  { path: 'chat', component: ChatComponent },
+  { path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard,AuthGuard] },
+  { path: 'estadisticas-liga', component: EstadisticasLigaComponent, canActivate: [AuthGuard] },
+  { path: 'plantilla', component: MiPlantillaComponent, canActivate: [LigasGuard,AuthGuard] },
+  { path: 'noticias', component: NoticiasComponent, canActivate: [AuthGuard] },
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
   { path: 'ofertas', component: OfertasComponent, canActivate: [LigasGuard] },
-  { path: 'perfil', component: PerfilComponent },
-  { path: 'ligas', component: LigasComponent },
+  { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
+  { path: 'ligas', component: LigasComponent, canActivate: [LigasGuard]},
   {
     path: 'auth',
     children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-      { path: '', redirectTo: 'login', pathMatch: 'full' } // Redirección por defecto a login
+      {
+        path: 'login',
+        component: LoginComponent,
+        canActivate: [RedirigirSiLogueadoGuard]  // ✅ aquí
+      },
+
+      {
+        path: 'register',
+        component: RegisterComponent,
+        canActivate: [RedirigirSiLogueadoGuard]  // ✅ aquí también
+      }, { path: '', redirectTo: 'login', pathMatch: 'full' }
+      // Redirección por defecto a login
     ]
   },
   { path: '', component: InicioComponent, canActivate: [LigasGuard] },
