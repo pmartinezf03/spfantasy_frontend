@@ -8,4 +8,8 @@ export interface Usuario {
   titulares: number[];
   suplentes: number[];
   alias?: string;
+  liga?: {
+    id: number;
+    nombre: string;
+  };
 }

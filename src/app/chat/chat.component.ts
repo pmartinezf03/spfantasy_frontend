@@ -45,12 +45,10 @@ export class ChatComponent implements OnInit, OnChanges {
       if (!user) return;
 
       this.currentUser = user;
-      this.loadUsuarios();
-      this.loadGruposDelUsuario();
 
       const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
-      // Precargar mensajes históricos
+      // 1. Precargar mensajes históricos
       this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/${user.id}/todos`, { headers }).subscribe({
         next: (todos) => {
           todos.forEach((msg) => {
@@ -73,25 +71,33 @@ export class ChatComponent implements OnInit, OnChanges {
         error: (err) => console.error("Error al precargar mensajes:", err)
       });
 
-      this.http.get<GrupoChat[]>(`${environment.apiUrl}/api/grupos`, { headers }).subscribe(grupos => {
-        grupos.forEach(grupo => {
-          this.webSocketService.subscribeToChannel(
-            this.webSocketService.getCanalGrupo(grupo.id)
-          );
-        });
+      // 2. Subscribirse a grupos
+      this.http.get<GrupoChat>(`${environment.apiUrl}/api/grupos/liga/${user.id}`, { headers }).subscribe(grupo => {
+        const canal = this.webSocketService.getCanalGrupo(grupo.id);
+        this.webSocketService.subscribeToChannel(canal);
+        console.log("📡 Subscrito SOLO al canal de grupo del usuario:", canal);
+        this.gruposUsuario = [grupo];
       });
 
+
+      // 3. Obtener usuarios y subscribirse a canales privados
       this.usuarioService.obtenerUsuarios().subscribe(usuarios => {
         this.usuarios = usuarios.filter(u => u.id !== this.currentUser!.id);
 
-        this.usuarios.forEach(contacto => {
-          if (contacto.alias && user.alias) {
-            const canalPrivado = this.webSocketService.getCanalPrivado(user.alias, contacto.alias);
-            this.webSocketService.subscribeToChannel(canalPrivado);
+        if (this.currentUser?.alias) {
+          for (const contacto of this.usuarios) {
+            if (contacto.alias) {
+              const canalPrivado = this.webSocketService.getCanalPrivado(this.currentUser.alias, contacto.alias);
+              this.webSocketService.subscribeToChannel(canalPrivado);
+              console.log("📡 Subscrito a canal privado:", canalPrivado);
+            }
           }
-        });
+        } else {
+          console.warn("⚠️ El usuario actual no tiene alias definido. No se puede subscribir a canales privados.");
+        }
       });
 
+      // 4. Escuchar mensajes entrantes
       this.webSocketService.getMessages().subscribe((message: Message) => {
         const clave = this.getClaveConversacion(message);
         if (!this.mensajesPorConversacion.has(clave)) {
@@ -101,7 +107,7 @@ export class ChatComponent implements OnInit, OnChanges {
         const mensajes = this.mensajesPorConversacion.get(clave)!;
         const yaExiste = mensajes.some(m =>
           m.id && message.id ? m.id === message.id :
-          m.timestamp === message.timestamp && m.contenido === message.contenido && m.remitenteId === message.remitenteId
+            m.timestamp === message.timestamp && m.contenido === message.contenido && m.remitenteId === message.remitenteId
         );
 
         if (!yaExiste) {
@@ -117,6 +123,7 @@ export class ChatComponent implements OnInit, OnChanges {
       });
     });
   }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedGroupId'] || changes['selectedUserId']) {
@@ -142,8 +149,21 @@ export class ChatComponent implements OnInit, OnChanges {
     this.selectedGroupId = null;
     this.contactoSeleccionado = this.usuarios.find(u => u.id === usuarioId) || null;
     this.grupoSeleccionado = null;
-    this.loadMessages();
+
+    const clave = this.generarClavePrivada(this.currentUser!.id, usuarioId);
+
+    const mensajes = this.mensajesPorConversacion.get(`privado-${clave}`) || [];
+    this.messages = [...mensajes]; // mostrar en pantalla
+
+    // marcar como leídos
+    const ultimoId = mensajes.length ? mensajes[mensajes.length - 1].id ?? 0 : 0;
+    this.markAsRead(`privado-${clave}`, ultimoId);
+
+    this.changeDetector.detectChanges();
+    this.scrollChatToBottom(); // 👈 scroll automático
   }
+
+
 
   onGrupoSeleccionado(grupoId: number): void {
     this.selectedGroupId = grupoId;
@@ -155,21 +175,27 @@ export class ChatComponent implements OnInit, OnChanges {
 
   loadMessages(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
+
     if (this.selectedGroupId) {
-      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/grupo/${this.selectedGroupId}/dto`, { headers })
+      const clave = `grupo-${this.selectedGroupId}`;
+      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/grupo/${this.selectedGroupId}/dto?limit=50`, { headers })
         .subscribe(data => {
-          this.messages = data;
+          this.mensajesPorConversacion.set(clave, data);
+          this.messages = [...data];
           this.scrollChatToBottom();
         });
     } else if (this.selectedUserId) {
-      const clave = this.generarClavePrivada(this.currentUser!.id, this.selectedUserId);
-      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/privado/${this.currentUser!.id}/${this.selectedUserId}/dto`, { headers })
+      const clavePrivada = this.generarClavePrivada(this.currentUser!.id, this.selectedUserId);
+      const clave = `privado-${clavePrivada}`;
+      this.http.get<Message[]>(`${environment.apiUrl}/api/mensajes/privado/${this.currentUser!.id}/${this.selectedUserId}/dto?limit=50`, { headers })
         .subscribe(data => {
-          this.messages = data;
+          this.mensajesPorConversacion.set(clave, data);
+          this.messages = [...data];
           this.scrollChatToBottom();
         });
     }
   }
+
 
   sendMessage(contenido: string): void {
     if (!contenido.trim() || !this.currentUser) return;
@@ -192,18 +218,8 @@ export class ChatComponent implements OnInit, OnChanges {
     this.changeDetector.detectChanges();
 
     // 📤 Enviar mensaje por WebSocket
-    if (this.selectedGroupId) {
-      const canalGrupo = this.webSocketService.getCanalGrupo(this.selectedGroupId);
-      this.webSocketService.publishMessage(canalGrupo, mensaje);
-    } else if (this.selectedUserId) {
-      const destino = this.usuarios.find(u => u.id === this.selectedUserId);
-      if (destino?.alias && this.currentUser.alias) {
-        const canalPrivado = this.webSocketService.getCanalPrivado(this.currentUser.alias, destino.alias);
-        this.webSocketService.publishMessage(canalPrivado, mensaje);
-      } else {
-        console.warn("❌ No se puede enviar el mensaje: alias no disponible.");
-      }
-    }
+    this.webSocketService.sendMessage(mensaje);
+
   }
 
 

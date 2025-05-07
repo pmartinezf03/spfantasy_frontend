@@ -1,46 +1,79 @@
 <!-- Modal -->
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-  <div class="bg-[#1e2937] p-6 rounded-xl w-11/12 md:w-2/3 lg:w-1/2 relative flex flex-col">
-    
+<div
+  *ngIf="isModalOpen"
+  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+>
+  <div
+    class="bg-[#1e2937] p-6 rounded-xl w-11/12 md:w-2/3 lg:w-1/2 relative flex flex-col"
+  >
     <!-- Título del gráfico -->
     <h4 class="text-xl font-bold text-white mb-4">📊 Gráfico Grande</h4>
 
     <!-- Gráfico -->
     <div class="flex-grow">
-      <p-chart *ngIf="selectedChartData" [type]="selectedChartType" [data]="selectedChartData" [options]="selectedChartOptions" style="height: 400px;"></p-chart>
+      <p-chart
+        *ngIf="
+          selectedChartData?.datasets?.length &&
+          selectedChartData?.labels?.length
+        "
+        [type]="selectedChartType || 'bar'"
+        [data]="selectedChartData"
+        [options]="selectedChartOptions"
+        style="height: 400px"
+      ></p-chart>
     </div>
 
     <!-- Botón de salir prominente con estilo PrimeNG -->
-    <button 
-      (click)="closeModal()" 
-      class="p-button p-button-rounded p-button-danger text-xl font-bold py-6 px-14 hover:bg-red-500 focus:ring-4 focus:ring-red-500 transition-all !text-white !bg-red-600 !rounded-full !shadow-lg mt-6 mx-auto">
+    <button
+      (click)="closeModal()"
+      class="p-button p-button-rounded p-button-danger text-xl font-bold py-6 px-14 hover:bg-red-500 focus:ring-4 focus:ring-red-500 transition-all !text-white !bg-red-600 !rounded-full !shadow-lg mt-6 mx-auto"
+    >
       Salir
     </button>
   </div>
 </div>
 
-
-
-
 <!-- 👋 Bienvenida animada -->
-<div class="dashboard-container p-6 bg-gradient-to-br from-[#1f2937] via-[#111827] to-[#0f172a] min-h-screen text-white">
-
+<div
+  class="dashboard-container p-6 bg-gradient-to-br from-[#1f2937] via-[#111827] to-[#0f172a] min-h-screen text-white"
+>
   <!-- 📊 Comparativa principal -->
   <div class="section animate__animated animate__zoomIn mb-6">
-    <div class="bg-[#1e40af] rounded-xl p-6 shadow-2xl cursor-pointer" (click)="openModal(chartData, 'bar', chartOptions)">
+    <div
+      class="bg-[#1e40af] rounded-xl p-6 shadow-2xl cursor-pointer"
+      (click)="openModal(chartData, 'doughnut', chartOptions)"
+    >
       <h3 class="text-xl font-bold text-white">📊 Comparativa: Tú vs Liga</h3>
-      <p-chart type="bar" [data]="chartData" [options]="chartOptions" style="max-height: 220px;" class="mt-4"></p-chart>
+      <p-chart
+        type="doughnut"
+        [data]="chartData"
+        [options]="chartOptions"
+        style="max-height: 220px"
+        class="mt-4"
+      ></p-chart>
     </div>
   </div>
 
   <!-- 📈 Gráficas individuales dinámicas -->
   <div class="section mb-6">
-    <h3 class="text-2xl font-bold text-fantasyGold mb-4">📈 Estadísticas Individuales</h3>
+    <h3 class="text-2xl font-bold text-fantasyGold mb-4">
+      📈 Estadísticas Individuales
+    </h3>
     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      <div *ngFor="let chart of chartsResumen" class="animate__animated animate__fadeInUp cursor-pointer" (click)="openModal(chart.data, chart.tipo, chart.options)">
+      <div
+        *ngFor="let chart of chartsResumen"
+        class="animate__animated animate__fadeInUp cursor-pointer"
+        (click)="openModal(chart.data, chart.tipo, chart.options)"
+      >
         <div class="bg-[#111827] rounded-xl shadow-lg p-4">
           <h4 class="text-xl font-bold text-white">{{ chart.titulo }}</h4>
-          <p-chart [type]="chart.tipo" [data]="chart.data" [options]="chart.options" style="height: 250px;" class="mt-4"></p-chart>
+          <p-chart
+            [type]="chart.tipo"
+            [data]="chart.data"
+            [options]="chart.options"
+            style="height: 250px"
+            class="mt-4"
+          ></p-chart>
         </div>
       </div>
     </div>
@@ -48,25 +81,46 @@
 
   <!-- 🏀 Radar y Doughnut -->
   <div class="section grid gap-6 md:grid-cols-2 mb-6">
-    <div class="animate__animated animate__fadeInLeft cursor-pointer" (click)="openModal(radarData, 'radar', radarOptions)">
+    <div
+      class="animate__animated animate__fadeInLeft cursor-pointer"
+      (click)="openModal(radarData, 'radar', radarOptions)"
+    >
       <div class="bg-[#111827] rounded-xl shadow-lg p-6">
-        <h4 class="text-xl font-bold text-white">📡 Radar - Perfil de tu equipo</h4>
-        <p-chart type="radar" [data]="radarData" [options]="radarOptions"></p-chart>
+        <h4 class="text-xl font-bold text-white">
+          📡 Radar - Perfil de tu equipo
+        </h4>
+        <p-chart
+          type="radar"
+          [data]="radarData"
+          [options]="radarOptions"
+        ></p-chart>
       </div>
     </div>
-    <div class="animate__animated animate__fadeInRight cursor-pointer" (click)="openModal(doughnutData, 'doughnut', doughnutOptions)">
+    <div
+      class="animate__animated animate__fadeInRight cursor-pointer"
+      (click)="openModal(doughnutData, 'doughnut', doughnutOptions)"
+    >
       <div class="bg-[#111827] rounded-xl shadow-lg p-6">
-        <h4 class="text-xl font-bold text-white">🍩 Distribución de Fortalezas</h4>
-        <p-chart type="doughnut" [data]="doughnutData" [options]="doughnutOptions"></p-chart>
+        <h4 class="text-xl font-bold text-white">Distribución de Fortalezas</h4>
+        <p-chart
+          type="doughnut"
+          [data]="doughnutData"
+          [options]="doughnutOptions"
+        ></p-chart>
       </div>
     </div>
   </div>
 
   <!-- 🏆 Ranking -->
   <div class="section mb-6">
-    <h3 class="text-2xl font-bold text-fantasyGold mb-4">🏆 Ranking de tu Liga</h3>
+    <h3 class="text-2xl font-bold text-fantasyGold mb-4">
+      🏆 Ranking de tu Liga
+    </h3>
     <div class="flex flex-col gap-3">
-      <div *ngFor="let user of ranking; let i = index" class="bg-[#1e40af] rounded-xl p-4 shadow-xl hover:scale-105 transition-all">
+      <div
+        *ngFor="let user of ranking; let i = index"
+        class="bg-[#1e40af] rounded-xl p-4 shadow-xl hover:scale-105 transition-all"
+      >
         <span class="text-fantasyGold font-semibold">{{ i + 1 }}º</span>
         <span class="text-white">👤 {{ user.nombre }}</span>
         <span class="text-yellow-400">{{ user.puntosTotales }} pts</span>
@@ -76,13 +130,23 @@
 
   <!-- 🚀 Carrusel de estadísticas destacadas -->
   <div class="section mb-6">
-    <h3 class="text-2xl font-bold text-fantasyGold mb-4">📈 Destacados de la Semana</h3>
-    <p-carousel [value]="carruselTop" [numVisible]="1" [circular]="true" [autoplayInterval]="5000" class="bg-[#1e2937] rounded-xl p-6">
+    <h3 class="text-2xl font-bold text-fantasyGold mb-4">
+      📈 Destacados de la Semana
+    </h3>
+    <p-carousel
+      [value]="carruselTop"
+      [numVisible]="1"
+      [circular]="true"
+      [autoplayInterval]="5000"
+      class="bg-[#1e2937] rounded-xl p-6"
+    >
       <ng-template pTemplate="item" let-top>
         <div class="bg-[#1e40af] rounded-xl shadow-lg p-4">
           <h3 class="text-xl font-bold text-white">{{ top.titulo }}</h3>
           <ul class="mt-4 text-gray-300">
-            <li *ngFor="let j of top.jugadores">🏀 {{ j.nombre }} — {{ top.formato(j) }}</li>
+            <li *ngFor="let j of top.jugadores">
+              🏀 {{ j.nombre }} — {{ top.formato(j) }}
+            </li>
           </ul>
         </div>
       </ng-template>
@@ -93,23 +157,49 @@
   <div class="section mb-6">
     <h3 class="text-2xl font-bold text-fantasyGold mb-4">⚡ Accesos Rápidos</h3>
     <div class="flex flex-wrap justify-center gap-3">
-      <button pButton label="📊 Estadísticas" class="p-button-rounded p-button-info bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white" routerLink="/estadisticas"></button>
-      <button pButton label="💰 Mercado" class="p-button-rounded p-button-success bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white" routerLink="/mercado"></button>
-      <button pButton label="📋 Mi Plantilla" class="p-button-rounded p-button-warning bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-white" routerLink="/mi-plantilla"></button>
-      <button pButton label="💬 Chat" class="p-button-rounded p-button-help bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white" routerLink="/chat"></button>
+      <button
+        pButton
+        label="📊 Estadísticas"
+        class="p-button-rounded p-button-info bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white"
+        routerLink="/estadisticas"
+      ></button>
+      <button
+        pButton
+        label="💰 Mercado"
+        class="p-button-rounded p-button-success bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white"
+        routerLink="/mercado"
+      ></button>
+      <button
+        pButton
+        label="📋 Mi Plantilla"
+        class="p-button-rounded p-button-warning bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-white"
+        routerLink="/mi-plantilla"
+      ></button>
+      <button
+        pButton
+        label="💬 Chat"
+        class="p-button-rounded p-button-help bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white"
+        routerLink="/chat"
+      ></button>
     </div>
   </div>
 
   <!-- 📰 Noticias -->
   <div class="section mb-6">
-    <h3 class="text-2xl font-bold text-fantasyGold mb-4">📰 Últimas Noticias</h3>
+    <h3 class="text-2xl font-bold text-fantasyGold mb-4">
+      📰 Últimas Noticias
+    </h3>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div *ngFor="let noticia of noticias" class="bg-[#1e3a8a] rounded-xl shadow-lg p-4 transition-transform transform hover:scale-105">
+      <div
+        *ngFor="let noticia of noticias"
+        class="bg-[#1e3a8a] rounded-xl shadow-lg p-4 transition-transform transform hover:scale-105"
+      >
         <img [src]="noticia.imagenUrl" class="rounded-xl mb-4" />
         <h4 class="text-white font-semibold text-lg">{{ noticia.titulo }}</h4>
-        <p class="text-gray-300">{{ noticia.contenido | slice:0:100 }}...</p>
+        <p class="text-gray-300">
+          {{ noticia.contenido | slice : 0 : 100 }}...
+        </p>
       </div>
     </div>
   </div>
-
 </div>

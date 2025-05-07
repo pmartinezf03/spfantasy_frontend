@@ -10,12 +10,16 @@ import { environment } from '../../environments/environment';
 export class GrupoChatService {
   private apiUrl = `${environment.apiUrl}/api/grupos`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // ✅ Obtener todos los grupos disponibles
   getGrupos(): Observable<GrupoChat[]> {
     return this.http.get<GrupoChat[]>(`${this.apiUrl}`);
   }
+  getGrupoDeLigaDelUsuario(usuarioId: number): Observable<GrupoChat> {
+    return this.http.get<GrupoChat>(`${environment.apiUrl}/api/grupos/liga/${usuarioId}`);
+  }
+
 
   // ✅ Crear un nuevo grupo
   crearGrupo(grupo: { nombre: string; descripcion: string; passwordGrupo: string; creadorId: number }): Observable<GrupoChat> {

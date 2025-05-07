@@ -32,12 +32,25 @@ export class GruposComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
-    this.usuarioId = user ? user.id : 0;
-    this.esAdmin = user?.role === 'admin';
-    this.cargarGrupos();
-    this.cargarUsuarios();
+    this.authService.usuarioCompleto$.subscribe(user => {
+      if (!user || !user.id) return;
+
+      this.usuarioId = user.id;
+      this.esAdmin = user.role === 'admin';
+
+      this.grupoChatService.getGrupoDeLigaDelUsuario(user.id).subscribe({
+        next: (grupo: GrupoChat) => {
+          this.grupos = [grupo]; // Solo el grupo de su liga
+        },
+        error: (err: any) => console.error('❌ Error al obtener el grupo de la liga:', err)
+      });
+
+      this.cargarUsuarios();
+    });
   }
+
+
+
 
   cargarGrupos(): void {
     this.grupoChatService.getGrupos().subscribe({

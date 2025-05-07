@@ -3,10 +3,13 @@ export interface Jugador {
   idLiga: number;
   nombre: string;
   posicion: string;
+
   equipo: {
     id: number;
     nombre: string;
   };
+
+
   precioVenta: number;
   rendimiento: number;
   puntosTotales: number;

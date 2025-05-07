@@ -5,5 +5,5 @@ export interface GrupoChat {
   passwordGrupo?: string;
   creadorId: number;
   usuarios: number[];
-  usuariosIds: number[]; // Lista de IDs de usuarios en el grupo
+  usuariosIds: number[];
 }

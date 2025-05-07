@@ -6,6 +6,7 @@ import { EstadisticasService } from '../services/estadisticas.service';
 import { Jugador } from '../models/jugador.model';
 import { Noticia } from '../models/noticia.model';
 import { Usuario } from '../models/usuario.model';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-inicio',
@@ -97,13 +98,13 @@ export class InicioComponent implements OnInit {
   // Modal state
   isModalOpen: boolean = false;
   selectedChartData: any = null;
-  selectedChartType: ChartType = 'bar';  // Definir el tipo correcto
+  selectedChartType: ChartType = 'bar';
   selectedChartOptions: any = null;
 
   constructor(
     private authService: AuthService,
     private estadisticasService: EstadisticasService,
-    private noticiasService: NoticiasService
+    private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
@@ -120,7 +121,7 @@ export class InicioComponent implements OnInit {
       }
     });
   }
-  
+
 
   cargarDatos(ligaId: number, usuarioId: number): void {
     this.estadisticasService.getRanking(ligaId).subscribe(data => this.ranking = data.slice(0, 5));
@@ -133,7 +134,9 @@ export class InicioComponent implements OnInit {
         datasets: [{
           label: 'Puntos FP',
           data: data.map(j => j.fp),
-          backgroundColor: '#6366f1'
+          backgroundColor: '#4ade80',
+          borderColor: '#10b981',
+          borderWidth: 2
         }]
       };
     });
@@ -145,8 +148,9 @@ export class InicioComponent implements OnInit {
         datasets: [{
           label: 'FP / Min',
           data: data.map(j => j.fp / (j.min || 1)),
-          backgroundColor: '#f59e0b',
-          borderColor: '#f59e0b',
+          backgroundColor: '#facc15',
+          borderColor: '#fbbf24',
+          borderWidth: 2,
           tension: 0.4,
           fill: false
         }]
@@ -160,19 +164,25 @@ export class InicioComponent implements OnInit {
         datasets: [{
           label: 'Valor €',
           data: data.map(j => j.precioVenta),
-          backgroundColor: '#3b82f6'
+          backgroundColor: '#60a5fa',
+          borderColor: '#3b82f6',
+          borderWidth: 2
         }]
       };
     });
 
     this.estadisticasService.getTopMinutos(ligaId).subscribe(data => {
       this.topMinutos = data;
+      this.actualizarGraficosSecundarios();
+
       this.chartMinutos = {
         labels: data.map(j => j.nombre),
         datasets: [{
           label: 'Minutos',
           data: data.map(j => j.min),
-          backgroundColor: '#10b981'
+          backgroundColor: '#34d399',
+          borderColor: '#10b981',
+          borderWidth: 2
         }]
       };
     });
@@ -181,28 +191,42 @@ export class InicioComponent implements OnInit {
 
     this.estadisticasService.getComparativa(ligaId, usuarioId).subscribe(data => {
       this.comparativa = data;
+      this.actualizarGraficosSecundarios();
       this.chartData = {
         labels: ['Tu plantilla', 'Media de la liga'],
         datasets: [{
           label: 'Puntos Fantasy',
           data: [data.usuarioPuntos, data.mediaLiga],
-          backgroundColor: ['#42A5F5', '#FF6384']
+          backgroundColor: ['#38bdf8', '#f472b6'],
+          borderColor: ['#0ea5e9', '#ec4899'],
+          borderWidth: 2
         }]
       };
 
       this.radarData.datasets = [{
         label: 'Tu plantilla',
         data: [10, 8, 7, 15, data.usuarioPuntos],
-        backgroundColor: 'rgba(255,99,132,0.2)',
-        borderColor: '#FF6384',
-        pointBackgroundColor: '#FF6384'
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        borderColor: '#3b82f6',
+        pointBackgroundColor: '#3b82f6'
       }];
+      this.actualizarGraficosSecundarios();
+
     });
 
-    this.noticiasService.getNoticias().subscribe(data => {
-      this.noticias = data.slice(0, 5);
+    // ✅ Obtener noticias desde NewsAPI en lugar de base de datos
+    const apiKey = '68d8835c43cc4323b29494c947a03473';
+    const url = `https://newsapi.org/v2/everything?q=baloncesto&language=es&sortBy=publishedAt&pageSize=3&apiKey=${apiKey}`;
+
+    this.http.get<any>(url).subscribe(response => {
+      this.noticias = response.articles.map((noticia: any) => ({
+        titulo: noticia.title,
+        contenido: noticia.description,
+        imagenUrl: noticia.urlToImage
+      }));
     });
 
+    // Carrusel
     setTimeout(() => {
       this.carruselTop = [
         { titulo: '🔥 Triplistas Letales', jugadores: this.topT3, formato: (j: Jugador) => `${j.t3} triples` },
@@ -213,23 +237,30 @@ export class InicioComponent implements OnInit {
       ].filter(grupo => grupo.jugadores.length > 0);
     }, 500);
 
+    // Gráfico doughnut
     this.doughnutData = {
       labels: ['Triples', 'Tiros Libres', 'Minutos'],
       datasets: [{
         data: [this.topT3.length, this.topTl.length, this.topMinutos.length],
         backgroundColor: ['#4ade80', '#fb923c', '#3b82f6'],
+        borderColor: ['#16a34a', '#f97316', '#2563eb'],
+        borderWidth: 2,
         label: 'Distribución'
       }]
     };
 
+    // Charts resumen
     this.estadisticasService.getTopT3(ligaId).subscribe(data => {
       this.topT3 = data;
+      this.actualizarGraficosSecundarios();
       this.chartT3 = {
         labels: data.map(j => j.nombre),
         datasets: [{
           label: 'Triples Anotados',
           data: data.map(j => j.t3),
-          backgroundColor: '#ef4444'
+          backgroundColor: '#ef4444',
+          borderColor: '#dc2626',
+          borderWidth: 2
         }]
       };
 
@@ -240,8 +271,44 @@ export class InicioComponent implements OnInit {
         { titulo: '💰 Valor de Mercado', data: this.chartPrecio, label: 'Valor €', tipo: 'bar', options: this.chartOptions },
         { titulo: '🎯 Puntos Fantasy', data: this.chartPuntos, label: 'Puntos FP', tipo: 'bar', options: this.chartOptions }
       ];
+      setTimeout(() => {
+        this.actualizarGraficosSecundarios();
+      }, 500);
+
     });
   }
+
+  private actualizarGraficosSecundarios(): void {
+    // Asignar doughnut solo si ya hay datos
+    if (this.topT3.length && this.topTl.length && this.topMinutos.length) {
+      this.doughnutData = {
+        labels: ['Triples', 'Tiros Libres', 'Minutos'],
+        datasets: [{
+          data: [this.topT3.length, this.topTl.length, this.topMinutos.length],
+          backgroundColor: ['#4ade80', '#fb923c', '#3b82f6'],
+          borderColor: ['#16a34a', '#f97316', '#2563eb'],
+          borderWidth: 2,
+          label: 'Distribución'
+        }]
+      };
+    }
+
+    // Asignar radar solo si ya tienes datos comparativos
+    if (this.comparativa && this.comparativa.usuarioPuntos) {
+      this.radarData = {
+        labels: ['T2', 'T3', 'TL', 'Minutos', 'FP'],
+        datasets: [{
+          label: 'Tu plantilla',
+          data: [10, 8, 7, 15, this.comparativa.usuarioPuntos],
+          backgroundColor: 'rgba(59,130,246,0.2)',
+          borderColor: '#3b82f6',
+          pointBackgroundColor: '#3b82f6'
+        }]
+      };
+    }
+  }
+
+
 
   // Modal open/close
   openModal(chartData: any, chartType: ChartType, chartOptions: any) {
@@ -254,7 +321,7 @@ export class InicioComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.selectedChartData = null;
-    this.selectedChartType = 'bar'; // Default chart type
+    this.selectedChartType = 'bar';
     this.selectedChartOptions = null;
   }
 }
