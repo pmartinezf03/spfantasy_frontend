@@ -11,6 +11,9 @@ export class WebSocketService {
   private stompClient!: Client;
   private messageSubject = new Subject<any>();
   private canalesSuscritos = new Set<string>();
+  private reintentosPorCanal: Map<string, number> = new Map();
+  private readonly LIMITE_REINTENTOS = 10;
+
 
   constructor() {
     this.connect();
@@ -61,32 +64,45 @@ export class WebSocketService {
 
   // 🔔 Generalizado para escuchar un canal concreto
   subscribeToChannel(channel: string): void {
-    if (this.canalesSuscritos.has(channel)) return;
+    if (this.canalesSuscritos.has(channel)) {
+      console.log(`⚠️ Canal ya suscrito: ${channel}`);
+      return;
+    }
 
-    const intentarSuscripcion = () => {
-      if (this.stompClient && this.stompClient.connected) {
-        this.stompClient.subscribe(channel, (message) => {
-          const msg = JSON.parse(message.body);
-          this.messageSubject.next(msg);
-        });
-        this.canalesSuscritos.add(channel);
-        console.log(`📡 Subscrito a canal: ${channel}`);
-      } else {
-        // 🕒 Reintentar hasta que conecte
-        setTimeout(intentarSuscripcion, 500);
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.subscribe(channel, (message) => {
+        const msg = JSON.parse(message.body);
+        console.log(`📨 MENSAJE RECIBIDO en canal ${channel}:`, msg);
+        this.messageSubject.next(msg);
+      });
+
+      this.canalesSuscritos.add(channel);
+      console.log(`📡 Subscrito a canal: ${channel}`);
+      this.reintentosPorCanal.delete(channel); // ✅ limpiar si conecta
+    } else {
+      const intentos = this.reintentosPorCanal.get(channel) ?? 0;
+
+      if (intentos >= this.LIMITE_REINTENTOS) {
+        console.warn(`❌ No se pudo conectar al canal ${channel} después de ${this.LIMITE_REINTENTOS} intentos.`);
+        return;
       }
-    };
 
-    intentarSuscripcion(); // 🟢 Intento inicial
+      this.reintentosPorCanal.set(channel, intentos + 1);
+      console.warn(`⏳ Esperando conexión WebSocket para canal: ${channel} (intento ${intentos + 1})`);
+
+      setTimeout(() => this.subscribeToChannel(channel), 1000);
+    }
   }
+
 
 
 
   // 🧠 Canal entre alias
-  getCanalPrivado(alias1: string, alias2: string): string {
-    const ordenado = [alias1, alias2].sort();
+  getCanalPrivadoPorId(id1: number, id2: number): string {
+    const ordenado = [id1, id2].sort((a, b) => a - b);
     return `/chat/privado/${ordenado[0]}-${ordenado[1]}`;
   }
+
 
   // 🎯 Canal de grupo de liga
   getCanalGrupo(grupoId: number): string {

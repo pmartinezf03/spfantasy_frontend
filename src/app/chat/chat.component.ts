@@ -9,6 +9,7 @@ import { Usuario } from '../models/usuario.model';
 import { UsuarioService } from '../services/usuario.service';
 import { GrupoChat } from '../models/grupochat.model';
 import { environment } from '../../environments/environment';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -40,8 +41,9 @@ export class ChatComponent implements OnInit, OnChanges {
     private usuarioService: UsuarioService
   ) { }
 
+
   ngOnInit(): void {
-    this.authService.usuarioCompleto$.subscribe(user => {
+    this.authService.usuarioCompleto$.pipe(take(1)).subscribe(user => {
       if (!user) return;
 
       this.currentUser = user;
@@ -71,7 +73,7 @@ export class ChatComponent implements OnInit, OnChanges {
         error: (err) => console.error("Error al precargar mensajes:", err)
       });
 
-      // 2. Subscribirse a grupos
+      // 2. Subscribirse al grupo de la liga
       this.http.get<GrupoChat>(`${environment.apiUrl}/api/grupos/liga/${user.id}`, { headers }).subscribe(grupo => {
         const canal = this.webSocketService.getCanalGrupo(grupo.id);
         this.webSocketService.subscribeToChannel(canal);
@@ -79,27 +81,23 @@ export class ChatComponent implements OnInit, OnChanges {
         this.gruposUsuario = [grupo];
       });
 
-
       // 3. Obtener usuarios y subscribirse a canales privados
       this.usuarioService.obtenerUsuarios().subscribe(usuarios => {
         this.usuarios = usuarios.filter(u => u.id !== this.currentUser!.id);
 
-        if (this.currentUser?.alias) {
-          for (const contacto of this.usuarios) {
-            if (contacto.alias) {
-              const canalPrivado = this.webSocketService.getCanalPrivado(this.currentUser.alias, contacto.alias);
-              this.webSocketService.subscribeToChannel(canalPrivado);
-              console.log("📡 Subscrito a canal privado:", canalPrivado);
-            }
-          }
-        } else {
-          console.warn("⚠️ El usuario actual no tiene alias definido. No se puede subscribir a canales privados.");
+        for (const contacto of this.usuarios) {
+          const canalPrivado = this.webSocketService.getCanalPrivadoPorId(this.currentUser!.id, contacto.id);
+          this.webSocketService.subscribeToChannel(canalPrivado);
         }
       });
 
       // 4. Escuchar mensajes entrantes
       this.webSocketService.getMessages().subscribe((message: Message) => {
+        console.log("📥 Mensaje capturado en ChatComponent:", message); // AÑADE ESTO
+
         const clave = this.getClaveConversacion(message);
+        const claveActual = this.getClaveActual();
+
         if (!this.mensajesPorConversacion.has(clave)) {
           this.mensajesPorConversacion.set(clave, []);
         }
@@ -111,18 +109,25 @@ export class ChatComponent implements OnInit, OnChanges {
         );
 
         if (!yaExiste) {
-          mensajes.push(message);
-          if (clave === this.getClaveActual()) {
-            this.messages = [...mensajes];
+          const nuevosMensajes = [...mensajes, message];
+          this.mensajesPorConversacion.set(clave, nuevosMensajes);
+
+          if (clave === claveActual || message.remitenteId === this.currentUser?.id) {
+            this.messages = [...nuevosMensajes];
             this.markAsRead(clave, message.id ?? 0);
             this.changeDetector.detectChanges();
-          } else if (message.remitenteId !== this.currentUser?.id) {
+            this.scrollChatToBottom();
+          } else {
             this.notificacionesPendientes.add(clave);
           }
+
         }
       });
+
     });
   }
+
+
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -208,19 +213,11 @@ export class ChatComponent implements OnInit, OnChanges {
       timestamp: new Date().toISOString()
     };
 
-    // 👇 Añadir mensaje localmente para mostrarlo de inmediato
-    const clave = this.getClaveActual();
-    if (!this.mensajesPorConversacion.has(clave)) {
-      this.mensajesPorConversacion.set(clave, []);
-    }
-    this.mensajesPorConversacion.get(clave)!.push(mensaje);
-    this.messages = [...this.mensajesPorConversacion.get(clave)!];
-    this.changeDetector.detectChanges();
-
-    // 📤 Enviar mensaje por WebSocket
+    // ✅ Ya no lo añadimos a mano, llegará por WebSocket
     this.webSocketService.sendMessage(mensaje);
-
+    this.scrollChatToBottom();
   }
+
 
 
   private scrollChatToBottom(): void {
@@ -241,15 +238,27 @@ export class ChatComponent implements OnInit, OnChanges {
     return [id1, id2].sort((a, b) => a - b).join('-');
   }
 
+
   private getClaveActual(): string {
-    return this.selectedGroupId ? `grupo-${this.selectedGroupId}` :
-      this.selectedUserId ? `privado-${this.generarClavePrivada(this.currentUser!.id, this.selectedUserId)}` : '';
+    return this.selectedGroupId
+      ? `grupo-${this.selectedGroupId}`
+      : this.selectedUserId
+        ? `privado-${this.generarClavePrivada(this.currentUser!.id, this.selectedUserId)}`
+        : '';
   }
 
+
   private getClaveConversacion(msg: Message): string {
-    return msg.grupoId ? `grupo-${msg.grupoId}` :
-      `privado-${this.generarClavePrivada(msg.remitenteId!, msg.destinatarioId!)}`;
+    if (msg.grupoId) return `grupo-${msg.grupoId}`;
+    if (msg.remitenteId == null || msg.destinatarioId == null || !this.currentUser) return '';
+
+    const id1 = Math.min(msg.remitenteId, msg.destinatarioId);
+    const id2 = Math.max(msg.remitenteId, msg.destinatarioId);
+    return `privado-${id1}-${id2}`;
   }
+
+
+
 
   private markAsRead(clave: string, ultimoId: number): void {
     this.ultimosLeidos.set(clave, ultimoId);
