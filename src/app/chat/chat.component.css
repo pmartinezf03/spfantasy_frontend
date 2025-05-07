@@ -1,0 +1,41 @@
+:host {
+  height: 100vh;
+  background: linear-gradient(to bottom right, #0f172a, #1f2937);
+  color: #f3f4f6;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Panel izquierdo */
+.w-80 {
+  background-color: #111827;
+  border-right: 1px solid #1f2937;
+}
+
+/* Cabecera del chat */
+.h-16 {
+  background-color: #1f2937;
+  border-bottom: 1px solid #374151;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.text-yellow-400 {
+  color: #facc15;
+}
+
+/* Botones comunes */
+button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+/* Fondo general del chat */
+.flex-1.flex.flex-col {
+  background-color: #0f172a;
+}

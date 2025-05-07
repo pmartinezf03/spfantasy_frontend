@@ -203,7 +203,14 @@ export class ChatComponent implements OnInit, OnChanges {
 
 
   sendMessage(contenido: string): void {
-    if (!contenido.trim() || !this.currentUser) return;
+    if (
+      !contenido.trim() ||
+      !this.currentUser ||
+      (!this.selectedGroupId && !this.selectedUserId)
+    ) {
+      console.warn('⛔ No hay destinatario seleccionado para el mensaje.');
+      return;
+    }
 
     const mensaje: Message = {
       remitenteId: this.currentUser.id,
@@ -213,10 +220,10 @@ export class ChatComponent implements OnInit, OnChanges {
       timestamp: new Date().toISOString()
     };
 
-    // ✅ Ya no lo añadimos a mano, llegará por WebSocket
     this.webSocketService.sendMessage(mensaje);
     this.scrollChatToBottom();
   }
+
 
 
 

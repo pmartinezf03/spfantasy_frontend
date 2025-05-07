@@ -1,61 +1,60 @@
-<div class="flex flex-col h-full bg-gray-100 text-gray-800 rounded-xl shadow-lg p-5 border border-gray-300">
-
+<div class="contact-list-container">
   <!-- 👥 Título -->
-  <h2 class="text-xl font-bold text-fantasyGold mb-5">👥 Contactos</h2>
+  <h2 class="contact-title">👥 Contactos</h2>
 
   <!-- 🔍 Buscador -->
-  <div class="mb-3">
+  <div class="input-group">
     <input
       type="text"
       [(ngModel)]="filtroContacto"
       placeholder="Buscar alias o nombre..."
-      class="w-full px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 shadow focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
+      class="input-control"
     />
   </div>
 
   <!-- ➕ Añadir contacto -->
-  <div class="flex flex-col gap-2 mb-5">
+  <div class="add-contact">
     <input
       type="text"
       [(ngModel)]="nuevoContactoAlias"
       placeholder="Alias del contacto..."
-      class="w-full px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 shadow focus:outline-none focus:ring-2 focus:ring-fantasyBlue"
+      class="input-control"
     />
-    <button
-      (click)="agregarContacto()"
-      class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150"
+    <button (click)="agregarContacto()" class="btn-add">➕ Añadir</button>
+    <p
+      class="status-message"
+      [ngClass]="{
+        'status-success': mensaje.startsWith('✅'),
+        'status-error': mensaje.startsWith('❌') || mensaje.startsWith('⚠️'),
+        'status-neutral':
+          !mensaje.startsWith('✅') &&
+          !mensaje.startsWith('❌') &&
+          !mensaje.startsWith('⚠️')
+      }"
     >
-      ➕ Añadir
-    </button>
-    <p class="text-sm mt-1"
-       [ngClass]="{
-         'text-green-600': mensaje.startsWith('✅'),
-         'text-red-600': mensaje.startsWith('❌') || mensaje.startsWith('⚠️'),
-         'text-gray-500': !mensaje.startsWith('✅') && !mensaje.startsWith('❌') && !mensaje.startsWith('⚠️')
-       }">
       {{ mensaje }}
     </p>
   </div>
 
   <!-- 📋 Lista de contactos -->
-  <ul class="flex-1 overflow-y-auto space-y-2 pr-1">
+  <ul class="contact-list">
     <li
-      *ngFor="let usuario of usuarios | filtroContactos: filtroContacto; trackBy: trackByUsuarioId"
+      *ngFor="
+        let usuario of usuarios | filtroContactos : filtroContacto;
+        trackBy: trackByUsuarioId
+      "
       (click)="seleccionarContacto(usuario.id)"
-      class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 cursor-pointer transition duration-150"
+      class="contact-card"
     >
-      <!-- Avatar -->
-      <div class="w-10 h-10 rounded-full bg-fantasyBlue text-white flex items-center justify-center font-bold text-sm uppercase shadow-inner">
-        {{ usuario.username.charAt(0) }}
-      </div>
-
-      <!-- Datos -->
-      <div class="flex flex-col overflow-hidden">
-        <div class="font-semibold text-sm truncate">
+      <div class="avatar">{{ usuario.username.charAt(0) }}</div>
+      <div class="contact-info">
+        <div class="contact-name">
           {{ usuario.username }}
-          <small *ngIf="usuario.alias" class="ml-1 text-gray-500 text-xs">{{ ('@' + usuario.alias) }}</small>
+          <small *ngIf="usuario.alias" class="alias">
+            {{ "@" + usuario.alias }}
+          </small>
         </div>
-        <div class="text-xs text-gray-500 truncate">{{ usuario.email }}</div>
+        <div class="contact-email">{{ usuario.email }}</div>
       </div>
     </li>
   </ul>
