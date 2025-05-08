@@ -44,8 +44,8 @@
         ></app-tarjeta-informacion>
 
         <app-alineacion
-        [jugadoresPorPosicion]="jugadoresPorPosicion"
-        [banquillo]="jugadoresBanquillo"
+          [jugadoresPorPosicion]="jugadoresPorPosicion"
+          [banquillo]="jugadoresBanquillo"
           (cambiarJugador)="moverJugador($event)"
           (vender)="venderJugador($event)"
           (mostrarInfo)="mostrarInformacion($event)"
@@ -104,10 +104,17 @@
           </thead>
           <tbody>
             <tr *ngFor="let jugador of jugadoresCompletos">
-              <td class="jugador-info">
-                <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" />
-                {{ jugador.nombre }}
+              <td class="jugador-info flex items-center gap-3">
+                <div class="text-base font-semibold truncate">
+                  {{ jugador.nombre }}
+                </div>
+                <div class="text-sm text-gray-400 truncate">
+                  {{ jugador.esTitular ? "Titular" : "Banquillo" }}
+                </div>
+
+                <span class="truncate">{{ jugador.nombre }}</span>
               </td>
+
               <td>{{ jugador.posicion }}</td>
               <td>{{ jugador.precioVenta | currency }}</td>
               <td>{{ jugador.fp }}</td>
@@ -125,7 +132,6 @@
 
       <!-- Radar + Estadísticas -->
       <div class="grid mt-5">
-
         <div class="col-12 md:col-6">
           <div class="grid">
             <div class="col-6" *ngFor="let card of resumenStats">

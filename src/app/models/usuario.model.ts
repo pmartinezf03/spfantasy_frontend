@@ -12,4 +12,6 @@ export interface Usuario {
     id: number;
     nombre: string;
   };
+  vipHasta?: string | null;
+
 }

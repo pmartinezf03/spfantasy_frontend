@@ -35,16 +35,21 @@ export class NavigationComponent implements OnInit {
 
     // 🔁 Suscribirse al usuario completo
     this.authService.usuarioCompleto$.subscribe(usuario => {
+      if (!usuario) {
+        console.warn('⚠️ usuarioCompleto$ emitió null. No actualizo navbar.');
+        return;
+      }
+
       this.zone.run(() => {
         this.esperandoUsuario = false;
 
         const token = this.authService.getToken();
         this.isUserLoggedIn = !!usuario && !!token;
 
-        this.usuarioLogueado = usuario?.username || null;
-        this.usuarioDinero = usuario?.dinero ?? 0;
-        this.usuarioDineroPendiente = usuario?.dineroPendiente ?? 0;
-        this.datosUsuarioCargados = !!usuario;
+        this.usuarioLogueado = usuario.username;
+        this.usuarioDinero = usuario.dinero ?? 0;
+        this.usuarioDineroPendiente = usuario.dineroPendiente ?? 0;
+        this.datosUsuarioCargados = true;
 
         console.log('✅ Datos del usuario en navbar:');
         console.log('   👤 Username:', this.usuarioLogueado);
@@ -52,10 +57,9 @@ export class NavigationComponent implements OnInit {
         console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
 
         this.construirMenu();
-        this.cdr.detectChanges(); // forzar por si acaso
+        this.cdr.detectChanges(); // fuerza actualización visual
       });
     });
-
 
     // 🔔 Verificar si hay ofertas nuevas
     const userId = this.authService.getUserId();
@@ -78,18 +82,20 @@ export class NavigationComponent implements OnInit {
     // 🔁 Refrescar usuario completo al iniciar, si no lo estaba
     const user = this.authService.getUser();
     if (user?.id) {
-      this.authService.refreshUsuarioCompleto();
-
-      // Nos aseguramos de que la liga esté también disponible
-      this.authService.getLigaObservable().subscribe(ligaId => {
-        if (ligaId) {
-          console.log('📌 Liga detectada al iniciar navbar:', ligaId);
-          this.construirMenu(); // ⚠️ Reconstruimos el menú completo cuando esté lista la liga
-          this.cdr.detectChanges(); // 🔄 Forzamos update visual si era necesario
+      this.authService.refreshUsuarioCompleto().subscribe(usuarioActualizado => {
+        if (usuarioActualizado) {
+          this.authService.getLigaObservable().subscribe(ligaId => {
+            if (ligaId) {
+              console.log('📌 Liga detectada al iniciar navbar:', ligaId);
+              this.construirMenu();
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          console.warn('❌ No se pudo actualizar el usuario al iniciar');
         }
       });
     }
-
   }
 
   construirMenu(): void {
@@ -103,9 +109,11 @@ export class NavigationComponent implements OnInit {
           { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
           { label: '🏆 Ligas', routerLink: '/ligas' },
           { label: '💬 Chat', routerLink: '/chat' },
-          { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' }
+          { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' },
+          { label: '📈 Comparador', routerLink: '/comparador' }
         ]
-        : []),
+        : [])
+      ,
       {
         label: this.isUserLoggedIn ? '🚪 Cerrar Sesión' : '🔑 Iniciar sesión',
         command: () => {
@@ -130,4 +138,10 @@ export class NavigationComponent implements OnInit {
       this.construirMenu();
     });
   }
+
+  esVip(): boolean {
+    const vipHasta = this.authService.getUser()?.vipHasta;
+    return vipHasta ? new Date(vipHasta) > new Date() : false;
+  }
+
 }

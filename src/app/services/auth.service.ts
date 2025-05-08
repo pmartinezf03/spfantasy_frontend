@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, of, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LigasService } from './ligas.service';
 import { UsuarioService } from './usuario.service';
@@ -15,7 +15,8 @@ interface User {
   token?: string;
   dinero?: number;
   dineroPendiente?: number;
-}
+  vipHasta?: string | null; }
+
 
 @Injectable({
   providedIn: 'root'
@@ -39,10 +40,8 @@ export class AuthService {
     this.ligaIdSubject.next(id);
 
     // 👇 Al cargar el servicio, intenta cargar el usuario completo
-    const user = this.getUser();
-    if (user?.id) {
-      this.refreshUsuarioCompleto(); // 👈 Esto actualiza usuarioCompleto$
-    }
+    this.restaurarSesionDesdeStorage(); // ✅ Carga usuario + refresh correcto
+
   }
 
 
@@ -53,6 +52,10 @@ export class AuthService {
 
       if (user && token) {
         this.userSubject.next(user);
+        console.log('📥 usuarioCompleto$ emitió:', user);
+        console.log("🧪 VIP hasta (inicio):", user.vipHasta); // 👈 AÑADE AQUÍ
+
+
         this.refreshUsuarioCompleto(); // 🔄 Refresca datos extendidos (dinero, etc.)
       } else {
         this.logout(); // ❌ Limpia si hay datos inconsistentes
@@ -71,11 +74,14 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
           this.userSubject.next(response.user);
-          this.refreshUsuarioCompleto();
+
+          // Espera a que se refresque correctamente
+          this.refreshUsuarioCompleto().subscribe(); // ← esto asegura que esté emitido
         }
       })
     );
   }
+
 
   logout(): void {
 
@@ -100,34 +106,37 @@ export class AuthService {
   }
 
 
-  refreshUsuarioCompleto(): void {
-    const user = this.getUser();
-    if (user?.id) {
-
-      this.usuarioService.obtenerUsuarioCompleto(user.id).subscribe(usuario => {
-        const actualizado = {
-          ...user,
-          dinero: usuario.dinero,
-          dineroPendiente: usuario.dineroPendiente
-        };
-
-        // 👇 Consultar si el usuario está en una liga
-        this.ligasService.obtenerLigaDelUsuario(user.id).subscribe(liga => {
-          if (liga) {
-            this.setLiga(liga);
-            this.setLigaId(liga.id);
-          } else {
-            this.setLiga(null);
-            this.setLigaId(null);
-          }
-
-          // 👉 Guardar todo en localStorage (excepto la liga como tal, solo ID)
-          localStorage.setItem('user', JSON.stringify(actualizado));
-          this.userSubject.next(actualizado); // Datos básicos
-          this.usuarioCompletoSubject.next(usuario); // Objeto completo
-        });
-      });
+  refreshUsuarioCompleto(): Observable<Usuario | null> {
+    const userId = this.getUserId();
+    if (!userId) {
+      console.warn('⚠️ No se pudo obtener el ID del usuario para refrescar.');
+      return of(null);
     }
+
+    return this.http.get<Usuario>(`${this.apiUrl}/${userId}`).pipe(
+      tap((usuario) => {
+        console.log('📥 usuarioCompleto$ emitió (desde refresh):', usuario);
+        this.usuarioCompletoSubject.next(usuario);
+
+        const currentUser = this.getUser();
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            dinero: usuario.dinero,
+            dineroPendiente: usuario.dineroPendiente,
+            vipHasta: usuario.vipHasta || null
+          };
+          this.userSubject.next(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          console.log('🆕 Usuario con VIP actualizado en localStorage:', updatedUser);
+        }
+
+      }),
+      catchError((error) => {
+        console.error('❌ Error al refrescar el usuario:', error);
+        return of(null);
+      })
+    );
   }
 
 
@@ -188,4 +197,29 @@ export class AuthService {
   getLiga(): Liga | null {
     return this.ligaActual;
   }
+
+  esVip(): boolean {
+    const vipHasta = this.getUser()?.vipHasta;
+    console.log('🧪 [esVip] vipHasta:', vipHasta);
+
+    if (!vipHasta) return false;
+
+    const ahora = new Date();
+    const expiracion = new Date(vipHasta);
+    const esVip = expiracion > ahora;
+
+    console.log(`🔎 VIP válido? ${esVip} (ahora: ${ahora.toISOString()}, expira: ${expiracion.toISOString()})`);
+
+    return esVip;
+  }
+
+
+  marcarComoVip(userId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${userId}/hacer-vip`, null, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+
+
 }

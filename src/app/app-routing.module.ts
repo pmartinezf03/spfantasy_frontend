@@ -16,16 +16,26 @@ import { InicioComponent } from './inicio/inicio.component';
 import { RedirigirSiLogueadoGuard } from './guards/redirigir-si-logueado.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { NoLigaGuard } from './guards/noliga.guard';
+import { ComparadorJugadoresComponent } from './comparador/comparador-jugadores/comparador-jugadores.component';
+import { ScoutingComponent } from './scouting/scouting.component'; // 👈 Asegúrate de que esto es correcto
+import { VipGuard } from './guards/vip.guard';
+import { VipComponent } from './VipComponent/vip/vip.component';
 
 const routes: Routes = [
-  { path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard,AuthGuard] },
+  { path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard, AuthGuard] },
   { path: 'estadisticas-liga', component: EstadisticasLigaComponent, canActivate: [AuthGuard] },
-  { path: 'plantilla', component: MiPlantillaComponent, canActivate: [LigasGuard,AuthGuard] },
+  { path: 'plantilla', component: MiPlantillaComponent, canActivate: [LigasGuard, AuthGuard] },
   { path: 'noticias', component: NoticiasComponent, canActivate: [AuthGuard] },
-  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard,LigasGuard] },
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard, LigasGuard] },
   { path: 'ofertas', component: OfertasComponent, canActivate: [LigasGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
-  { path: 'ligas', component: LigasComponent, canActivate: [AuthGuard]},
+  { path: 'ligas', component: LigasComponent, canActivate: [AuthGuard] },
+  { path: 'comparador', component: ComparadorJugadoresComponent, canActivate: [AuthGuard] },
+  { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, LigasGuard, VipGuard] },
+  { path: 'vip', component: VipComponent},
+
+
+
   {
     path: 'auth',
     children: [

@@ -1,34 +1,71 @@
-<div *ngIf="!cargandoInicial" class="w-full max-w-screen-2xl mx-auto p-6 animate__animated animate__fadeIn">
+<div
+  *ngIf="!cargandoInicial"
+  class="w-full max-w-screen-2xl mx-auto p-6 animate__animated animate__fadeIn"
+>
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>
 
   <!-- 🛒 Título -->
   <div class="text-center mb-10">
-    <h2 class="text-4xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]">
+    <h2
+      class="text-4xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]"
+    >
       🛒 Mercado de Jugadores
     </h2>
   </div>
 
   <!-- 🟩 Distribución en 2 columnas (mitad y mitad) -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-screen-2xl mx-auto">
+  <div
+    class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-screen-2xl mx-auto"
+  >
     <!-- 🎮 Zona izquierda - Mercado -->
     <div class="overflow-y-auto h-full">
-      <div *ngFor="let jugador of jugadores" class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] rounded-xl p-5 shadow-xl flex flex-col md:flex-row items-center gap-5 border border-fantasyBlue hover:scale-[1.02] transition-transform duration-200">
+      <!-- ✨ Sugerencia de Scouting -->
+      <div
+        class="mb-6 p-4 rounded-xl border-2 border-yellow-400 bg-gradient-to-br from-yellow-900 via-yellow-700 to-yellow-800 text-center shadow-lg animate__animated animate__pulse animate__infinite"
+        (click)="router.navigate(['/scouting'])"
+        style="cursor: pointer"
+      >
+        <h3 class="text-lg font-bold text-yellow-300 mb-1">
+          📈 ¿No sabes a quién fichar?
+        </h3>
+        <p class="text-sm text-white">
+          Haz clic aquí para ver recomendaciones automáticas de jugadores
+          destacados
+        </p>
+        <p class="mt-2 text-sm text-yellow-400 font-semibold">
+          🔒 Solo para usuarios VIP
+        </p>
+      </div>
+
+      <div
+        *ngFor="let jugador of jugadores"
+        class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] rounded-xl p-5 shadow-xl flex flex-col md:flex-row items-center gap-5 border border-fantasyBlue hover:scale-[1.02] transition-transform duration-200"
+      >
         <!-- Foto -->
-        <img [src]="jugador.fotoUrl"
-             class="w-20 h-20 rounded-full border-4 border-fantasyGold object-contain shadow-inner"
-             [alt]="obtenerNombreJugador(jugador)" />
+        <img
+          [src]="jugador.fotoUrl"
+          class="w-20 h-20 rounded-full border-4 border-fantasyGold object-contain shadow-inner"
+          [alt]="obtenerNombreJugador(jugador)"
+        />
 
         <!-- Info -->
         <div class="flex-1 text-white text-center md:text-left">
-          <h4 class="text-2xl font-bold text-fantasyGold mb-1">{{ obtenerNombreJugador(jugador) }}</h4>
+          <h4 class="text-2xl font-bold text-fantasyGold mb-1">
+            {{ obtenerNombreJugador(jugador) }}
+          </h4>
           <p class="text-sm text-fantasyBlue mb-1">{{ jugador.posicion }}</p>
-          <p class="text-sm text-green-400 mb-1">💰 {{ jugador.precioVenta | currency : 'EUR' }}</p>
-          <p class="text-sm text-gray-400 mb-2">👤 {{ jugador.propietarioUsername || 'Libre' }}</p>
+          <p class="text-sm text-green-400 mb-1">
+            💰 {{ jugador.precioVenta | currency : "EUR" }}
+          </p>
+          <p class="text-sm text-gray-400 mb-2">
+            👤 {{ jugador.propietarioUsername || "Libre" }}
+          </p>
 
           <!-- Botones personalizados -->
-          <div class="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
-
+          <div
+            class="flex flex-wrap gap-2 justify-center md:justify-start mt-2"
+          >
             <!-- Comprar -->
             <button
               *ngIf="!jugador.propietarioId"
@@ -36,18 +73,22 @@
               label="Comprar"
               icon="pi pi-shopping-cart"
               class="border-none bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-green-400 transition-all"
-              (click)="comprarJugador(jugador)">
-            </button>
+              (click)="comprarJugador(jugador)"
+            ></button>
 
             <!-- Hacer Oferta -->
             <button
-              *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
+              *ngIf="
+                jugador.propietarioId &&
+                jugador.propietarioId !== usuarioId &&
+                !ofertasEnCurso[jugador.id]
+              "
               pButton
               label="Hacer Oferta"
               icon="pi pi-dollar"
               class="border-none bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-blue-400 transition-all"
-              (click)="abrirDialogoOferta(jugador)">
-            </button>
+              (click)="abrirDialogoOferta(jugador)"
+            ></button>
 
             <!-- Cancelar Oferta -->
             <button
@@ -56,8 +97,8 @@
               label="Cancelar Oferta"
               icon="pi pi-times"
               class="border-none bg-gradient-to-br from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-red-400 transition-all"
-              (click)="cancelarOferta(jugador.id)">
-            </button>
+              (click)="cancelarOferta(jugador.id)"
+            ></button>
           </div>
         </div>
       </div>
@@ -70,7 +111,8 @@
         [usuarioDinero]="usuarioDinero"
         [totalOfertasEnCurso]="0"
         (cerrar)="cerrarDialogoOferta()"
-        (enviarOferta)="enviarOferta($event.monto)">
+        (enviarOferta)="enviarOferta($event.monto)"
+      >
       </app-oferta-dialogo>
     </div>
 

@@ -1,0 +1,51 @@
+.scouting-wrapper {
+  padding: 30px;
+  background-color: #0f0f0f;
+  color: white;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.titulo {
+  font-size: 2.5rem;
+  color: #ffd700;
+  margin-bottom: 20px;
+}
+
+.descripcion {
+  max-width: 700px;
+  margin: auto;
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 40px;
+}
+
+.jugadores-recomendados {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+.jugador-card {
+  background: #1c1c1c;
+  border: 2px solid #333;
+  border-radius: 12px;
+  width: 220px;
+  padding: 16px;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.jugador-card:hover {
+  transform: scale(1.05);
+}
+
+.jugador-foto {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 3px solid #ffd700;
+}

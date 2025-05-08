@@ -8,6 +8,7 @@ import { Oferta } from '../models/oferta.model';
 import { WebSocketService } from '../services/websocket.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LoaderService } from '../shared/loader.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mercado',
@@ -37,7 +38,8 @@ export class MercadoComponent implements OnInit {
     private webSocketService: WebSocketService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    public router: Router
   ) { }
 
   ngOnInit(): void {

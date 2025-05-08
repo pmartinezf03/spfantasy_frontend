@@ -1,4 +1,4 @@
-/* ZONA DE CANCHA */
+/* Contenedor principal de cancha */
 .cancha-zona-horizontal {
   display: flex;
   justify-content: space-between;
@@ -7,70 +7,75 @@
   padding: 1rem;
   border-radius: 1rem;
   margin-bottom: 2rem;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
   overflow-x: auto;
 }
 
-/* SLOT DE POSICIÓN */
+/* Slot individual para cada posición */
 .slot-cancha {
   background-color: #1f2937;
   border: 2px dashed #3b82f6;
   border-radius: 0.75rem;
-  flex: 1;
-  min-width: 160px;
+  min-width: 180px;
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  transition: border-color 0.2s;
+  flex: 1;
+  transition: border-color 0.2s ease-in-out;
 }
 
 .slot-label {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: bold;
   color: #facc15;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.3rem;
   text-transform: uppercase;
 }
 
-/* JUGADOR SLOT */
+/* Tarjeta de jugador arrastrable */
 .jugador-slot {
   width: 100%;
   max-width: 160px;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
 .jugador-slot:hover {
   transform: scale(1.03);
 }
 
-/* BANQUILLO */
+/* Banquillo scroll */
 .banquillo-scroll {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   overflow-x: auto;
   background-color: #1e1e2f;
   padding: 1rem;
   border-radius: 1rem;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
 }
 
 .banquillo-scroll .slot-label {
   min-width: 100px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: bold;
   color: #facc15;
   text-transform: uppercase;
 }
 
-/* Estilo general del arrastrable */
+/* Drag preview estilo */
 .cdk-drag-preview {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-  border-radius: 0.75rem;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  border-radius: 1rem;
+  transform: scale(1.05);
 }
 
 .cdk-drag-placeholder {
-  opacity: 0.3;
+  opacity: 0.2;
+  border: 2px dashed #3b82f6;
+  border-radius: 0.75rem;
+  min-height: 80px;
 }

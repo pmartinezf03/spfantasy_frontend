@@ -1,0 +1,17 @@
+<div class="scouting-wrapper">
+  <h2 class="titulo">🔍 Scouting Automático</h2>
+  <p class="descripcion">
+    Aquí podrás descubrir jugadores ocultos con gran rendimiento antes que nadie. Este sistema analiza automáticamente los mejores valores ocultos en la liga.
+  </p>
+
+  <div class="jugadores-recomendados">
+    <div class="jugador-card" *ngFor="let jugador of jugadoresScouting">
+      <img [src]="jugador.fotoUrl" class="jugador-foto" />
+      <h3>{{ jugador.nombre }}</h3>
+      <p>{{ jugador.posicion }}</p>
+      <p>💰 {{ jugador.precioVenta | currency }}</p>
+      <p>🔥 Rendimiento: {{ jugador.rendimiento | number:'1.1-2' }}</p>
+      <button pButton label="Ver Detalles" icon="pi pi-eye" class="p-button-sm p-button-info"></button>
+    </div>
+  </div>
+</div>

@@ -51,21 +51,36 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.loaderService.showSpinner(); // ✅ Usamos el spinner del LoaderService
+    this.loaderService.showSpinner();
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.authService.refreshUsuarioCompleto();
-        setTimeout(() => {
-          this.loaderService.hideSpinner(); // ✅ Ocultamos spinner tras carga
-          this.router.navigate(['/']);
-        }, 1000); // Puedes ajustar el tiempo para que se vea
+        this.authService.refreshUsuarioCompleto().subscribe((usuarioCompleto) => {
+          this.loaderService.hideSpinner();
+
+          // 🔍 Verifica si es VIP ANTES de navegar
+          const vipHasta = usuarioCompleto?.vipHasta;
+          const ahora = new Date();
+          const expiracion = vipHasta ? new Date(vipHasta) : null;
+          const esVip = expiracion && expiracion > ahora;
+
+          console.log('✅ Usuario actualizado:', usuarioCompleto);
+          console.log('🔍 Es VIP?', esVip, 'Hasta:', vipHasta);
+
+          if (esVip) {
+            this.router.navigate(['/scouting']);
+          } else {
+            this.router.navigate(['/']);
+          }
+        });
       },
       error: () => {
         this.loaderService.hideSpinner();
         this.errorMessage = '⚠ Credenciales incorrectas. Intenta de nuevo.';
         this.mensaje = 'Credenciales incorrectas';
-      },
+      }
     });
   }
+
+
 }

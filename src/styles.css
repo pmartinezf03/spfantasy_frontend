@@ -184,17 +184,20 @@ html, body {
   .p-button {
     @apply rounded-xl font-bold tracking-wide text-white transition-all;
   }
-  
+
   .p-button-success {
     @apply bg-green-500 hover:bg-green-400 shadow hover:shadow-green-300/40;
   }
-  
+
   .p-button-info {
     @apply bg-blue-500 hover:bg-blue-400 shadow hover:shadow-blue-300/40;
   }
-  
+
   .p-button-danger {
     @apply bg-red-500 hover:bg-red-400 shadow hover:shadow-red-300/40;
   }
-  
+
 }
+
+
+

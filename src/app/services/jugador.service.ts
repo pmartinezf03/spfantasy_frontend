@@ -45,5 +45,17 @@ export class JugadorService {
     );
   }
 
+  obtenerJugadoresPorLiga(ligaId: number): Observable<Jugador[]> {
+    return this.http.get<Jugador[]>(`${this.apiUrl}/jugadores-liga/liga`, {
+      params: { ligaId: ligaId.toString() }
+    }).pipe(
+      tap(jugadores => {
+        console.log('📊 [SERVICE] Jugadores por liga cargados para el comparador:');
+        console.table(jugadores);
+      })
+    );
+  }
+
+
 
 }

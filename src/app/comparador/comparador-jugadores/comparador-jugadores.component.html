@@ -1,0 +1,65 @@
+<div class="comparador-wrapper">
+  <!-- Selección -->
+  <div class="seleccion">
+    <p-dropdown
+      [options]="jugadores"
+      [(ngModel)]="jugador1"
+      optionLabel="nombre"
+      placeholder="Jugador 1"
+      [filter]="true"
+      [showClear]="true"
+      styleClass="dropdown-jugador">
+    </p-dropdown>
+
+    <p-dropdown
+      [options]="jugadores"
+      [(ngModel)]="jugador2"
+      optionLabel="nombre"
+      placeholder="Jugador 2"
+      [filter]="true"
+      [showClear]="true"
+      styleClass="dropdown-jugador">
+    </p-dropdown>
+
+    <button pButton type="button" label="Comparar" icon="pi pi-chart-bar"
+            class="p-button-rounded p-button-danger"
+            (click)="comparar()">
+    </button>
+  </div>
+
+  <!-- Comparación -->
+  <div *ngIf="jugador1 && jugador2" class="tarjetas-container">
+    <div class="tarjeta-comparador">
+      <div class="foto-contenedor">
+        <img [src]="jugador1.fotoUrl" class="fotoJugador" alt="Jugador 1" />
+      </div>
+      <h3 class="nombre-jugador">{{ jugador1.nombre }}</h3>
+      <div class="stats">
+        <p>🎯 PTS: {{ jugador1.pts }}</p>
+        <p>⏱ Min: {{ jugador1.min }}</p>
+        <p>🔥 Tiro: {{ (jugador1.t2 || 0) + (jugador1.t3 || 0) + (jugador1.tl || 0) }}</p>
+        <p>💰 Valor: {{ jugador1.precioVenta | currency }}</p>
+      </div>
+    </div>
+
+    <div class="vs-box">VS</div>
+
+    <div class="tarjeta-comparador">
+      <div class="foto-contenedor">
+        <img [src]="jugador2.fotoUrl" class="fotoJugador" alt="Jugador 2" />
+      </div>
+      <h3 class="nombre-jugador">{{ jugador2.nombre }}</h3>
+      <div class="stats">
+        <p>🎯 PTS: {{ jugador2.pts }}</p>
+        <p>⏱ Min: {{ jugador2.min }}</p>
+        <p>🔥 Tiro: {{ (jugador2.t2 || 0) + (jugador2.t3 || 0) + (jugador2.tl || 0) }}</p>
+        <p>💰 Valor: {{ jugador2.precioVenta | currency }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radar -->
+  <div *ngIf="chartData" class="grafico">
+    <p-chart type="radar" [data]="chartData" [options]="chartOptions" styleClass="radar-style"></p-chart>
+  </div>
+</div>

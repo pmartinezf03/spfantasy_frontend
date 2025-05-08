@@ -1,0 +1,56 @@
+.vip-wrapper {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #0f172a;
+  color: #f9f9f9;
+  text-align: center;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.vip-header h1 {
+  font-size: 32px;
+  color: #ffd700;
+  margin-bottom: 10px;
+}
+
+.vip-beneficios ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.vip-beneficios li {
+  margin: 10px 0;
+  font-size: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+}
+
+.vip-precio {
+  margin-top: 20px;
+}
+
+.vip-precio h2 {
+  font-size: 24px;
+  color: #00ffcc;
+  margin-bottom: 8px;
+}
+
+.btn-comprar {
+  background: linear-gradient(to right, #ffd700, #ffa500);
+  color: #000;
+  font-weight: bold;
+  border: none;
+  padding: 12px 28px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.btn-comprar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #ffd700;
+}

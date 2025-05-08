@@ -70,6 +70,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppLoaderComponent } from './shared/app-loader/app-loader.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ComparadorJugadoresComponent } from './comparador/comparador-jugadores/comparador-jugadores.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { VipComponent } from './VipComponent/vip/vip.component';
+import { ScoutingComponent } from './scouting/scouting.component';
 
 
 
@@ -104,6 +108,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HistorialComponent,
     InicioComponent,
     AppLoaderComponent,
+    ComparadorJugadoresComponent,
+    VipComponent,
+    ScoutingComponent,
 
 
 
@@ -141,7 +148,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ChartModule,
     ChipModule,
     ConfirmDialogModule,
-
+    DropdownModule,
   ],
   providers: [
     provideAnimations(),
