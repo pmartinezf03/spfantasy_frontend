@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-
+import { CanActivate, Router } from "@angular/router";
+import { map, Observable } from "rxjs";
+import { AuthService } from "../services/auth.service";
+import { Injectable } from "@angular/core";
 @Injectable({
   providedIn: 'root'
 })
@@ -15,15 +13,18 @@ export class VipGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
+    console.log('🚀 [VipGuard] Ejecutando canActivate');
+
     return this.authService.usuarioCompleto$.pipe(
-      take(1),
       map(usuario => {
+        console.log('👤 Usuario completo recibido en VipGuard:', usuario);
+
         const vipHasta = usuario?.vipHasta;
         console.log('🧪 VIP hasta (guard):', vipHasta);
 
         if (!vipHasta) {
-          console.warn('🚫 Usuario no es VIP. Redirigiendo a /vip');
-          this.router.navigate(['/vip']);
+          console.warn('🚫 Usuario no es VIP. Redirigiendo a /inicio');
+          this.router.navigate(['/inicio']);
           return false;
         }
 
@@ -31,9 +32,12 @@ export class VipGuard implements CanActivate {
         const ahora = new Date();
         const esVip = expiracion > ahora;
 
+        console.log('🔎 VIP válido?', esVip);
+
         if (!esVip) {
-          console.warn('🚫 Usuario no es VIP vigente. Redirigiendo a /vip');
-          this.router.navigate(['/vip']);
+          console.warn('🚫 Usuario no es VIP vigente. Redirigiendo a /inicio');
+          this.router.navigate(['/inicio']);
+          return false;
         }
 
         return esVip;

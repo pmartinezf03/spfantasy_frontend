@@ -18,15 +18,17 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('🚀 [AppComponent] Cargando aplicación...');
+
     const user = this.authService.getUser();
     if (user) {
       const ligaId = this.authService.getLigaId();
-  
+
       if (ligaId) {
         console.log('✅ Liga encontrada en AuthService:', ligaId);
         return;
       }
-  
+
       console.log('ℹ️ No hay liga en memoria, buscando desde el backend...');
       this.ligasService.obtenerLigaDelUsuario(user.id).subscribe({
         next: (liga) => {
@@ -38,7 +40,7 @@ export class AppComponent implements OnInit {
             this.router.navigate(['/ligas']);
           }
         },
-      
+
         error: () => {
           console.log('❌ Error verificando liga');
           this.router.navigate(['/ligas']);
@@ -46,6 +48,6 @@ export class AppComponent implements OnInit {
       });
     }
   }
-  
-  
+
+
 }

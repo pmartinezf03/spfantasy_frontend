@@ -35,6 +35,8 @@ export class NavigationComponent implements OnInit {
 
     // 🔁 Suscribirse al usuario completo
     this.authService.usuarioCompleto$.subscribe(usuario => {
+      console.log('[usuarioCompleto$] Datos del usuario actual:', usuario);
+
       if (!usuario) {
         console.warn('⚠️ usuarioCompleto$ emitió null. No actualizo navbar.');
         return;

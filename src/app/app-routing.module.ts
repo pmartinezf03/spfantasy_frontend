@@ -31,7 +31,7 @@ const routes: Routes = [
   { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
   { path: 'ligas', component: LigasComponent, canActivate: [AuthGuard] },
   { path: 'comparador', component: ComparadorJugadoresComponent, canActivate: [AuthGuard] },
-  { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, LigasGuard, VipGuard] },
+  { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, LigasGuard] },
   { path: 'vip', component: VipComponent},
 
 

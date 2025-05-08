@@ -4,14 +4,52 @@
     Aquí podrás descubrir jugadores ocultos con gran rendimiento antes que nadie. Este sistema analiza automáticamente los mejores valores ocultos en la liga.
   </p>
 
-  <div class="jugadores-recomendados">
+  <div class="jugadores-recomendados" *ngIf="!cargando">
     <div class="jugador-card" *ngFor="let jugador of jugadoresScouting">
       <img [src]="jugador.fotoUrl" class="jugador-foto" />
       <h3>{{ jugador.nombre }}</h3>
       <p>{{ jugador.posicion }}</p>
       <p>💰 {{ jugador.precioVenta | currency }}</p>
       <p>🔥 Rendimiento: {{ jugador.rendimiento | number:'1.1-2' }}</p>
-      <button pButton label="Ver Detalles" icon="pi pi-eye" class="p-button-sm p-button-info"></button>
+
+      <button pButton
+              label="Ver Detalles"
+              icon="pi pi-eye"
+              class="p-button-sm p-button-info"
+              (click)="mostrarDetalles(jugador)">
+      </button>
     </div>
   </div>
+
+  <!-- Mensaje de Carga -->
+  <p *ngIf="cargando">Cargando jugadores destacados...</p>
+
+  <!-- Modal de Detalles del Jugador -->
+  <p-dialog header="Detalles del Jugador" [(visible)]="modalVisible" [modal]="true" [closable]="true" [resizable]="false">
+    <div *ngIf="jugadorSeleccionado">
+      <h3>{{ jugadorSeleccionado.nombre }}</h3>
+      <img [src]="jugadorSeleccionado.fotoUrl" class="jugador-foto" />
+      <p><strong>Posición:</strong> {{ jugadorSeleccionado.posicion }}</p>
+      <p><strong>Equipo:</strong> {{ jugadorSeleccionado.equipo.nombre }}</p>
+      <p><strong>Precio:</strong> 💰 {{ jugadorSeleccionado.precioVenta | currency }}</p>
+      <p><strong>Rendimiento:</strong> 🔥 {{ jugadorSeleccionado.rendimiento | number:'1.1-2' }}</p>
+
+      <!-- Estadísticas Avanzadas (solo para VIP) -->
+      <div *ngIf="esVip">
+        <h4>Estadísticas Avanzadas:</h4>
+        <p><strong>Puntos Totales:</strong> {{ jugadorSeleccionado.puntosTotales }}</p>
+        <p><strong>Minutos por partido:</strong> {{ jugadorSeleccionado.min }}</p>
+        <p><strong>Tiros Libres (%):</strong> {{ jugadorSeleccionado.tl | number:'1.1-2' }}</p>
+        <p><strong>Tiros de 2 (%):</strong> {{ jugadorSeleccionado.t2 | number:'1.1-2' }}</p>
+        <p><strong>Tiros de 3 (%):</strong> {{ jugadorSeleccionado.t3 | number:'1.1-2' }}</p>
+        <p><strong>Puntos Fantasy:</strong> {{ jugadorSeleccionado.fp }}</p>
+      </div>
+
+      <!-- Mensaje de advertencia para no VIP -->
+      <div *ngIf="!esVip">
+        <p class="alerta-vip">Para ver las estadísticas avanzadas, necesitas ser un usuario VIP.</p>
+      </div>
+    </div>
+  </p-dialog>
+
 </div>
