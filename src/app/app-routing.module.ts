@@ -22,10 +22,10 @@ const routes: Routes = [
   { path: 'estadisticas-liga', component: EstadisticasLigaComponent, canActivate: [AuthGuard] },
   { path: 'plantilla', component: MiPlantillaComponent, canActivate: [LigasGuard,AuthGuard] },
   { path: 'noticias', component: NoticiasComponent, canActivate: [AuthGuard] },
-  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuard,LigasGuard] },
   { path: 'ofertas', component: OfertasComponent, canActivate: [LigasGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
-  { path: 'ligas', component: LigasComponent, canActivate: [LigasGuard]},
+  { path: 'ligas', component: LigasComponent, canActivate: [AuthGuard]},
   {
     path: 'auth',
     children: [

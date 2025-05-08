@@ -18,24 +18,29 @@ export class LigasGuard implements CanActivate {
     const userId = this.authService.getUserId();
 
     if (!userId) {
-      console.warn('⛔ Usuario no autenticado, redirigiendo a login');
-      this.router.navigate(['/login']);
+      console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/login');
+      this.router.navigate(['/auth/login']);
       return of(false);
     }
 
     return this.ligasService.obtenerLigaDelUsuario(userId).pipe(
       map(liga => {
         if (liga) {
-          this.authService.setLigaId(liga.id);
+          console.log('✅ Usuario tiene liga. Acceso permitido.');
           this.authService.setLiga(liga);
+          this.authService.setLigaId(liga.id);
+          return true;
+        } else {
+          console.warn('🚫 Usuario sin liga. Redirigiendo a /ligas');
+          this.router.navigate(['/ligas']);
+          return false;
         }
-        return true; // ✅ Siempre dejamos entrar al componente
       }),
       catchError(err => {
-        console.error('❌ Error al cargar liga:', err);
-        return of(true); // ✅ También dejamos entrar aunque haya error, se mostrará vista sin liga
+        console.error('❌ Error al verificar liga del usuario:', err);
+        this.router.navigate(['/ligas']);
+        return of(false);
       })
     );
   }
-
 }
