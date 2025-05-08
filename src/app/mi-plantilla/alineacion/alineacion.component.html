@@ -1,41 +1,55 @@
-<!-- =============== CANCHA HORIZONTAL (1 línea) =============== -->
-<div class="cancha-zona fila-horizontal">
+<!-- 🎯 Cancha con alineación horizontal -->
+<div class="cancha-zona-horizontal">
   <ng-container *ngFor="let posicion of ['base', 'alero', 'alaPivot', 'escolta', 'pivot']">
-    <div class="slot-cancha" [id]="'drop-' + posicion"
+    <div
+      class="slot-cancha"
+      [id]="'drop-' + posicion"
       cdkDropList
       [cdkDropListData]="jugadoresPorPosicion[posicion]"
       [cdkDropListConnectedTo]="idDropLists"
-      (cdkDropListDropped)="onDropEnSlot($event, posicion)">
-
+      (cdkDropListDropped)="onDropEnSlot($event, posicion)"
+    >
       <div class="slot-label">{{ posicion | titlecase }}</div>
 
-      <div *ngFor="let jugador of jugadoresPorPosicion[posicion]" class="jugador-slot" cdkDrag [cdkDragData]="jugador">
+      <div
+        *ngFor="let jugador of jugadoresPorPosicion[posicion]"
+        class="jugador-slot"
+        cdkDrag
+        [cdkDragData]="jugador"
+      >
         <app-jugador-card
           [jugador]="jugador"
           [tipo]="'titular'"
           (mostrarInfo)="mostrarInformacion($event)"
-          (vender)="venderJugador($event)">
-        </app-jugador-card>
+          (vender)="venderJugador($event)"
+        ></app-jugador-card>
       </div>
     </div>
   </ng-container>
 </div>
 
-<!-- =============== BANQUILLO HORIZONTAL SCROLLABLE =============== -->
-<div class="banquillo" id="banquillo"
+<!-- 🛋️ Banquillo horizontal scrollable -->
+<div
+  class="banquillo-scroll"
+  id="banquillo"
   cdkDropList
   [cdkDropListData]="banquillo"
   [cdkDropListConnectedTo]="idDropLists"
-  (cdkDropListDropped)="onDropBanquillo($event)">
-
+  (cdkDropListDropped)="onDropBanquillo($event)"
+>
   <div class="slot-label">Banquillo</div>
 
-  <div *ngFor="let jugador of banquillo" class="jugador-slot" cdkDrag [cdkDragData]="jugador">
+  <div
+    *ngFor="let jugador of banquillo"
+    class="jugador-slot"
+    cdkDrag
+    [cdkDragData]="jugador"
+  >
     <app-jugador-card
       [jugador]="jugador"
       [tipo]="'banquillo'"
       (mostrarInfo)="mostrarInformacion($event)"
-      (vender)="venderJugador($event)">
-    </app-jugador-card>
+      (vender)="venderJugador($event)"
+    ></app-jugador-card>
   </div>
 </div>

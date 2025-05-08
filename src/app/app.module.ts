@@ -12,7 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { MatTableModule } from '@angular/material/table';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { PrimeNGConfig } from 'primeng/api';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -69,6 +69,7 @@ import { ChipModule } from 'primeng/chip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppLoaderComponent } from './shared/app-loader/app-loader.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 
@@ -140,14 +141,19 @@ import { AppLoaderComponent } from './shared/app-loader/app-loader.component';
     ChartModule,
     ChipModule,
     ConfirmDialogModule,
+
   ],
   providers: [
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     PrimeNGConfig,
     ConfirmationService,
-    MessageService
-
+    MessageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

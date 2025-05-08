@@ -67,3 +67,41 @@
   min-width: 2.5rem;
   height: 2.5rem;
 }
+/* 🛡️ Garantiza que todos los textos largos no rompan la tarjeta */
+
+.ofertas-container .text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+.ofertas-container .jugador-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ofertas-container .text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+
+/* 🧱 Tarjeta bien alineada y que no se deforme */
+.ofertas-container .oferta-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+}
+
+/* Asegura espacio vertical entre tarjetas en grid */
+.ofertas-container .grid > div {
+  display: flex;
+  flex-direction: column;
+}

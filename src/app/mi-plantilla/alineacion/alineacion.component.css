@@ -1,71 +1,76 @@
-.cancha-zona.fila-horizontal {
+/* ZONA DE CANCHA */
+.cancha-zona-horizontal {
   display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
+  justify-content: space-between;
   gap: 1rem;
-  background: url('../../assets/cancha.png') center center no-repeat;
-  background-size: contain;
+  background-color: #0f172a;
   padding: 1rem;
   border-radius: 1rem;
-  border: 2px solid #60a5fa;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  overflow-x: auto;
 }
 
+/* SLOT DE POSICIÓN */
 .slot-cancha {
-  width: 120px;
-  min-height: 160px;
+  background-color: #1f2937;
   border: 2px dashed #3b82f6;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  background-color: #f8fafcdd;
-  text-align: center;
+  border-radius: 0.75rem;
+  flex: 1;
+  min-width: 160px;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.75rem;
+  transition: border-color 0.2s;
 }
 
 .slot-label {
+  font-size: 0.9rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-  color: #334155;
+  color: #facc15;
+  margin-bottom: 0.25rem;
   text-transform: uppercase;
 }
 
+/* JUGADOR SLOT */
 .jugador-slot {
   width: 100%;
-  height: 100%;
-  cursor: grab;
+  max-width: 160px;
+  transition: transform 0.2s;
 }
 
-/* BANQUILLO HORIZONTAL CON SCROLL SI HAY MUCHOS */
-.banquillo {
+.jugador-slot:hover {
+  transform: scale(1.03);
+}
+
+/* BANQUILLO */
+.banquillo-scroll {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding: 1rem;
-  background-color: #e2e8f0;
-  border-radius: 1rem;
-  border: 1px solid #cbd5e1;
+  align-items: center;
   gap: 1rem;
+  overflow-x: auto;
+  background-color: #1e1e2f;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
-.banquillo::-webkit-scrollbar {
-  height: 6px;
+.banquillo-scroll .slot-label {
+  min-width: 100px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #facc15;
+  text-transform: uppercase;
 }
 
-.banquillo::-webkit-scrollbar-thumb {
-  background-color: #94a3b8;
-  border-radius: 3px;
+/* Estilo general del arrastrable */
+.cdk-drag-preview {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  border-radius: 0.75rem;
 }
 
-@media screen and (max-width: 768px) {
-  .slot-cancha {
-    width: 100px;
-    min-height: 140px;
-  }
-
-  .jugador-slot {
-    width: 100%;
-  }
+.cdk-drag-placeholder {
+  opacity: 0.3;
 }
