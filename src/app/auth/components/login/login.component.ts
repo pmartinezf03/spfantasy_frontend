@@ -69,11 +69,8 @@ export class LoginComponent implements OnInit {
           console.log('✅ Usuario actualizado:', usuarioCompleto);
           console.log('🔍 Es VIP?', esVip, 'Hasta:', vipHasta);
 
-          if (esVip) {
-            this.router.navigate(['/scouting']);
-          } else {
             this.router.navigate(['/']);
-          }
+
         });
       },
       error: () => {
