@@ -30,9 +30,11 @@ const routes: Routes = [
   { path: 'ofertas', component: OfertasComponent, canActivate: [LigasGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
   { path: 'ligas', component: LigasComponent, canActivate: [AuthGuard] },
-  { path: 'comparador', component: ComparadorJugadoresComponent, canActivate: [AuthGuard] },
-  { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, LigasGuard] },
-  { path: 'vip', component: VipComponent},
+  { path: 'comparador', component: ComparadorJugadoresComponent },
+  { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, VipGuard] },
+  { path: 'vip', component: VipComponent, canActivate: [AuthGuard] },
+
+
 
 
 
@@ -42,18 +44,18 @@ const routes: Routes = [
       {
         path: 'login',
         component: LoginComponent,
-        canActivate: [RedirigirSiLogueadoGuard]  // ✅ aquí
+        // ✅ aquí
       },
 
       {
         path: 'register',
         component: RegisterComponent,
         canActivate: [RedirigirSiLogueadoGuard]  // ✅ aquí también
-      }, { path: '', redirectTo: 'login', pathMatch: 'full' }
-      // Redirección por defecto a login
+      },
+      { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   },
-  { path: '', component: InicioComponent, canActivate: [LigasGuard] },
+  { path: '', component: InicioComponent, canActivate: [AuthGuard, LigasGuard] },
   { path: '**', redirectTo: 'auth/login' } // Redirige a login si la ruta no existe
 ];
 

@@ -15,7 +15,8 @@ interface User {
   token?: string;
   dinero?: number;
   dineroPendiente?: number;
-  vipHasta?: string | null; }
+  vipHasta?: string | null;
+}
 
 
 @Injectable({
@@ -141,8 +142,19 @@ export class AuthService {
 
 
   getUser(): User | null {
-    return this.userSubject.value;
+    let user = this.userSubject.value;
+
+    if (!user) {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        user = JSON.parse(stored);
+        this.userSubject.next(user); // 🔁 Lo restauramos
+      }
+    }
+
+    return user;
   }
+
 
   getUserId(): number | null {
     return this.getUser()?.id || null;

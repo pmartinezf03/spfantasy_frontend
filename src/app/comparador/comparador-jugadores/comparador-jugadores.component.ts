@@ -5,8 +5,10 @@ import { Jugador } from '../../models/jugador.model'; // ← usamos tu modelo ba
 
 @Component({
   selector: 'app-comparador-jugadores',
-  templateUrl: './comparador-jugadores.component.html'
+  templateUrl: './comparador-jugadores.component.html',
+  styleUrls: ['./comparador-jugadores.component.css']
 })
+
 export class ComparadorJugadoresComponent implements OnInit {
   jugadores: Jugador[] = [];
 

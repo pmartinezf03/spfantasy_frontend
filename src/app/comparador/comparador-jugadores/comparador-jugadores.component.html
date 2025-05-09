@@ -1,65 +1,48 @@
-<div class="comparador-wrapper">
+<div class="comparador-container">
   <!-- Selección -->
-  <div class="seleccion">
-    <p-dropdown
-      [options]="jugadores"
-      [(ngModel)]="jugador1"
-      optionLabel="nombre"
-      placeholder="Jugador 1"
-      [filter]="true"
-      [showClear]="true"
-      styleClass="dropdown-jugador">
-    </p-dropdown>
+  <div class="selector-jugadores">
+    <select [(ngModel)]="jugador1">
+      <option [ngValue]="null" disabled selected>Jugador 1</option>
+      <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
+    </select>
 
-    <p-dropdown
-      [options]="jugadores"
-      [(ngModel)]="jugador2"
-      optionLabel="nombre"
-      placeholder="Jugador 2"
-      [filter]="true"
-      [showClear]="true"
-      styleClass="dropdown-jugador">
-    </p-dropdown>
+    <select [(ngModel)]="jugador2">
+      <option [ngValue]="null" disabled selected>Jugador 2</option>
+      <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
+    </select>
 
-    <button pButton type="button" label="Comparar" icon="pi pi-chart-bar"
-            class="p-button-rounded p-button-danger"
-            (click)="comparar()">
-    </button>
+    <button (click)="comparar()">Comparar</button>
   </div>
 
-  <!-- Comparación -->
-  <div *ngIf="jugador1 && jugador2" class="tarjetas-container">
-    <div class="tarjeta-comparador">
-      <div class="foto-contenedor">
-        <img [src]="jugador1.fotoUrl" class="fotoJugador" alt="Jugador 1" />
-      </div>
-      <h3 class="nombre-jugador">{{ jugador1.nombre }}</h3>
-      <div class="stats">
-        <p>🎯 PTS: {{ jugador1.pts }}</p>
-        <p>⏱ Min: {{ jugador1.min }}</p>
-        <p>🔥 Tiro: {{ (jugador1.t2 || 0) + (jugador1.t3 || 0) + (jugador1.tl || 0) }}</p>
-        <p>💰 Valor: {{ jugador1.precioVenta | currency }}</p>
-      </div>
+  <!-- Cromos comparativos -->
+  <div *ngIf="mostrarComparacion && jugador1 && jugador2" class="cromos-wrapper">
+    <div class="cromo">
+      <img [src]="jugador1.fotoUrl" alt="Jugador 1" />
+      <h3>{{ jugador1.nombre }}</h3>
+      <ul>
+        <li><span>🎯 PTS:</span> {{ jugador1.pts }}</li>
+        <li><span>⏱ Min:</span> {{ jugador1.min }}</li>
+        <li><span>🔥 Tiro:</span> {{ (jugador1.t2 || 0) + (jugador1.t3 || 0) + (jugador1.tl || 0) }}</li>
+        <li><span>💰 Valor:</span> {{ jugador1.precioVenta | currency }}</li>
+      </ul>
     </div>
 
     <div class="vs-box">VS</div>
 
-    <div class="tarjeta-comparador">
-      <div class="foto-contenedor">
-        <img [src]="jugador2.fotoUrl" class="fotoJugador" alt="Jugador 2" />
-      </div>
-      <h3 class="nombre-jugador">{{ jugador2.nombre }}</h3>
-      <div class="stats">
-        <p>🎯 PTS: {{ jugador2.pts }}</p>
-        <p>⏱ Min: {{ jugador2.min }}</p>
-        <p>🔥 Tiro: {{ (jugador2.t2 || 0) + (jugador2.t3 || 0) + (jugador2.tl || 0) }}</p>
-        <p>💰 Valor: {{ jugador2.precioVenta | currency }}</p>
-      </div>
+    <div class="cromo">
+      <img [src]="jugador2.fotoUrl" alt="Jugador 2" />
+      <h3>{{ jugador2.nombre }}</h3>
+      <ul>
+        <li><span>🎯 PTS:</span> {{ jugador2.pts }}</li>
+        <li><span>⏱ Min:</span> {{ jugador2.min }}</li>
+        <li><span>🔥 Tiro:</span> {{ (jugador2.t2 || 0) + (jugador2.t3 || 0) + (jugador2.tl || 0) }}</li>
+        <li><span>💰 Valor:</span> {{ jugador2.precioVenta | currency }}</li>
+      </ul>
     </div>
   </div>
 
-  <!-- Radar -->
-  <div *ngIf="chartData" class="grafico">
+  <!-- Gráfico -->
+  <div *ngIf="chartData" class="grafico-container">
     <p-chart type="radar" [data]="chartData" [options]="chartOptions" styleClass="radar-style"></p-chart>
   </div>
 </div>
