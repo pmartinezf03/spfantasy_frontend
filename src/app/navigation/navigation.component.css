@@ -36,3 +36,12 @@
   margin-top: 4px;
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
 }
+.avatar-navbar {
+  width: 2rem;
+  height: 2rem;
+  background-size: cover;
+  background-position: center;
+  border-radius: 9999px;
+  border: 2px solid #FFD700; /* fantasyGold */
+  box-shadow: 0 0 5px #FFD700;
+}

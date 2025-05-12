@@ -1,0 +1,36 @@
+<div class="logros-container">
+  <h2 class="titulo">🏆 Logros</h2>
+
+  <div class="grid-logros">
+    <div
+      class="logro-card"
+      *ngFor="let logro of logros"
+      [class.desbloqueado]="logro.desbloqueado"
+      (click)="mostrarDetalle(logro)"
+    >
+      <div class="icono-logro">
+        <span *ngIf="logro.desbloqueado">{{ logro.icono }}</span>
+        <span *ngIf="!logro.desbloqueado">🔒</span>
+      </div>
+      <h3>{{ logro.nombre }}</h3>
+    </div>
+  </div>
+
+  <!-- Modal de detalle -->
+  <div
+    class="modal-backdrop"
+    *ngIf="logroSeleccionado"
+    (click)="logroSeleccionado = null"
+  >
+    <div class="modal-detalle" (click)="$event.stopPropagation()">
+      <div class="icono-grande">{{ logroSeleccionado.icono }}</div>
+      <h3>{{ logroSeleccionado.nombre }}</h3>
+      <p>{{ logroSeleccionado.descripcion }}</p>
+      <p *ngIf="logroSeleccionado.desbloqueado" class="fecha">
+        Desbloqueado el
+        {{ logroSeleccionado.fechaDesbloqueo | date: 'dd/MM/yyyy' }}
+      </p>
+      <button (click)="logroSeleccionado = null" class="btn-cerrar">Cerrar</button>
+    </div>
+  </div>
+</div>

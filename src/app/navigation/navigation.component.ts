@@ -4,6 +4,9 @@ import { AuthService } from '../services/auth.service';
 import { UsuarioService } from '../services/usuario.service';
 import { Router } from '@angular/router';
 import { OfertasService } from '../services/ofertas.service';
+import { Usuario } from '../models/usuario.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-navigation',
@@ -20,6 +23,12 @@ export class NavigationComponent implements OnInit {
   datosUsuarioCargados = false;
   esperandoUsuario = true;
   usuarioId: number = 0;
+  usuarioAvatarUrl: string | null = null;
+  avatarPreview: string | null = null;
+  usuarioCompleto: Usuario | null = null;
+  avatarBase64: string | null = null;
+
+
 
   constructor(
     private authService: AuthService,
@@ -27,7 +36,8 @@ export class NavigationComponent implements OnInit {
     public router: Router,
     private ofertasService: OfertasService,
     private cdr: ChangeDetectorRef,
-    private zone: NgZone
+    private zone: NgZone,
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -35,6 +45,7 @@ export class NavigationComponent implements OnInit {
 
     // 🔁 Suscribirse al usuario completo
     this.authService.usuarioCompleto$.subscribe(usuario => {
+
       console.log('[usuarioCompleto$] Datos del usuario actual:', usuario);
 
       if (!usuario) {
@@ -43,12 +54,30 @@ export class NavigationComponent implements OnInit {
       }
 
       this.zone.run(() => {
+
         this.esperandoUsuario = false;
 
         const token = this.authService.getToken();
         this.isUserLoggedIn = !!usuario && !!token;
 
         this.usuarioLogueado = usuario.username;
+        if (usuario.avatarUrl) {
+          this.http.get(`${environment.apiUrl}${usuario.avatarUrl}`, { responseType: 'arraybuffer' })
+            .subscribe((buffer: ArrayBuffer) => {
+              const base64 = btoa(
+                new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+              );
+              this.avatarBase64 = `data:image/png;base64,${base64}`;
+            }, error => {
+              console.warn('⚠️ Avatar no disponible. Usando imagen por defecto.');
+              this.avatarBase64 = null;
+            });
+        } else {
+          this.avatarBase64 = null;
+        }
+
+
+
         this.usuarioDinero = usuario.dinero ?? 0;
         this.usuarioDineroPendiente = usuario.dineroPendiente ?? 0;
         this.datosUsuarioCargados = true;
@@ -83,6 +112,7 @@ export class NavigationComponent implements OnInit {
 
     // 🔁 Refrescar usuario completo al iniciar, si no lo estaba
     const user = this.authService.getUser();
+
     if (user?.id) {
       this.authService.refreshUsuarioCompleto().subscribe(usuarioActualizado => {
         if (usuarioActualizado) {

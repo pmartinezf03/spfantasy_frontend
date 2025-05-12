@@ -134,5 +134,22 @@ export class UsuarioService {
     return this.http.get<{ [jugadorId: number]: string }>(`${environment.apiUrl}/api/usuarios/${username}/puntos-semana`, { headers });
   }
 
+  subirAvatar(usuarioId: number, formData: FormData): Observable<string> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+    });
+
+    return this.http.post(`${this.apiUrl}/${usuarioId}/avatar`, formData, {
+      headers,
+      responseType: 'text'
+    });
+
+
+  }
+
+
+
+
+
 
 }

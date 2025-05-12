@@ -1,0 +1,11 @@
+<div class="modal-backdrop" *ngIf="logro" (click)="cerrarModal()">
+  <div class="modal-detalle" (click)="$event.stopPropagation()">
+    <div class="icono-grande">{{ logro?.icono }}</div>
+    <h3>{{ logro?.nombre }}</h3>
+    <p>{{ logro?.descripcion }}</p>
+    <p *ngIf="logro?.fechaDesbloqueo" class="fecha">
+      Desbloqueado el {{ logro.fechaDesbloqueo | date: 'dd/MM/yyyy' }}
+    </p>
+    <button (click)="cerrarModal()" class="btn-cerrar">Cerrar</button>
+  </div>
+</div>

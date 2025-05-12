@@ -1,12 +1,99 @@
 <div class="perfil-container">
-  <h2>📋 Mi Perfil</h2>
+  <h2 class="perfil-titulo text-3xl font-bold text-fantasyGold mb-6 text-center">
+    🧾 Mi Perfil
+  </h2>
 
-  <div class="perfil-info" *ngIf="usuarioLogueado">
-    <img [src]="'assets/img/default-avatar.png'" alt="Foto de perfil" class="perfil-foto">
-    <p><strong>👤 Nombre de usuario:</strong> {{ usuarioLogueado.username }}</p>
-    <p><strong>📧 Email:</strong> {{ usuarioLogueado.email }}</p>
-    <p><strong>💰 Dinero disponible:</strong> {{ usuarioDinero | currency:'EUR' }}</p> <!-- ✅ actualizado aquí -->
+  <div class="perfil-grid gap-6 grid-cols-1 lg:grid-cols-2">
+    <!-- 🎭 Avatar + Info -->
+    <div class="perfil-card bg-[#1e293b] p-6 rounded-xl shadow-xl">
+      <div
+        class="perfil-avatar-preview mx-auto mb-4"
+        [ngStyle]="{
+          'background-image': 'url(' + (avatarPreview || usuarioAvatarUrl || 'assets/default-avatar.png') + ')'
+        }"
+      ></div>
+
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onAvatarSelected($event)"
+        class="avatar-input w-full text-center my-2 file:border-none file:bg-fantasyGold file:text-black file:font-bold file:rounded-md"
+      />
+
+      <button
+        class="btn-aplicar w-full bg-fantasyGold text-black px-3 py-2 rounded-md shadow hover:bg-yellow-300 transition mb-4"
+        (click)="aplicarNuevoAvatar()"
+        *ngIf="avatarPreview"
+      >
+        ✅ Aplicar Avatar
+      </button>
+
+      <div class="perfil-text space-y-2 text-white text-sm">
+        <p><strong>👤 Usuario:</strong> {{ usuarioLogueado.username }}</p>
+        <p><strong>📧 Email:</strong> {{ usuarioLogueado.email || '-' }}</p>
+        <p><strong>💰 Dinero:</strong> {{ usuarioDinero | currency: 'EUR' }}</p>
+        <p class="text-red-400"><strong>🔴 Pendiente:</strong> {{ dineroPendiente | currency: 'EUR' }}</p>
+      </div>
+    </div>
+
+    <!-- 🏆 Logros -->
+    <div class="perfil-card bg-[#0f172a] p-6 rounded-xl shadow-xl">
+      <h3 class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse">
+        🏆 Logros Desbloqueados
+      </h3>
+
+      <div class="grid-logros grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div
+          class="card-logro cursor-pointer"
+          *ngFor="let logro of logros"
+          [class.desbloqueado]="logro.desbloqueado"
+          (click)="mostrarDetalle(logro)"
+        >
+          <div class="icono-logro text-3xl">
+            <span *ngIf="logro.desbloqueado">{{ logro.icono }}</span>
+            <span *ngIf="!logro.desbloqueado">🔒</span>
+          </div>
+          <p class="nombre-logro truncate text-white text-xs font-semibold" [title]="logro.nombre">
+            {{ logro.nombre }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <p *ngIf="!usuarioLogueado">No has iniciado sesión.</p>
+  <!-- 📊 Widgets -->
+  <div class="perfil-widgets mt-8 grid gap-6 grid-cols-1 md:grid-cols-3">
+    <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
+      <h4 class="text-lg font-bold mb-2 text-fantasyGold">📊 Rendimiento Semanal</h4>
+      <p-chart type="radar" [data]="chartData" [options]="chartOptions" style="height: 250px;"></p-chart>
+    </div>
+
+    <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
+      <h4 class="text-lg font-bold mb-2 text-fantasyGold">🎯 Nivel de Experiencia</h4>
+      <div class="exp-bar w-full bg-gray-700 rounded-full h-6 overflow-hidden shadow-inner mb-2">
+        <div
+          class="exp-fill h-full bg-green-500 text-center text-sm text-black font-bold"
+          [style.width.%]="usuarioLogueado?.experiencia || 0"
+        >
+          {{ usuarioLogueado?.experiencia || 0 }}%
+        </div>
+      </div>
+      <p class="text-sm">Nivel actual basado en la experiencia acumulada.</p>
+    </div>
+
+    <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
+      <h4 class="text-lg font-bold mb-2 text-fantasyGold">🔍 Estadísticas rápidas</h4>
+      <ul class="text-sm space-y-1">
+        <li>📅 Días activo: <strong>{{ usuarioLogueado?.diasActivo }}</strong></li>
+        <li>🔥 Racha login: <strong>{{ usuarioLogueado?.rachaLogin }} días</strong></li>
+        <li>🕹 Partidas jugadas: <strong>{{ usuarioLogueado?.partidasJugadas }}</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <app-logro-detalle-modal
+    [logro]="logroSeleccionado"
+    (cerrar)="logroSeleccionado = null"
+  ></app-logro-detalle-modal>
 </div>

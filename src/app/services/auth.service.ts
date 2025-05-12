@@ -16,6 +16,8 @@ interface User {
   dinero?: number;
   dineroPendiente?: number;
   vipHasta?: string | null;
+  avatarUrl?: string | null;
+
 }
 
 
@@ -23,10 +25,12 @@ interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/api/usuarios`;
+  public apiUrl = `${environment.apiUrl}/api/usuarios`;
 
   private userSubject = new BehaviorSubject<User | null>(null);  // ❗ Iniciamos vacío
-  private usuarioCompletoSubject = new BehaviorSubject<Usuario | null>(null);
+  public usuarioCompletoSubject = new BehaviorSubject<Usuario | null>(null);
+  public usuarioCompleto: Usuario | null = null; // ✅ acceso directo a la última versión del usuario
+
   usuarioCompleto$ = this.usuarioCompletoSubject.asObservable();
 
   private ligaIdSubject = new BehaviorSubject<number | null>(null);
@@ -41,7 +45,7 @@ export class AuthService {
     this.ligaIdSubject.next(id);
 
     // 👇 Al cargar el servicio, intenta cargar el usuario completo
-    this.restaurarSesionDesdeStorage(); // ✅ Carga usuario + refresh correcto
+    this.restaurarSesionDesdeStorage();
 
   }
 
@@ -117,6 +121,8 @@ export class AuthService {
     return this.http.get<Usuario>(`${this.apiUrl}/${userId}`).pipe(
       tap((usuario) => {
         console.log('📥 usuarioCompleto$ emitió (desde refresh):', usuario);
+        this.usuarioCompleto = usuario;
+
         this.usuarioCompletoSubject.next(usuario);
 
         const currentUser = this.getUser();
@@ -125,8 +131,10 @@ export class AuthService {
             ...currentUser,
             dinero: usuario.dinero,
             dineroPendiente: usuario.dineroPendiente,
-            vipHasta: usuario.vipHasta || null
+            vipHasta: usuario.vipHasta || null,
+            avatarUrl: usuario.avatarUrl || null // ✅ AÑADIR ESTA LÍNEA
           };
+
           this.userSubject.next(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
           console.log('🆕 Usuario con VIP actualizado en localStorage:', updatedUser);
@@ -231,6 +239,33 @@ export class AuthService {
       headers: this.getAuthHeaders()
     });
   }
+
+  setAvatarUrl(url: string): void {
+    const baseUrl = environment.apiUrl;
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+
+    const user = this.getUser();
+    const usuarioCompleto = this.usuarioCompletoSubject.value;
+
+    if (user) {
+      const updatedUser = {
+        ...user,
+        avatarUrl: fullUrl
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      this.userSubject.next(updatedUser);
+    }
+
+    if (usuarioCompleto) {
+      const actualizado = { ...usuarioCompleto, avatarUrl: fullUrl };
+      this.usuarioCompletoSubject.next(actualizado);
+    }
+  }
+
+
+
+
+
 
 
 

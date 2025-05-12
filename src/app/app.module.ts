@@ -74,6 +74,8 @@ import { ComparadorJugadoresComponent } from './comparador/comparador-jugadores/
 import { DropdownModule } from 'primeng/dropdown';
 import { VipComponent } from './VipComponent/vip/vip.component';
 import { ScoutingComponent } from './scouting/scouting.component';
+import { LogrosComponent } from './logros/logros.component';
+import { LogroDetalleModalComponent } from './shared/logro-detalle-modal/logro-detalle-modal.component';
 
 
 
@@ -111,6 +113,8 @@ import { ScoutingComponent } from './scouting/scouting.component';
     ComparadorJugadoresComponent,
     VipComponent,
     ScoutingComponent,
+    LogrosComponent,
+    LogroDetalleModalComponent,
 
 
 

@@ -1,0 +1,144 @@
+.logros-container {
+  background: #0f172a;
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.titulo {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #22d3ee;
+  text-shadow: 0 0 10px #0ff;
+}
+
+.grid-logros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.logro-card {
+  background: #1e293b;
+  border-radius: 15px;
+  padding: 1.2rem;
+  text-align: center;
+  transition: transform 0.3s ease;
+  border: 2px solid #334155;
+}
+
+.logro-card:hover {
+  transform: scale(1.05);
+  border-color: #22d3ee;
+  box-shadow: 0 0 12px #22d3ee;
+}
+
+.logro-card.desbloqueado {
+  background: linear-gradient(to bottom, #14b8a6, #0f766e);
+  color: white;
+  border-color: #0ff;
+  box-shadow: 0 0 20px #0ff;
+}
+
+.icono-logro {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.descripcion {
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+  color: #cbd5e1;
+}
+
+.fecha {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #a5f3fc;
+}
+.grid-logros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.logro-card {
+  background: #1e293b;
+  border: 2px solid #334155;
+  border-radius: 12px;
+  text-align: center;
+  padding: 1rem;
+  transition: transform 0.2s;
+  cursor: pointer;
+  filter: grayscale(100%);
+  opacity: 0.4;
+}
+
+.logro-card.desbloqueado {
+  filter: none;
+  opacity: 1;
+  background: linear-gradient(to bottom, #22d3ee, #0f766e);
+  border-color: #0ff;
+  box-shadow: 0 0 12px #0ff;
+}
+
+.icono-logro {
+  font-size: 2.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-detalle {
+  background: #0f172a;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  color: #f8fafc;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 0 10px #0ff;
+  animation: zoomIn 0.3s ease-out;
+}
+
+.icono-grande {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.btn-cerrar {
+  margin-top: 1rem;
+  background: #334155;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-cerrar:hover {
+  background: #475569;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

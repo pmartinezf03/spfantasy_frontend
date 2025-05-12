@@ -13,5 +13,15 @@ export interface Usuario {
     nombre: string;
   };
   vipHasta?: string | null;
-
+  avatarUrl?: string;
+  avatarBase64?: string;
+  compras?: number;
+  ventas?: number;
+  puntos?: number;
+  logins?: number;
+  sesiones?: number;
+  experiencia?: number;
+  diasActivo?: number;
+  rachaLogin?: number;
+  partidasJugadas?: number;
 }

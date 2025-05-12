@@ -48,22 +48,38 @@
         📈 Comparador
       </a>
     </li>
-
   </ul>
 
   <!-- Usuario -->
   <div
     *ngIf="isUserLoggedIn && usuarioLogueado"
-    class="text-right text-white text-sm font-semibold"
+    class="text-right text-white text-sm font-semibold flex flex-col items-end"
   >
-    <div>👤 {{ usuarioLogueado }}</div>
+    <div
+      class="flex items-center gap-2 cursor-pointer hover:underline"
+      (click)="router.navigate(['/perfil'])"
+    >
+      <div
+        class="avatar-navbar"
+        [ngStyle]="{
+          'background-image':
+            'url(' + (avatarBase64 || 'assets/default-avatar.png') + ')'
+        }"
+      ></div>
+
+      <span>{{ usuarioLogueado }}</span>
+    </div>
+
     <div class="text-fantasyGold">
       💰 {{ usuarioDinero | currency : "EUR" }}
     </div>
     <div class="text-xs text-red-400">
       ({{ usuarioDineroPendiente | currency : "EUR" }} pendientes)
     </div>
-    <div *ngIf="esVip()" class="vip-badge animate__animated animate__pulse animate__infinite">
+    <div
+      *ngIf="esVip()"
+      class="vip-badge animate__animated animate__pulse animate__infinite"
+    >
       🌟 VIP
     </div>
 
