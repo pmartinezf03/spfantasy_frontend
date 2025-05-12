@@ -1,5 +1,16 @@
-<div class="perfil-container">
-  <h2 class="perfil-titulo text-3xl font-bold text-fantasyGold mb-6 text-center">
+<!-- Mensaje emergente de notificación -->
+<div
+  *ngIf="toastMessage"
+  class="toast-message fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg"
+>
+  {{ toastMessage }}
+</div>
+
+<div class="perfil-container" *ngIf="usuarioLogueado">
+  <!-- Asegúrate de que usuarioLogueado no sea null -->
+  <h2
+    class="perfil-titulo text-3xl font-bold text-fantasyGold mb-6 text-center"
+  >
     🧾 Mi Perfil
   </h2>
 
@@ -9,7 +20,10 @@
       <div
         class="perfil-avatar-preview mx-auto mb-4"
         [ngStyle]="{
-          'background-image': 'url(' + (avatarPreview || usuarioAvatarUrl || 'assets/default-avatar.png') + ')'
+          'background-image':
+            'url(' +
+            (avatarPreview || usuarioAvatarUrl || 'assets/default-avatar.png') +
+            ')'
         }"
       ></div>
 
@@ -30,19 +44,28 @@
 
       <div class="perfil-text space-y-2 text-white text-sm">
         <p><strong>👤 Usuario:</strong> {{ usuarioLogueado.username }}</p>
-        <p><strong>📧 Email:</strong> {{ usuarioLogueado.email || '-' }}</p>
-        <p><strong>💰 Dinero:</strong> {{ usuarioDinero | currency: 'EUR' }}</p>
-        <p class="text-red-400"><strong>🔴 Pendiente:</strong> {{ dineroPendiente | currency: 'EUR' }}</p>
+        <p><strong>📧 Email:</strong> {{ usuarioLogueado.email || "-" }}</p>
+        <p>
+          <strong>💰 Dinero:</strong> {{ usuarioDinero | currency : "EUR" }}
+        </p>
+        <p class="text-red-400">
+          <strong>🔴 Pendiente:</strong>
+          {{ dineroPendiente | currency : "EUR" }}
+        </p>
       </div>
     </div>
 
     <!-- 🏆 Logros -->
     <div class="perfil-card bg-[#0f172a] p-6 rounded-xl shadow-xl">
-      <h3 class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse">
+      <h3
+        class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse"
+      >
         🏆 Logros Desbloqueados
       </h3>
 
-      <div class="grid-logros grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div
+        class="grid-logros grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+      >
         <div
           class="card-logro cursor-pointer"
           *ngFor="let logro of logros"
@@ -53,7 +76,10 @@
             <span *ngIf="logro.desbloqueado">{{ logro.icono }}</span>
             <span *ngIf="!logro.desbloqueado">🔒</span>
           </div>
-          <p class="nombre-logro truncate text-white text-xs font-semibold" [title]="logro.nombre">
+          <p
+            class="nombre-logro truncate text-white text-xs font-semibold"
+            [title]="logro.nombre"
+          >
             {{ logro.nombre }}
           </p>
         </div>
@@ -63,14 +89,31 @@
 
   <!-- 📊 Widgets -->
   <div class="perfil-widgets mt-8 grid gap-6 grid-cols-1 md:grid-cols-3">
-    <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
-      <h4 class="text-lg font-bold mb-2 text-fantasyGold">📊 Rendimiento Semanal</h4>
-      <p-chart type="radar" [data]="chartData" [options]="chartOptions" style="height: 250px;"></p-chart>
+<div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
+  <h4 class="text-lg font-bold mb-2 text-fantasyGold">
+    🎯 Nivel de Experiencia
+  </h4>
+  <div
+    class="exp-bar w-full bg-gray-700 rounded-full h-6 overflow-hidden shadow-inner mb-2"
+  >
+    <div
+      class="exp-fill h-full bg-green-500 text-center text-sm text-black font-bold"
+      [style.width.%]="experienciaPorcentaje"
+    >
+      {{ usuarioLogueado?.experiencia || 0 }} Puntos
     </div>
+  </div>
+  <p class="text-sm">Nivel {{ calcularNivel(usuarioLogueado.experiencia ?? 0) }}. Siguiente nivel en {{ calcularProximoNivel(usuarioLogueado.experiencia ?? 0) }} puntos.</p>
+</div>
+
 
     <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
-      <h4 class="text-lg font-bold mb-2 text-fantasyGold">🎯 Nivel de Experiencia</h4>
-      <div class="exp-bar w-full bg-gray-700 rounded-full h-6 overflow-hidden shadow-inner mb-2">
+      <h4 class="text-lg font-bold mb-2 text-fantasyGold">
+        🎯 Nivel de Experiencia
+      </h4>
+      <div
+        class="exp-bar w-full bg-gray-700 rounded-full h-6 overflow-hidden shadow-inner mb-2"
+      >
         <div
           class="exp-fill h-full bg-green-500 text-center text-sm text-black font-bold"
           [style.width.%]="usuarioLogueado?.experiencia || 0"
@@ -82,11 +125,21 @@
     </div>
 
     <div class="widget bg-[#1e293b] rounded-xl p-4 shadow-lg text-white">
-      <h4 class="text-lg font-bold mb-2 text-fantasyGold">🔍 Estadísticas rápidas</h4>
+      <h4 class="text-lg font-bold mb-2 text-fantasyGold">
+        🔍 Estadísticas rápidas
+      </h4>
       <ul class="text-sm space-y-1">
-        <li>📅 Días activo: <strong>{{ usuarioLogueado?.diasActivo }}</strong></li>
-        <li>🔥 Racha login: <strong>{{ usuarioLogueado?.rachaLogin }} días</strong></li>
-        <li>🕹 Partidas jugadas: <strong>{{ usuarioLogueado?.partidasJugadas }}</strong></li>
+        <li>
+          📅 Días activo: <strong>{{ usuarioLogueado?.diasActivo }}</strong>
+        </li>
+        <li>
+          🔥 Racha login:
+          <strong>{{ usuarioLogueado?.rachaLogin }} días</strong>
+        </li>
+        <li>
+          🕹 Partidas jugadas:
+          <strong>{{ usuarioLogueado?.partidasJugadas }}</strong>
+        </li>
       </ul>
     </div>
   </div>
@@ -96,4 +149,41 @@
     [logro]="logroSeleccionado"
     (cerrar)="logroSeleccionado = null"
   ></app-logro-detalle-modal>
+
+  <!-- Barra de progreso circular -->
+  <div class="section mb-6">
+    <h3 class="text-2xl font-bold text-fantasyGold mb-4">
+      🎯 Nivel de Experiencia
+    </h3>
+    <div class="relative flex justify-center items-center">
+      <p-progressSpinner
+        *ngIf="usuarioLogueado?.experiencia"
+        [diameter]="120"
+        [strokeWidth]="12"
+        [value]="experienciaPorcentaje"
+        [showValue]="false"
+        styleClass="exp-progress-circle"
+      ></p-progressSpinner>
+      <div class="absolute text-2xl font-bold text-fantasyGold">
+        Nivel {{ calcularNivel(usuarioLogueado.experiencia) }}
+      </div>
+    </div>
+    <p class="text-sm mt-4 text-center">
+      Experiencia: {{ usuarioLogueado?.experiencia }} puntos.
+    </p>
+  </div>
+
+  <!-- Modal de Racha de Login -->
+  <div *ngIf="showLoginStreakModal" class="modal-overlay">
+    <div class="modal-content bg-[#1e293b] p-6 rounded-xl text-center">
+      <h3 class="text-xl text-fantasyGold mb-4">¡Racha de Login!</h3>
+      <p class="text-white">{{ streakMessage }}</p>
+      <button
+        (click)="showLoginStreakModal = false"
+        class="btn-close mt-4 bg-red-600 text-white px-4 py-2 rounded-md"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
 </div>

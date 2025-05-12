@@ -28,7 +28,8 @@ export class InicioComponent implements OnInit {
   topMinutos: Jugador[] = [];
   topTl: Jugador[] = [];
   chartT3: ChartData<'bar'> = { labels: [], datasets: [] };
-
+  showCongratsModal: boolean = false; // Estado para el modal
+  congratsMessage: string = ''; // Mensaje de felicitación
   comparativa: { usuarioPuntos: number, mediaLiga: number } = { usuarioPuntos: 0, mediaLiga: 0 };
 
   chartData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -110,6 +111,12 @@ export class InicioComponent implements OnInit {
   ngOnInit(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
       this.usuario = usuario;
+
+      // Verifica si la racha de login es mayor o igual a 1
+      if (usuario && (usuario.rachaLogin ?? 0) >= 2) {
+        this.congratsMessage = `🎉 ¡Felicidades ${usuario.username}! Has iniciado sesión durante ${usuario.rachaLogin} día/s consecutivos. ¡Sigue así!`;
+        this.showCongratsModal = true;  // Mostrar el modal de felicitación
+      }
     });
 
     this.authService.getLigaObservable().subscribe(ligaId => {
@@ -121,6 +128,7 @@ export class InicioComponent implements OnInit {
       }
     });
   }
+
 
 
   cargarDatos(ligaId: number, usuarioId: number): void {

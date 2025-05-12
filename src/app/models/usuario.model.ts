@@ -24,4 +24,5 @@ export interface Usuario {
   diasActivo?: number;
   rachaLogin?: number;
   partidasJugadas?: number;
+  nivel: number;
 }

@@ -17,8 +17,17 @@ interface User {
   dineroPendiente?: number;
   vipHasta?: string | null;
   avatarUrl?: string | null;
-
+  compras?: number;
+  ventas?: number;
+  puntos?: number;
+  logins?: number;
+  sesiones?: number;
+  experiencia?: number;
+  diasActivo?: number;
+  rachaLogin?: number;
+  partidasJugadas?: number;
 }
+
 
 
 @Injectable({
@@ -27,9 +36,9 @@ interface User {
 export class AuthService {
   public apiUrl = `${environment.apiUrl}/api/usuarios`;
 
-  private userSubject = new BehaviorSubject<User | null>(null);  // ❗ Iniciamos vacío
+  private userSubject = new BehaviorSubject<User | null>(null);
   public usuarioCompletoSubject = new BehaviorSubject<Usuario | null>(null);
-  public usuarioCompleto: Usuario | null = null; // ✅ acceso directo a la última versión del usuario
+  public usuarioCompleto: Usuario | null = null;
 
   usuarioCompleto$ = this.usuarioCompletoSubject.asObservable();
 
@@ -62,6 +71,9 @@ export class AuthService {
 
 
         this.refreshUsuarioCompleto(); // 🔄 Refresca datos extendidos (dinero, etc.)
+        this.registrarSesion(user.id); // sesion diaria
+        this.registrarLogin(user.id);  // login real
+
       } else {
         this.logout(); // ❌ Limpia si hay datos inconsistentes
       }
@@ -80,12 +92,19 @@ export class AuthService {
           localStorage.setItem('token', response.token);
           this.userSubject.next(response.user);
 
-          // Espera a que se refresque correctamente
-          this.refreshUsuarioCompleto().subscribe(); // ← esto asegura que esté emitido
+          const userId = response.user.id;
+
+          // ✅ Llamadas al backend para registrar actividad
+          this.registrarLogin(userId);     // Suma login y actualiza racha
+          this.registrarSesion(userId);    // Suma sesiones
+
+          // 🔄 Refrescar datos completos del usuario
+          this.refreshUsuarioCompleto().subscribe();
         }
       })
     );
   }
+
 
 
   logout(): void {
@@ -132,8 +151,19 @@ export class AuthService {
             dinero: usuario.dinero,
             dineroPendiente: usuario.dineroPendiente,
             vipHasta: usuario.vipHasta || null,
-            avatarUrl: usuario.avatarUrl || null // ✅ AÑADIR ESTA LÍNEA
+            avatarUrl: usuario.avatarUrl || null,
+            compras: usuario.compras ?? 0,
+            ventas: usuario.ventas ?? 0,
+            puntos: usuario.puntos ?? 0,
+            logins: usuario.logins ?? 0,
+            sesiones: usuario.sesiones ?? 0,
+            experiencia: usuario.experiencia ?? 0,
+            diasActivo: usuario.diasActivo ?? 0,
+            rachaLogin: usuario.rachaLogin ?? 0,
+            partidasJugadas: usuario.partidasJugadas ?? 0
           };
+
+
 
           this.userSubject.next(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -261,6 +291,53 @@ export class AuthService {
       this.usuarioCompletoSubject.next(actualizado);
     }
   }
+
+  // 🔥 Estadísticas de usuario
+  registrarLogin(userId: number): void {
+    this.http.put(`${this.apiUrl}/estadisticas/${userId}/login`, null, {
+      headers: this.getAuthHeaders()
+    }).subscribe({
+      next: () => console.log('✅ Login registrado'),
+      error: err => console.error('❌ Error al registrar login:', err)
+    });
+  }
+
+  registrarSesion(userId: number): void {
+    this.http.put(`${this.apiUrl}/estadisticas/${userId}/sesion`, null, {
+      headers: this.getAuthHeaders()
+    }).subscribe({
+      next: () => console.log('✅ Sesión registrada'),
+      error: err => console.error('❌ Error al registrar sesión:', err)
+    });
+  }
+
+  registrarCompra(userId: number): void {
+    this.http.put(`${this.apiUrl}/estadisticas/${userId}/compra`, null, {
+      headers: this.getAuthHeaders()
+    }).subscribe({
+      next: () => console.log('✅ Compra registrada'),
+      error: err => console.error('❌ Error al registrar compra:', err)
+    });
+  }
+
+  registrarVenta(userId: number): void {
+    this.http.put(`${this.apiUrl}/estadisticas/${userId}/venta`, null, {
+      headers: this.getAuthHeaders()
+    }).subscribe({
+      next: () => console.log('✅ Venta registrada'),
+      error: err => console.error('❌ Error al registrar venta:', err)
+    });
+  }
+
+  registrarPartida(userId: number): void {
+    this.http.put(`${this.apiUrl}/estadisticas/${userId}/partida`, null, {
+      headers: this.getAuthHeaders()
+    }).subscribe({
+      next: () => console.log('✅ Partida registrada'),
+      error: err => console.error('❌ Error al registrar partida:', err)
+    });
+  }
+
 
 
 

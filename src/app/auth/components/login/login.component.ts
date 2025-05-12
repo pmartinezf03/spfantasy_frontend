@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { LoaderService } from '../../../shared/loader.service';
+import { ToastService } from '../../../services/toast.service';  // Importa el ToastService
 
 @Component({
   selector: 'app-login',
@@ -15,20 +16,18 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   recaptchaResponse: string = '';
   activarCaptcha: boolean = false;
-
+  toastMessage: string | null = null;
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private toastService: ToastService  // Inyecta el servicio aquí
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      recaptcha: [
-        '',
-        this.activarCaptcha ? Validators.required : []
-      ],
+      recaptcha: ['', this.activarCaptcha ? Validators.required : []],
     });
   }
 
@@ -60,7 +59,7 @@ export class LoginComponent implements OnInit {
         this.authService.refreshUsuarioCompleto().subscribe((usuarioCompleto) => {
           this.loaderService.hideSpinner();
 
-          // 🔍 Verifica si es VIP ANTES de navegar
+          // Verificar si es VIP ANTES de navegar
           const vipHasta = usuarioCompleto?.vipHasta;
           const ahora = new Date();
           const expiracion = vipHasta ? new Date(vipHasta) : null;
@@ -69,8 +68,18 @@ export class LoginComponent implements OnInit {
           console.log('✅ Usuario actualizado:', usuarioCompleto);
           console.log('🔍 Es VIP?', esVip, 'Hasta:', vipHasta);
 
-            this.router.navigate(['/']);
+          // Verificar la racha de logins y mostrar el mensaje emergente
+          if (usuarioCompleto?.rachaLogin) {
+            console.log('LoginComponent - Racha de login:', usuarioCompleto.rachaLogin);  // Verifica si la racha de logins es correcta
 
+            if (usuarioCompleto.rachaLogin > 1) {
+              this.toastService.showToast(`¡Racha de Logins Consecutivos: ${usuarioCompleto.rachaLogin} días!`);
+              console.log('LoginComponent - Setting toastMessage:', this.toastMessage); // Verifica si se está actualizando el mensaje
+
+            }
+          }
+
+          this.router.navigate(['/']);
         });
       },
       error: () => {
@@ -80,6 +89,4 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-
-
 }

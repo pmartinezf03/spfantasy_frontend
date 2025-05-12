@@ -5,6 +5,7 @@ import { LogroDTO } from '../models/logro.model';
 import { UsuarioService } from '../services/usuario.service';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-perfil',
@@ -13,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class PerfilComponent implements OnInit {
   usuarioLogueado: any = null;
+  rachaLogin: number = 0;  // Para mostrar la racha de logins
   usuarioDinero: number = 0;
   dineroPendiente: number = 0;
 
@@ -23,9 +25,10 @@ export class PerfilComponent implements OnInit {
   avatarPreview: string | null = null;
   avatarSeleccionado: File | null = null;
   apiUrl = environment.apiUrl;
-
-  experienciaPorcentaje: number = 0;
-
+  toastMessage: string | null = null;  // Definir toastMessage
+  experienciaPorcentaje: number = 0;  // Para la barra de progreso de experiencia
+  showLoginStreakModal: boolean = false;  // Estado del modal de racha de login
+  streakMessage: string = '';
   chartData: any;
   chartOptions: any;
 
@@ -34,6 +37,7 @@ export class PerfilComponent implements OnInit {
     private logrosService: LogrosService,
     private usuarioService: UsuarioService,
     private http: HttpClient,
+    private toastService: ToastService  // Inyectar el ToastService
   ) { }
 
   ngOnInit(): void {
@@ -41,71 +45,26 @@ export class PerfilComponent implements OnInit {
       if (!usuario) return;
 
       this.usuarioLogueado = usuario;
+      this.rachaLogin = usuario.rachaLogin ?? 0;
       this.usuarioDinero = usuario.dinero ?? 0;
       this.dineroPendiente = usuario.dineroPendiente ?? 0;
 
-      this.experienciaPorcentaje = Math.min(100, usuario.experiencia || 0);
+      // Calcular el porcentaje de experiencia
+      this.experienciaPorcentaje = this.calcularExperiencia(usuario.experiencia ?? 0);
 
-      // 🎯 Datos para el gráfico radar
-      this.chartData = {
-        labels: ['Compras', 'Ventas', 'Puntos', 'Logins', 'Sesiones'],
-        datasets: [
-          {
-            label: 'Mi Actividad',
-            data: [
-              usuario.compras ?? 0,
-              usuario.ventas ?? 0,
-              usuario.puntos ?? 0,
-              usuario.logins ?? 0,
-              usuario.sesiones ?? 0
-            ],
-            fill: true,
-            backgroundColor: 'rgba(255, 206, 86, 0.2)',
-            borderColor: '#facc15',
-            pointBackgroundColor: '#facc15',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: '#facc15'
-          }
-        ]
-      };
-
-      this.chartOptions = {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#facc15'
-            }
-          }
-        },
-        scales: {
-          r: {
-            angleLines: { color: '#334155' },
-            grid: { color: '#334155' },
-            pointLabels: { color: '#facc15' },
-            ticks: {
-              color: '#e2e8f0',
-              backdropColor: 'transparent'
-            }
-          }
-        }
-      };
-
-      // 🖼️ Cargar avatar
-      if (usuario.avatarUrl?.startsWith('/')) {
-        this.http.get(`${environment.apiUrl}${usuario.avatarUrl}`, { responseType: 'arraybuffer' })
-          .subscribe(buffer => {
-            const base64 = btoa(
-              new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-            );
-            this.usuarioAvatarUrl = `data:image/png;base64,${base64}`;
-          }, () => {
-            this.usuarioAvatarUrl = 'assets/default-avatar.png';
-          });
+      // Verifica si el nivel ha cambiado
+      const nivel = this.calcularNivel(usuario.experiencia ?? 0);
+      if (nivel > (usuario.nivel ?? 0)) {
+        this.mostrarMensajeSubidaNivel(nivel);
       }
 
-      // 🏆 Cargar logros
+      // Mostrar el mensaje de la racha de login consecutivo en un modal
+      if (this.rachaLogin > 1) {
+        this.streakMessage = `🎉 ¡Racha de logins consecutivos: ${this.rachaLogin} días!`;
+        this.showLoginStreakModal = true;  // Hacer visible el modal
+      }
+
+      // Cargar logros (verifica que el backend devuelva los logros)
       if (usuario.id) {
         this.logrosService.getTodosConEstado(usuario.id).subscribe({
           next: logros => this.logros = logros,
@@ -115,11 +74,35 @@ export class PerfilComponent implements OnInit {
     });
   }
 
+  // Método para calcular el porcentaje de experiencia
+  calcularExperiencia(experiencia: number): number {
+    const experienciaParaNivel = 10 * (experiencia + 1); // Nivel 1 = 10, Nivel 2 = 20, etc.
+    return Math.min(100, (experiencia / experienciaParaNivel) * 100);
+  }
+
+  // Método para calcular el nivel
+  calcularNivel(experiencia: number): number {
+    return Math.floor(experiencia / 10) + 1;  // Cada 10 puntos de experiencia sube de nivel
+  }
+
+  // Mostrar mensaje de subida de nivel
+  mostrarMensajeSubidaNivel(nivel: number): void {
+    this.streakMessage = `🎉 ¡Felicidades! Has alcanzado el nivel ${nivel}! Sigue acumulando experiencia.`;
+    this.showLoginStreakModal = true;  // Mostrar el modal
+  }
+
   mostrarDetalle(logro: LogroDTO): void {
     if (logro.desbloqueado) {
       this.logroSeleccionado = logro;
     }
   }
+  // Método para calcular los puntos restantes para el siguiente nivel
+calcularProximoNivel(experiencia: number): number {
+  const nivel = Math.floor(experiencia / 10) + 1;
+  const experienciaParaNivel = 10 * nivel; // Cada 10 puntos sube de nivel
+  return experienciaParaNivel - experiencia;
+}
+
 
   onAvatarSelected(event: any): void {
     const file = event.target.files[0];
