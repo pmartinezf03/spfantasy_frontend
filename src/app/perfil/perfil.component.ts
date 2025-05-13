@@ -14,7 +14,7 @@ import { ToastService } from '../services/toast.service';
 })
 export class PerfilComponent implements OnInit {
   usuarioLogueado: any = null;
-  rachaLogin: number = 0;  // Para mostrar la racha de logins
+  rachaLogin: number = 0;
   usuarioDinero: number = 0;
   dineroPendiente: number = 0;
 
@@ -25,9 +25,9 @@ export class PerfilComponent implements OnInit {
   avatarPreview: string | null = null;
   avatarSeleccionado: File | null = null;
   apiUrl = environment.apiUrl;
-  toastMessage: string | null = null;  // Definir toastMessage
-  experienciaPorcentaje: number = 0;  // Para la barra de progreso de experiencia
-  showLoginStreakModal: boolean = false;  // Estado del modal de racha de login
+  toastMessage: string | null = null;
+  experienciaPorcentaje: number = 0;
+  showLoginStreakModal: boolean = false;
   streakMessage: string = '';
   chartData: any;
   chartOptions: any;
@@ -43,6 +43,8 @@ export class PerfilComponent implements OnInit {
   ngOnInit(): void {
     this.authService.refreshUsuarioCompleto().subscribe(usuario => {
       if (!usuario) return;
+        usuario.nivel = this.calcularNivel(usuario.experiencia ?? 0);
+
 
       this.usuarioLogueado = usuario;
       this.rachaLogin = usuario.rachaLogin ?? 0;
@@ -50,7 +52,7 @@ export class PerfilComponent implements OnInit {
       this.dineroPendiente = usuario.dineroPendiente ?? 0;
 
       // Calcular el porcentaje de experiencia
-      this.experienciaPorcentaje = this.calcularExperiencia(usuario.experiencia ?? 0);
+      this.experienciaPorcentaje = this.calcularExperienciaPorcentaje(usuario.experiencia ?? 0, usuario.nivel ?? 1);
 
       // Verifica si el nivel ha cambiado
       const nivel = this.calcularNivel(usuario.experiencia ?? 0);
@@ -58,11 +60,18 @@ export class PerfilComponent implements OnInit {
         this.mostrarMensajeSubidaNivel(nivel);
       }
 
-      // Mostrar el mensaje de la racha de login consecutivo en un modal
+      // Mostrar mensaje de racha de login
       if (this.rachaLogin > 1) {
-        this.streakMessage = `🎉 ¡Racha de logins consecutivos: ${this.rachaLogin} días!`;
-        this.showLoginStreakModal = true;  // Hacer visible el modal
+        const claveStorage = `racha-login-mostrada-${new Date().toISOString().split('T')[0]}`;
+        const yaMostrado = localStorage.getItem(claveStorage);
+
+        if (!yaMostrado) {
+          this.streakMessage = `🎉 ¡Racha de logins consecutivos: ${this.rachaLogin} días!`;
+          this.showLoginStreakModal = true;
+          localStorage.setItem(claveStorage, 'true');
+        }
       }
+
 
       // Cargar logros (verifica que el backend devuelva los logros)
       if (usuario.id) {
@@ -74,16 +83,35 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // Método para calcular el porcentaje de experiencia
-  calcularExperiencia(experiencia: number): number {
-    const experienciaParaNivel = 10 * (experiencia + 1); // Nivel 1 = 10, Nivel 2 = 20, etc.
-    return Math.min(100, (experiencia / experienciaParaNivel) * 100);
+  calcularExperienciaPorcentaje(experiencia: number, nivel: number): number {
+    let xpTotalAnterior = 0;
+
+    for (let i = 1; i < nivel; i++) {
+      xpTotalAnterior += i * 10;
+    }
+
+    const xpNivelActual = nivel * 10;
+    const xpDentroDelNivel = experiencia - xpTotalAnterior;
+    return Math.floor((xpDentroDelNivel / xpNivelActual) * 100);
   }
 
-  // Método para calcular el nivel
+
+
+
+
+
   calcularNivel(experiencia: number): number {
-    return Math.floor(experiencia / 10) + 1;  // Cada 10 puntos de experiencia sube de nivel
+    let nivel = 1;
+    let xpAcumulada = 0;
+
+    while (experiencia >= xpAcumulada + nivel * 10) {
+      xpAcumulada += nivel * 10;
+      nivel++;
+    }
+
+    return nivel;
   }
+
 
   // Mostrar mensaje de subida de nivel
   mostrarMensajeSubidaNivel(nivel: number): void {
@@ -97,11 +125,18 @@ export class PerfilComponent implements OnInit {
     }
   }
   // Método para calcular los puntos restantes para el siguiente nivel
-calcularProximoNivel(experiencia: number): number {
-  const nivel = Math.floor(experiencia / 10) + 1;
-  const experienciaParaNivel = 10 * nivel; // Cada 10 puntos sube de nivel
-  return experienciaParaNivel - experiencia;
-}
+  calcularProximoNivel(experiencia: number): number {
+    const nivel = this.calcularNivel(experiencia);
+    let xpAcumulada = 0;
+
+    for (let i = 1; i < nivel; i++) {
+      xpAcumulada += i * 10;
+    }
+
+    const xpParaSiguienteNivel = xpAcumulada + nivel * 10;
+    return xpParaSiguienteNivel - experiencia;
+  }
+
 
 
   onAvatarSelected(event: any): void {
@@ -119,6 +154,9 @@ calcularProximoNivel(experiencia: number): number {
       reader.readAsDataURL(file);
     }
   }
+
+
+
 
   aplicarNuevoAvatar() {
     if (!this.avatarSeleccionado) return;
