@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Fantasy',
   webDir: 'dist/sp_fantasy/browser',
   server: {
-    cleartext: true, // 👈 Permite HTTP
+    cleartext: true,
     androidScheme: 'http'
 
   }

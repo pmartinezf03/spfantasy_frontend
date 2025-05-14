@@ -1,12 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
-import { AuthService } from './auth.service';
 import { Liga } from '../models/liga.model';
+import { environment } from '../../environments/environment';
 
 export interface CrearLigaDTO {
   nombre: string;
-  codigoInvitacion: string; // ✅ antes ponía 'codigo'
+  codigoInvitacion: string;
   creadorId: number;
 }
 
@@ -40,7 +40,7 @@ export interface MiembroLiga {
 })
 export class LigasService {
 
-  private apiUrl = 'http://localhost:8080/api/ligas';
+  private apiUrl = `${environment.apiUrl}/api/ligas`;
 
   constructor(private http: HttpClient) { }
 
