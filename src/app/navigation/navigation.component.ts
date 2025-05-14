@@ -176,4 +176,17 @@ export class NavigationComponent implements OnInit {
     return vipHasta ? new Date(vipHasta) > new Date() : false;
   }
 
+  reiniciarSesion(): void {
+    console.log('🧹 Reiniciando sesión: limpiando localStorage y forzando recarga');
+    localStorage.clear(); // Limpia todo
+
+    this.router.navigateByUrl('/auth').then(() => {
+      setTimeout(() => {
+        location.reload();
+      }, 100);
+    });
+  }
+
+
+
 }

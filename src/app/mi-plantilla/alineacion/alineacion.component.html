@@ -1,19 +1,19 @@
-<!-- 🎯 Cancha horizontal -->
-<div class="cancha-zona-horizontal">
+<!-- 🏀 Cancha minimalista horizontal -->
+<div class="cancha-minimal">
   <ng-container *ngFor="let posicion of ['base', 'alero', 'alaPivot', 'escolta', 'pivot']">
     <div
-      class="slot-cancha"
+      class="slot-minimal"
       [id]="'drop-' + posicion"
       cdkDropList
       [cdkDropListData]="jugadoresPorPosicion[posicion]"
       [cdkDropListConnectedTo]="idDropLists"
       (cdkDropListDropped)="onDropEnSlot($event, posicion)"
     >
-      <div class="slot-label">{{ posicion | titlecase }}</div>
+      <div class="slot-minimal-label">{{ posicion | titlecase }}</div>
 
       <div
         *ngFor="let jugador of jugadoresPorPosicion[posicion]"
-        class="jugador-slot"
+        class="jugador-minimal"
         cdkDrag
         [cdkDragData]="jugador"
       >
@@ -28,20 +28,19 @@
   </ng-container>
 </div>
 
-<!-- 🛋️ Banquillo -->
+<!-- 🛋️ Banquillo minimalista -->
 <div
-  class="banquillo-scroll"
-  id="banquillo"
+  class="banquillo-minimal"
   cdkDropList
   [cdkDropListData]="banquillo"
   [cdkDropListConnectedTo]="idDropLists"
   (cdkDropListDropped)="onDropBanquillo($event)"
 >
-  <div class="slot-label">Banquillo</div>
+  <div class="slot-minimal-label">Banquillo</div>
 
   <div
     *ngFor="let jugador of banquillo"
-    class="jugador-slot"
+    class="jugador-minimal"
     cdkDrag
     [cdkDragData]="jugador"
   >

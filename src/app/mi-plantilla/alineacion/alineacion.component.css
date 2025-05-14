@@ -1,64 +1,70 @@
-/* Contenedor principal de cancha */
-.cancha-zona-horizontal {
+/* 🎯 Cancha principal */
+.cancha-minimal {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  background-color: #0f172a;
-  padding: 1rem;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: #111827;
+  padding: 2rem 1rem;
   border-radius: 1rem;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
   margin-bottom: 2rem;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
   overflow-x: auto;
 }
 
-/* Slot individual para cada posición */
-.slot-cancha {
+/* Slot para cada posición */
+.slot-minimal {
   background-color: #1f2937;
-  border: 2px dashed #3b82f6;
-  border-radius: 0.75rem;
-  min-width: 180px;
-  padding: 0.75rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 180px;
+  min-height: 260px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-  transition: border-color 0.2s ease-in-out;
+  gap: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.slot-label {
-  font-size: 0.85rem;
-  font-weight: bold;
+.slot-minimal:hover {
+  transform: translateY(-2px);
+}
+
+.slot-minimal-label {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #facc15;
-  margin-bottom: 0.3rem;
   text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
-/* Tarjeta de jugador arrastrable */
-.jugador-slot {
+/* Tarjetas de jugador */
+.jugador-minimal {
   width: 100%;
   max-width: 160px;
   transition: transform 0.2s ease;
 }
 
-.jugador-slot:hover {
-  transform: scale(1.03);
+.jugador-minimal:hover {
+  transform: scale(1.02);
 }
 
-/* Banquillo scroll */
-.banquillo-scroll {
+/* Banquillo */
+.banquillo-minimal {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-wrap: nowrap;
   overflow-x: auto;
-  background-color: #1e1e2f;
+  gap: 1rem;
   padding: 1rem;
+  background-color: #1e1e2f;
   border-radius: 1rem;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
   margin-bottom: 2rem;
+  align-items: flex-start;
 }
 
-.banquillo-scroll .slot-label {
+.banquillo-minimal .slot-minimal-label {
   min-width: 100px;
   font-size: 0.85rem;
   font-weight: bold;
@@ -66,9 +72,9 @@
   text-transform: uppercase;
 }
 
-/* Drag preview estilo */
+/* Drag visual */
 .cdk-drag-preview {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
   border-radius: 1rem;
   transform: scale(1.05);
 }
@@ -76,6 +82,93 @@
 .cdk-drag-placeholder {
   opacity: 0.2;
   border: 2px dashed #3b82f6;
-  border-radius: 0.75rem;
-  min-height: 80px;
+  border-radius: 1rem;
+  min-height: 100px;
+}
+/* 🎯 Cancha principal */
+.cancha-minimal {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: #111827;
+  padding: 2rem 1rem;
+  border-radius: 1rem;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+/* Slot para cada posición */
+.slot-minimal {
+  background-color: #1f2937;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 180px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.slot-minimal:hover {
+  transform: translateY(-2px);
+}
+
+.slot-minimal-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #facc15;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* Tarjetas de jugador */
+.jugador-minimal {
+  width: 100%;
+  max-width: 160px;
+  transition: transform 0.2s ease;
+}
+
+.jugador-minimal:hover {
+  transform: scale(1.02);
+}
+
+/* Banquillo */
+.banquillo-minimal {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #1e1e2f;
+  border-radius: 1rem;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.banquillo-minimal .slot-minimal-label {
+  min-width: 100px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #facc15;
+  text-transform: uppercase;
+}
+
+/* Drag visual */
+.cdk-drag-preview {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  transform: scale(1.05);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.2;
+  border: 2px dashed #3b82f6;
+  border-radius: 1rem;
+  min-height: 100px;
 }

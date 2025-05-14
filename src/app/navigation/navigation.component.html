@@ -94,7 +94,7 @@
   <!-- Login -->
   <div *ngIf="!isUserLoggedIn">
     <button
-      (click)="router.navigate(['/auth'])"
+      (click)="reiniciarSesion()"
       class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
     >
       Iniciar Sesión
