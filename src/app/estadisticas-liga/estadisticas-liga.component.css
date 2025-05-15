@@ -26,3 +26,19 @@ img {
   border-radius: 8px;
   padding: 16px;
 }
+.p-chart canvas {
+  background-color: transparent !important;
+}
+
+.p-chart {
+  border: 2px solid #FACC15;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+}
+::ng-deep .p-dialog .p-dialog-content {
+  background-color: #1f2937 !important;
+  color: #fff !important;
+}
+::ng-deep .p-dialog .p-dialog-header {
+  background-color: #111827 !important;
+  color: #FACC15 !important;
+}

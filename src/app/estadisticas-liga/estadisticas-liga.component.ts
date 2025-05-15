@@ -18,28 +18,56 @@ export class EstadisticasLigaComponent implements OnInit {
   usuarioDinero: number = 0;
   totalOfertasEnCurso: number = 0;
   ofertasEnCurso: { [jugadorId: number]: number } = {};
+  ampliarRadar: boolean = false;
 
   mostrarDialogo: boolean = false;
   jugadorSeleccionado?: Jugador;
   mensajeError: string = '';
 
   radarTopData: ChartData<'radar'> = { labels: [], datasets: [] };
-  radarTopOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
+  radarTopOptions: ChartOptions<'radar'> = {
     plugins: {
-      legend: { position: 'top', labels: { color: '#0f172a' } },
-      title: { display: true, text: '📡 Comparativa Top Jugadores', color: '#2563eb' }
+      legend: {
+        labels: {
+          color: '#FFD700',
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        }
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: '#1f2937',
+        titleColor: '#FFD700',
+        bodyColor: '#ffffff',
+        borderColor: '#FFD700',
+        borderWidth: 1
+      }
     },
     scales: {
       r: {
-        pointLabels: { color: '#1f2937' },
-        ticks: { color: '#6b7280' },
-        grid: { color: 'rgba(0,0,0,0.1)' }
+        angleLines: {
+          color: '#4b5563'
+        },
+        grid: {
+          color: '#374151'
+        },
+        pointLabels: {
+          color: '#FACC15',
+          font: {
+            size: 13,
+            weight: 'bold'
+          }
+        },
+        ticks: {
+          display: false
+        }
       }
-    }
+    },
+    responsive: true,
+    maintainAspectRatio: false
   };
-
   constructor(
     private estadisticasService: EstadisticasService,
     private ofertasService: OfertasService,
@@ -65,7 +93,6 @@ export class EstadisticasLigaComponent implements OnInit {
     this.authService.getLigaObservable().subscribe(ligaId => {
       if (ligaId) {
         this.cargarEstadisticas();
-        this.construirRadarJugadoresTop(); // ✅ Generar radar dinámico
 
         this.cdr.detectChanges(); // fuerza actualización visual
       }
@@ -87,7 +114,11 @@ export class EstadisticasLigaComponent implements OnInit {
           propietarioId: jugador.propietarioId ?? 0,
           propietarioUsername: jugador.propietarioUsername ?? 'Libre'
         }));
+
         console.log("📊 Jugadores con estadísticas cargados:", this.jugadores);
+
+        this.construirRadarJugadoresTop();
+
         this.cdr.detectChanges();
       },
       error: (error: any) => {
@@ -95,6 +126,7 @@ export class EstadisticasLigaComponent implements OnInit {
       }
     });
   }
+
 
   obtenerDineroUsuario(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
@@ -215,32 +247,28 @@ export class EstadisticasLigaComponent implements OnInit {
     });
   }
 
-  // Método para construir el gráfico radar con los 3 mejores jugadores
   construirRadarJugadoresTop(): void {
     const topJugadores = this.jugadores
-      .filter(j => j.fp && j.min && j.t3) // asegurarse de que haya datos
+      .filter(j => j.fp && j.min && j.t3)
       .sort((a, b) => (b.fp ?? 0) - (a.fp ?? 0))
-      .slice(0, 3); // top 3 por FP
+      .slice(0, 3);
 
     this.radarTopData = {
       labels: ['TL', 'T2', 'T3', 'Min', 'FP'],
-      datasets: topJugadores.map(j => ({
-        label: j.nombre,
-        data: [
-          j.tl ?? 0,
-          j.t2 ?? 0,
-          j.t3 ?? 0,
-          j.min ?? 0,
-          j.fp ?? 0
-        ],
-        fill: true,
-        borderColor: this.getColor(j.nombre),
-        backgroundColor: this.getColor(j.nombre, 0.2),
-        pointBackgroundColor: this.getColor(j.nombre)
-      }))
+      datasets: topJugadores.map((j, i) => {
+        const baseColor = this.getColor(i);
+        return {
+          label: j.nombre,
+          data: [j.tl ?? 0, j.t2 ?? 0, j.t3 ?? 0, j.min ?? 0, j.fp ?? 0],
+          fill: true,
+          borderColor: baseColor,
+          backgroundColor: baseColor.replace('1)', '0.2)'),
+          pointBackgroundColor: baseColor
+        };
+      })
     };
 
-    this.createRadarChart();
+    this.cdr.detectChanges();
   }
 
   createRadarChart() {
@@ -252,10 +280,14 @@ export class EstadisticasLigaComponent implements OnInit {
     });
   }
 
-  getColor(nombre: string, alpha: number = 1): string {
-    const colores = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-    const index = nombre.length % colores.length;
-    const color = colores[index];
-    return alpha === 1 ? color : color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+  getColor(index: number): string {
+    const colores = [
+      'rgba(59, 130, 246, 1)', // azul
+      'rgba(16, 185, 129, 1)', // verde
+      'rgba(245, 158, 11, 1)', // amarillo
+      'rgba(239, 68, 68, 1)',  // rojo
+      'rgba(139, 92, 246, 1)'  // violeta
+    ];
+    return colores[index % colores.length];
   }
 }

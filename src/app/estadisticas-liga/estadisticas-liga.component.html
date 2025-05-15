@@ -1,10 +1,14 @@
 <div class="estadisticas-liga p-6">
   <!-- 🏀 Encabezado -->
   <div class="text-center mb-6">
-    <h2 class="text-3xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]">
+    <h2
+      class="text-3xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]"
+    >
       📊 Estadísticas de la Liga
     </h2>
-    <p class="text-gray-300">Compara el rendimiento y haz ofertas inteligentes</p>
+    <p class="text-gray-300">
+      Compara el rendimiento y haz ofertas inteligentes
+    </p>
   </div>
 
   <!-- 📊 Tabla para escritorio -->
@@ -26,7 +30,10 @@
           </tr>
         </thead>
         <tbody class="bg-[#111827]">
-          <tr *ngFor="let jugador of jugadores" class="hover:bg-gray-700 transition duration-200">
+          <tr
+            *ngFor="let jugador of jugadores"
+            class="hover:bg-gray-700 transition duration-200"
+          >
             <td class="px-4 py-3 flex items-center gap-2">
               <img
                 [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
@@ -42,8 +49,12 @@
             <td class="px-4 py-3 text-white">{{ jugador.t3 }}</td>
             <td class="px-4 py-3 text-white">{{ jugador.fp }}</td>
             <td class="px-4 py-3 text-white">
-              <ng-container *ngIf="jugador.propietarioUsername !== 'Libre'; else libre">
-                <span class="text-primary font-semibold">{{ jugador.propietarioUsername }}</span>
+              <ng-container
+                *ngIf="jugador.propietarioUsername !== 'Libre'; else libre"
+              >
+                <span class="text-primary font-semibold">{{
+                  jugador.propietarioUsername
+                }}</span>
               </ng-container>
               <ng-template #libre>
                 <span class="text-green-400 font-semibold">Libre</span>
@@ -51,7 +62,11 @@
             </td>
             <td class="px-4 py-3">
               <button
-                *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                *ngIf="
+                  !ofertasEnCurso[jugador.id] &&
+                  jugador.propietarioId &&
+                  jugador.propietarioId !== usuarioId
+                "
                 (click)="abrirDialogoOferta(jugador)"
                 class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
               >
@@ -74,32 +89,70 @@
   <!-- 🎯 Radar de Mejores Jugadores -->
   <div class="mt-5">
     <div class="bg-[#1f2937] p-6 rounded-xl shadow-lg">
-      <h4 class="text-xl font-bold text-indigo-500 text-center mb-5">📡 Comparativa de los 3 Mejores Jugadores</h4>
+      <h4 class="text-xl font-bold text-indigo-500 text-center mb-5">
+        📡 Comparativa de los 3 Mejores Jugadores
+      </h4>
       <div class="flex justify-center">
         <p-chart
           type="radar"
           [data]="radarTopData"
           [options]="radarTopOptions"
-          style="min-height: 380px; max-width: 680px"
+          style="min-height: 380px; max-width: 680px; cursor: pointer"
           class="w-full"
+          (click)="ampliarRadar = true"
         ></p-chart>
       </div>
     </div>
   </div>
+  <!-- Modal con Radar Ampliado -->
+  <p-dialog
+    [(visible)]="ampliarRadar"
+    [modal]="true"
+    [style]="{ width: '90vw', height: '90vh' }"
+    [closable]="true"
+    [resizable]="false"
+    [baseZIndex]="10000"
+    [dismissableMask]="true"
+    contentStyle="padding: 2rem;"
+    header="📡 Radar Comparativo Ampliado"
+  >
+    <div class="w-full h-full">
+      <p-chart
+        type="radar"
+        [data]="radarTopData"
+        [options]="radarTopOptions"
+        style="height: 100%; width: 100%"
+      ></p-chart>
+    </div>
+  </p-dialog>
 
   <!-- 📱 Fichas estilo Fantasy para móviles -->
   <div class="md:hidden grid gap-3">
-    <div *ngFor="let jugador of jugadores" class="bg-gradient-to-r from-[#1f2937] to-[#0f172a] text-white rounded-xl p-4 shadow-xl hover:scale-105 transition-transform duration-200">
+    <div
+      *ngFor="let jugador of jugadores"
+      class="bg-gradient-to-r from-[#1f2937] to-[#0f172a] text-white rounded-xl p-4 shadow-xl hover:scale-105 transition-transform duration-200"
+    >
       <div class="flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <img [src]="jugador.fotoUrl || 'assets/sin-foto.png'" class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md" />
+          <img
+            [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
+            class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md"
+          />
           <div>
             <div class="font-bold">{{ jugador.nombre }}</div>
             <div class="text-sm">{{ jugador.posicion }}</div>
           </div>
         </div>
-        <span *ngIf="jugador.propietarioUsername !== 'Libre'" class="text-primary font-semibold">{{ jugador.propietarioUsername }}</span>
-        <span *ngIf="jugador.propietarioUsername === 'Libre'" class="text-green-400 font-semibold">Libre</span>
+        <span
+          *ngIf="jugador.propietarioUsername !== 'Libre'"
+          class="text-primary font-semibold"
+          >{{ jugador.propietarioUsername }}</span
+        >
+        <span
+          *ngIf="jugador.propietarioUsername === 'Libre'"
+          class="text-green-400 font-semibold"
+          >Libre</span
+        >
       </div>
 
       <div class="grid grid-cols-2 gap-4 mt-3">
@@ -113,7 +166,11 @@
 
       <div class="flex justify-end gap-2 mt-3">
         <button
-          *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+          *ngIf="
+            !ofertasEnCurso[jugador.id] &&
+            jugador.propietarioId &&
+            jugador.propietarioId !== usuarioId
+          "
           (click)="abrirDialogoOferta(jugador)"
           class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
         >
