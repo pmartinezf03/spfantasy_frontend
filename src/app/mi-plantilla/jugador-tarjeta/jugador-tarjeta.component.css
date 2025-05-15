@@ -1,0 +1,23 @@
+.jugador-card {
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%; /* ✅ importante */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+
+.jugador-overlay {
+  font-size: 0.85rem;
+  position: relative;
+  color: white;
+}
+
+.boton-menu {
+  font-size: 1.2rem;
+  line-height: 1;
+  z-index: 10;
+}

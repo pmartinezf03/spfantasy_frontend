@@ -16,43 +16,38 @@ export class AlineacionComponent {
 
   posiciones: string[] = ['base', 'escolta', 'alero', 'alaPivot', 'pivot'];
 
+  // Estado del menú emergente
+  menuVisible: boolean = false;
+  jugadorSeleccionado: Jugador | null = null;
 
-
+  // 🔄 IDs para drag & drop
   get idDropLists(): string[] {
     return [...Object.keys(this.jugadoresPorPosicion).map(p => `drop-${p}`), 'banquillo'];
   }
 
-
+  // 📦 Al soltar en posición titular
   onDropEnSlot(event: CdkDragDrop<Jugador[]>, posicionDestino: string) {
     const jugador = event.item.data as Jugador;
-    if (!jugador) {
-      console.warn('⚠ No se pudo obtener el jugador del evento de drag.');
-      return;
-    }
+    if (!jugador) return;
 
     const origen = event.previousContainer.data;
     const destino = this.jugadoresPorPosicion[posicionDestino];
 
-    const posicionJugadorOriginal = jugador.posicion;
-    const posicionJugadorNormalizada = this.normalizarPosicion(posicionJugadorOriginal);
-    const posicionDestinoNormalizada = this.normalizarPosicion(posicionDestino);
-
-    console.log(`🔄 Intentando mover a: ${jugador.nombre} (${posicionJugadorOriginal})`);
-    console.log(`🎯 Slot destino: ${posicionDestino}`);
-    console.log(`📦 Jugadores actuales en "${posicionDestino}":`, destino);
+    const posOriginal = this.normalizarPosicion(jugador.posicion);
+    const posDestino = this.normalizarPosicion(posicionDestino);
 
     const posicionCompatible =
-      posicionDestinoNormalizada === posicionJugadorNormalizada ||
-      (['pivot', 'ala-pivot'].includes(posicionDestinoNormalizada) &&
-        ['pivot', 'ala-pivot'].includes(posicionJugadorNormalizada));
+      posDestino === posOriginal ||
+      (['pivot', 'alapivot'].includes(posDestino) &&
+        ['pivot', 'alapivot'].includes(posOriginal));
 
     if (!posicionCompatible) {
-      console.warn(`❌ Posición incompatible: ${posicionJugadorOriginal} no puede ir en ${posicionDestino}`);
+      console.warn(`❌ Posición incompatible: ${jugador.posicion} no puede ir en ${posicionDestino}`);
       return;
     }
 
     if (destino.length >= 1 && event.previousContainer !== event.container) {
-      console.warn(`❌ Ya hay un jugador en la posición ${posicionDestino}, no se puede agregar otro.`);
+      console.warn(`❌ Ya hay un jugador en la posición ${posicionDestino}`);
       return;
     }
 
@@ -62,13 +57,9 @@ export class AlineacionComponent {
       transferArrayItem(origen, destino, event.previousIndex, event.currentIndex);
       this.cambiarJugador.emit({ jugador, tipo: 'titular' });
     }
-
-    console.log(`✅ Jugador ${jugador.nombre} ahora en posición ${posicionDestino}`);
   }
 
-
-
-
+  // 📦 Al soltar en banquillo
   onDropBanquillo(event: CdkDragDrop<Jugador[]>) {
     const jugador = event.item.data as Jugador;
     if (!jugador) return;
@@ -83,30 +74,38 @@ export class AlineacionComponent {
     }
   }
 
+  // 🚀 Acciones del menú emergente
+  abrirMenu(jugador: Jugador) {
+    this.jugadorSeleccionado = jugador;
+    this.menuVisible = true;
+  }
+
+  cerrarMenu() {
+    this.menuVisible = false;
+    this.jugadorSeleccionado = null;
+  }
 
   venderJugador(jugador: Jugador) {
     this.vender.emit(jugador);
+    this.cerrarMenu();
   }
 
   mostrarInformacion(jugador: Jugador) {
     this.mostrarInfo.emit(jugador);
+    this.cerrarMenu();
   }
 
+  // 🧩 Utilidades
   private normalizarPosicion(pos: string): string {
     return pos
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // quita tildes
-      .toLowerCase()
-      .replace(/\s|-/g, '') // quita espacios y guiones
-      .replace('alapivot', 'alaPivot'); // deja esta como camelCase
-  }
-  getClassPosicion(pos: string): string {
-    return 'posicion-' + pos
-      .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/\s|-/g, '');
+      .replace(/\s|-/g, '')
+      .replace('alapivot', 'alaPivot');
   }
 
-
+  getClassPosicion(pos: string): string {
+    return 'posicion-' + this.normalizarPosicion(pos);
+  }
 }

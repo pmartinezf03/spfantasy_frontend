@@ -1,54 +1,89 @@
-<!-- 🏀 Cancha minimalista horizontal -->
-<div class="cancha-minimal">
-  <ng-container *ngFor="let posicion of ['base', 'alero', 'alaPivot', 'escolta', 'pivot']">
-    <div
-      class="slot-minimal"
-      [id]="'drop-' + posicion"
-      cdkDropList
-      [cdkDropListData]="jugadoresPorPosicion[posicion]"
-      [cdkDropListConnectedTo]="idDropLists"
-      (cdkDropListDropped)="onDropEnSlot($event, posicion)"
-    >
-      <div class="slot-minimal-label">{{ posicion | titlecase }}</div>
+<div class="alineacion-container-grid">
+  <!-- 🛋️ Banquillo -->
+  <div class="banquillo-columna"
+       cdkDropList
+       [cdkDropListData]="banquillo"
+       [cdkDropListConnectedTo]="idDropLists"
+       (cdkDropListDropped)="onDropBanquillo($event)"
+       id="drop-banquillo">
+    <div class="banquillo-label">🛋️ Banquillo</div>
 
-      <div
-        *ngFor="let jugador of jugadoresPorPosicion[posicion]"
-        class="jugador-minimal"
-        cdkDrag
-        [cdkDragData]="jugador"
-      >
-        <app-jugador-card
+    <div *ngFor="let jugador of banquillo"
+         class="tarjeta-jugador"
+         cdkDrag
+         [cdkDragData]="jugador">
+      <app-jugador-tarjeta
+        [jugador]="jugador"
+        (mostrarInfo)="mostrarInformacion($event)"
+        (vender)="venderJugador($event)"
+        (menuSolicitado)="abrirMenu($event)">
+      </app-jugador-tarjeta>
+    </div>
+  </div>
+
+  <!-- 🏟️ Cancha -->
+  <div class="posiciones-grid">
+    <div *ngFor="let posicion of posiciones"
+         class="slot-posicion"
+         cdkDropList
+         [cdkDropListData]="jugadoresPorPosicion[posicion]"
+         [cdkDropListConnectedTo]="idDropLists"
+         (cdkDropListDropped)="onDropEnSlot($event, posicion)"
+         [id]="'drop-' + posicion">
+      <div class="pos-label">{{ posicion.toUpperCase() }}</div>
+
+      <div *ngFor="let jugador of jugadoresPorPosicion[posicion]"
+           class="tarjeta-jugador"
+           cdkDrag
+           [cdkDragData]="jugador">
+        <app-jugador-tarjeta
           [jugador]="jugador"
-          [tipo]="'titular'"
           (mostrarInfo)="mostrarInformacion($event)"
           (vender)="venderJugador($event)"
-        ></app-jugador-card>
+          (menuSolicitado)="abrirMenu($event)">
+        </app-jugador-tarjeta>
       </div>
     </div>
-  </ng-container>
-</div>
-
-<!-- 🛋️ Banquillo minimalista -->
-<div
-  class="banquillo-minimal"
-  cdkDropList
-  [cdkDropListData]="banquillo"
-  [cdkDropListConnectedTo]="idDropLists"
-  (cdkDropListDropped)="onDropBanquillo($event)"
->
-  <div class="slot-minimal-label">Banquillo</div>
-
-  <div
-    *ngFor="let jugador of banquillo"
-    class="jugador-minimal"
-    cdkDrag
-    [cdkDragData]="jugador"
-  >
-    <app-jugador-card
-      [jugador]="jugador"
-      [tipo]="'banquillo'"
-      (mostrarInfo)="mostrarInformacion($event)"
-      (vender)="venderJugador($event)"
-    ></app-jugador-card>
   </div>
+
+  <!-- ✅ Menú emergente global -->
+  <p-dialog
+    [(visible)]="menuVisible"
+    [modal]="true"
+    [closable]="false"
+    [style]="{ width: '320px', 'border-radius': '1rem', overflow: 'hidden' }"
+    [baseZIndex]="10000"
+    [draggable]="false"
+    [dismissableMask]="true"
+    [position]="'center'">
+
+    <ng-template pTemplate="header">
+      <h3 class="text-center text-xl text-yellow-500">
+        Opciones para {{ jugadorSeleccionado?.nombre }}
+      </h3>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      <div class="flex flex-col gap-3">
+        <button
+          pButton
+          label="📌 Ver Información"
+          (click)="mostrarInformacion(jugadorSeleccionado!)"
+          class="p-button-info w-full rounded-md p-2 shadow hover:bg-blue-700">
+        </button>
+        <button
+          pButton
+          label="💸 Vender Jugador"
+          (click)="venderJugador(jugadorSeleccionado!)"
+          class="p-button-danger w-full rounded-md p-2 shadow hover:bg-red-700">
+        </button>
+        <button
+          pButton
+          label="❌ Cerrar"
+          (click)="cerrarMenu()"
+          class="p-button-secondary w-full rounded-md p-2 shadow hover:bg-gray-700">
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
 </div>

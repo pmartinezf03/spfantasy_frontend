@@ -176,6 +176,8 @@ export class MiPlantillaComponent implements OnInit {
         this.jugadoresTitulares = jugadores.filter(j => j.esTitular);
         this.jugadoresBanquillo = jugadores.filter(j => !j.esTitular);
         this.generarRadarYDistribucion();
+        this.generarGraficosTitulares();
+
 
         console.log("✅ Jugadores de la liga cargados:", jugadores);
       },
@@ -229,6 +231,8 @@ export class MiPlantillaComponent implements OnInit {
 
     // 🔁 Siempre actualiza el array de titulares a partir del mapa por posición
     this.jugadoresTitulares = Object.values(this.jugadoresPorPosicion).flat();
+    this.generarGraficosTitulares();
+
   }
 
 
@@ -387,6 +391,8 @@ export class MiPlantillaComponent implements OnInit {
           alert("✅ Plantilla guardada correctamente.");
           this.authService.refreshUsuarioCompleto();
           this.cargarEstadisticas();
+          this.generarGraficosTitulares();
+
         } else {
           alert("❌ No se pudo guardar la plantilla.");
         }
@@ -583,21 +589,22 @@ export class MiPlantillaComponent implements OnInit {
       scales: {
         x: {
           ticks: {
-            color: '#374151'
+            color: '#f3f4f6'  // texto claro
           },
           grid: {
-            color: 'rgba(0,0,0,0.05)'
+            color: 'rgba(255,255,255,0.05)'
           }
         },
         y: {
           ticks: {
-            color: '#374151'
+            color: '#f3f4f6'
           },
           grid: {
-            color: 'rgba(0,0,0,0.05)'
+            color: 'rgba(255,255,255,0.05)'
           }
         }
       }
+
     };
   }
 
