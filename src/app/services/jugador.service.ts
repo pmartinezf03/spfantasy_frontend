@@ -56,6 +56,16 @@ export class JugadorService {
     );
   }
 
+  obtenerMediaPorPosicion(posicion: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/jugadores/media/${posicion}`);
+  }
+  getMediasPorPosicion(posicion: string) {
+    return this.http.get<{ fp: number; min: number; t2: number; t3: number }>(
+      `${this.apiUrl}/jugadores/media/${posicion}`
+    );
+  }
+
+
 
 
 }

@@ -27,6 +27,7 @@ export class NavigationComponent implements OnInit {
   avatarPreview: string | null = null;
   usuarioCompleto: Usuario | null = null;
   avatarBase64: string | null = null;
+  menuAbierto: boolean = false;
 
 
 

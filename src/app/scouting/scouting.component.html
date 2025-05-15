@@ -1,7 +1,9 @@
 <div class="scouting-wrapper">
   <h2 class="titulo">🔍 Scouting Automático</h2>
   <p class="descripcion">
-    Aquí podrás descubrir jugadores ocultos con gran rendimiento antes que nadie. Este sistema analiza automáticamente los mejores valores ocultos en la liga.
+    Descubre jugadores ocultos antes que nadie. Este sistema analiza
+    rendimiento, eficiencia y relación calidad/precio para recomendar fichajes
+    clave.
   </p>
 
   <div class="jugadores-recomendados" *ngIf="!cargando">
@@ -10,46 +12,101 @@
       <h3>{{ jugador.nombre }}</h3>
       <p>{{ jugador.posicion }}</p>
       <p>💰 {{ jugador.precioVenta | currency }}</p>
-      <p>🔥 Rendimiento: {{ jugador.rendimiento | number:'1.1-2' }}</p>
+      <p>🔥 Rendimiento: {{ jugador.rendimiento | number : "1.1-2" }}</p>
 
-      <button pButton
-              label="Ver Detalles"
-              icon="pi pi-eye"
-              class="p-button-sm p-button-info"
-              (click)="mostrarDetalles(jugador)">
-      </button>
+      <button
+        pButton
+        label="Ver Detalles"
+        icon="pi pi-eye"
+        class="p-button-sm p-button-info"
+        (click)="mostrarDetalles(jugador)"
+      ></button>
     </div>
   </div>
 
-  <!-- Mensaje de Carga -->
   <p *ngIf="cargando">Cargando jugadores destacados...</p>
 
-  <!-- Modal de Detalles del Jugador -->
-  <p-dialog header="Detalles del Jugador" [(visible)]="modalVisible" [modal]="true" [closable]="true" [resizable]="false">
-    <div *ngIf="jugadorSeleccionado">
-      <h3>{{ jugadorSeleccionado.nombre }}</h3>
-      <img [src]="jugadorSeleccionado.fotoUrl" class="jugador-foto" />
-      <p><strong>Posición:</strong> {{ jugadorSeleccionado.posicion }}</p>
-      <p><strong>Equipo:</strong> {{ jugadorSeleccionado.equipo.nombre }}</p>
-      <p><strong>Precio:</strong> 💰 {{ jugadorSeleccionado.precioVenta | currency }}</p>
-      <p><strong>Rendimiento:</strong> 🔥 {{ jugadorSeleccionado.rendimiento | number:'1.1-2' }}</p>
+  <!-- Modal Detalles -->
+  <p-dialog
+    header="Detalles del Jugador"
+    [(visible)]="modalVisible"
+    [modal]="true"
+    [closable]="true"
+    [resizable]="false"
+    [style]="{ width: '420px' }"
+  >
+    <div *ngIf="jugadorSeleccionado" class="detalle-jugador">
+      <h3 *ngIf="jugadorSeleccionado">{{ jugadorSeleccionado.nombre }}</h3>
 
-      <!-- Estadísticas Avanzadas (solo para VIP) -->
-      <div *ngIf="esVip">
-        <h4>Estadísticas Avanzadas:</h4>
-        <p><strong>Puntos Totales:</strong> {{ jugadorSeleccionado.puntosTotales }}</p>
-        <p><strong>Minutos por partido:</strong> {{ jugadorSeleccionado.min }}</p>
-        <p><strong>Tiros Libres (%):</strong> {{ jugadorSeleccionado.tl | number:'1.1-2' }}</p>
-        <p><strong>Tiros de 2 (%):</strong> {{ jugadorSeleccionado.t2 | number:'1.1-2' }}</p>
-        <p><strong>Tiros de 3 (%):</strong> {{ jugadorSeleccionado.t3 | number:'1.1-2' }}</p>
-        <p><strong>Puntos Fantasy:</strong> {{ jugadorSeleccionado.fp }}</p>
+      <img [src]="jugadorSeleccionado.fotoUrl" class="jugador-foto mb-3" />
+
+      <p><strong>Posición:</strong> {{ jugadorSeleccionado.posicion }}</p>
+      <p *ngIf="jugadorSeleccionado.equipo">
+        <strong>Equipo:</strong> {{ jugadorSeleccionado.equipo.nombre }}
+      </p>
+      <p *ngIf="!jugadorSeleccionado.equipo">
+        <strong>Equipo:</strong> No asignado
+      </p>
+      <p>
+        <strong>Precio:</strong>
+        {{ jugadorSeleccionado.precioVenta | currency }}
+      </p>
+      <p>
+        <strong>Rendimiento:</strong>
+        {{ jugadorSeleccionado.rendimiento | number : "1.1-2" }}
+      </p>
+
+      <div
+        class="recomendacion bg-blue-50 text-blue-900 p-3 rounded-md my-3 shadow"
+      >
+        <strong>🤖 Análisis Automático:</strong><br />
+        {{ mensajeRecomendacion }}
       </div>
 
-      <!-- Mensaje de advertencia para no VIP -->
-      <div *ngIf="!esVip">
-        <p class="alerta-vip">Para ver las estadísticas avanzadas, necesitas ser un usuario VIP.</p>
+      <div
+        class="comparacion bg-green-50 text-green-900 p-3 rounded-md mb-3 shadow"
+      >
+        <strong>📊 Comparativa con media de su posición:</strong><br />
+        {{ comparacionMedia }}
+      </div>
+
+      <!-- VIP Stats -->
+      <div *ngIf="esVip" class="stats-avanzadas mt-4">
+        <h4 class="text-lg font-semibold mb-2">📈 Estadísticas Avanzadas</h4>
+        <ul class="list-disc pl-5">
+          <li>
+            <strong>Puntos Totales:</strong>
+            {{ jugadorSeleccionado.puntosTotales }}
+          </li>
+          <li>
+            <strong>Minutos por partido:</strong> {{ jugadorSeleccionado.min }}
+          </li>
+          <li>
+            <strong>Tiros Libres (%):</strong>
+            {{ jugadorSeleccionado.tl | number : "1.1-2" }}
+          </li>
+          <li>
+            <strong>Tiros de 2 (%):</strong>
+            {{ jugadorSeleccionado.t2 | number : "1.1-2" }}
+          </li>
+          <li>
+            <strong>Tiros de 3 (%):</strong>
+            {{ jugadorSeleccionado.t3 | number : "1.1-2" }}
+          </li>
+          <li><strong>Puntos Fantasy:</strong> {{ jugadorSeleccionado.fp }}</li>
+        </ul>
+      </div>
+
+
+      <div class="text-center mt-4">
+        <button
+          pButton
+          class="cerrar-modal-btn p-button-rounded p-button-danger"
+          (click)="cerrarModal()"
+          label="Cerrar"
+          icon="pi pi-times"
+        ></button>
       </div>
     </div>
   </p-dialog>
-
 </div>

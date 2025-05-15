@@ -15,15 +15,15 @@ export class LigasGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    const userId = this.authService.getUserId();
+    const usuario = this.authService.getUsuario();
 
-    if (!userId) {
+    if (!usuario) {
       console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/login');
       this.router.navigate(['/auth/login']);
       return of(false);
     }
 
-    return this.ligasService.obtenerLigaDelUsuario(userId).pipe(
+    return this.ligasService.obtenerLigaDelUsuario(usuario.id).pipe(
       map(liga => {
         if (liga) {
           console.log('✅ Usuario tiene liga. Acceso permitido.');

@@ -28,26 +28,25 @@
 }
 
 .jugador-card {
-  background: #1c1c1c;
-  border: 2px solid #333;
-  border-radius: 12px;
-  width: 220px;
-  padding: 16px;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
-  transition: transform 0.3s;
+  background-color: #1f2937;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: white;
+  text-align: center;
+  margin: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out;
 }
-
 .jugador-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .jugador-foto {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
   object-fit: cover;
-  margin-bottom: 10px;
-  border: 3px solid #ffd700;
+  margin-bottom: 0.5rem;
 }
 .detalle-jugador {
   text-align: center;
@@ -72,4 +71,95 @@
   color: #ffc107;
   font-weight: bold;
   margin-top: 1rem;
+}
+
+
+.recomendacion {
+  font-style: italic;
+}
+.alerta-vip {
+  border-left: 4px solid #facc15;
+}
+
+/* Detalles del jugador dentro del modal */
+.detalle-jugador {
+  text-align: left;
+  padding: 1rem;
+  color: #f0f0f0;
+  background-color: #1e1e2f;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
+}
+
+.detalle-jugador h3 {
+  font-size: 1.5rem;
+  color: #ffd700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.detalle-jugador p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #ddd;
+}
+
+.detalle-jugador strong {
+  color: #ffffff;
+}
+
+.detalle-jugador .jugador-foto.mb-3 {
+  display: block;
+  margin: 0 auto 1rem;
+  width: 110px;
+  height: 110px;
+  border-radius: 100%;
+  border: 2px solid #ffd700;
+  object-fit: cover;
+}
+
+.recomendacion,
+.comparacion {
+  font-size: 0.95rem;
+  border-left: 5px solid #38bdf8;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  font-style: italic;
+}
+
+.comparacion {
+  border-left-color: #22c55e;
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.stats-avanzadas {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #111827;
+  border-radius: 10px;
+  border: 1px solid #444;
+}
+
+.stats-avanzadas ul {
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+.stats-avanzadas li {
+  margin: 0.4rem 0;
+  color: #cbd5e1;
+}
+
+.alerta-vip {
+  border-left: 4px solid #facc15;
+  background-color: #fef9c3;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-top: 1.2rem;
+  color: #92400e;
+  border-radius: 8px;
 }

@@ -1,46 +1,56 @@
 <div class="alineacion-container-grid">
   <!-- 🛋️ Banquillo -->
-  <div class="banquillo-columna"
-       cdkDropList
-       [cdkDropListData]="banquillo"
-       [cdkDropListConnectedTo]="idDropLists"
-       (cdkDropListDropped)="onDropBanquillo($event)"
-       id="drop-banquillo">
+  <div
+    class="banquillo-columna"
+    cdkDropList
+    [cdkDropListData]="banquillo"
+    [cdkDropListConnectedTo]="idDropLists"
+    (cdkDropListDropped)="onDropBanquillo($event)"
+    id="drop-banquillo"
+  >
     <div class="banquillo-label">🛋️ Banquillo</div>
 
-    <div *ngFor="let jugador of banquillo"
-         class="tarjeta-jugador"
-         cdkDrag
-         [cdkDragData]="jugador">
+    <div
+      *ngFor="let jugador of banquillo"
+      class="tarjeta-jugador"
+      cdkDrag
+      [cdkDragData]="jugador"
+    >
       <app-jugador-tarjeta
         [jugador]="jugador"
         (mostrarInfo)="mostrarInformacion($event)"
         (vender)="venderJugador($event)"
-        (menuSolicitado)="abrirMenu($event)">
+        (menuSolicitado)="abrirMenu($event)"
+      >
       </app-jugador-tarjeta>
     </div>
   </div>
 
   <!-- 🏟️ Cancha -->
   <div class="posiciones-grid">
-    <div *ngFor="let posicion of posiciones"
-         class="slot-posicion"
-         cdkDropList
-         [cdkDropListData]="jugadoresPorPosicion[posicion]"
-         [cdkDropListConnectedTo]="idDropLists"
-         (cdkDropListDropped)="onDropEnSlot($event, posicion)"
-         [id]="'drop-' + posicion">
+    <div
+      *ngFor="let posicion of posiciones"
+      class="slot-posicion"
+      cdkDropList
+      [cdkDropListData]="jugadoresPorPosicion[posicion]"
+      [cdkDropListConnectedTo]="idDropLists"
+      (cdkDropListDropped)="onDropEnSlot($event, posicion)"
+      [id]="'drop-' + posicion"
+    >
       <div class="pos-label">{{ posicion.toUpperCase() }}</div>
 
-      <div *ngFor="let jugador of jugadoresPorPosicion[posicion]"
-           class="tarjeta-jugador"
-           cdkDrag
-           [cdkDragData]="jugador">
+      <div
+        *ngFor="let jugador of jugadoresPorPosicion[posicion]"
+        class="tarjeta-jugador"
+        cdkDrag
+        [cdkDragData]="jugador"
+      >
         <app-jugador-tarjeta
           [jugador]="jugador"
           (mostrarInfo)="mostrarInformacion($event)"
           (vender)="venderJugador($event)"
-          (menuSolicitado)="abrirMenu($event)">
+          (menuSolicitado)="abrirMenu($event)"
+        >
         </app-jugador-tarjeta>
       </div>
     </div>
@@ -55,8 +65,8 @@
     [baseZIndex]="10000"
     [draggable]="false"
     [dismissableMask]="true"
-    [position]="'center'">
-
+    [position]="'center'"
+  >
     <ng-template pTemplate="header">
       <h3 class="text-center text-xl text-yellow-500">
         Opciones para {{ jugadorSeleccionado?.nombre }}
@@ -69,21 +79,26 @@
           pButton
           label="📌 Ver Información"
           (click)="mostrarInformacion(jugadorSeleccionado!)"
-          class="p-button-info w-full rounded-md p-2 shadow hover:bg-blue-700">
-        </button>
+          class="p-button-info w-full rounded-md p-2 shadow hover:bg-blue-700"
+        ></button>
         <button
           pButton
           label="💸 Vender Jugador"
           (click)="venderJugador(jugadorSeleccionado!)"
-          class="p-button-danger w-full rounded-md p-2 shadow hover:bg-red-700">
-        </button>
+          class="p-button-danger w-full rounded-md p-2 shadow hover:bg-red-700"
+        ></button>
         <button
           pButton
           label="❌ Cerrar"
           (click)="cerrarMenu()"
-          class="p-button-secondary w-full rounded-md p-2 shadow hover:bg-gray-700">
-        </button>
+          class="p-button-secondary w-full rounded-md p-2 shadow hover:bg-gray-700"
+        ></button>
       </div>
     </ng-template>
   </p-dialog>
+</div>
+
+<!-- 🔴 Mensaje de error -->
+<div *ngIf="mensajeErrorPosicion" class="mensaje-error-posicion">
+  {{ mensajeErrorPosicion }}
 </div>

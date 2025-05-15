@@ -16,16 +16,15 @@ export class AlineacionComponent {
 
   posiciones: string[] = ['base', 'escolta', 'alero', 'alaPivot', 'pivot'];
 
-  // Estado del menú emergente
   menuVisible: boolean = false;
   jugadorSeleccionado: Jugador | null = null;
 
-  // 🔄 IDs para drag & drop
+  mensajeErrorPosicion: string | null = null;
+
   get idDropLists(): string[] {
     return [...Object.keys(this.jugadoresPorPosicion).map(p => `drop-${p}`), 'banquillo'];
   }
 
-  // 📦 Al soltar en posición titular
   onDropEnSlot(event: CdkDragDrop<Jugador[]>, posicionDestino: string) {
     const jugador = event.item.data as Jugador;
     if (!jugador) return;
@@ -42,12 +41,14 @@ export class AlineacionComponent {
         ['pivot', 'alapivot'].includes(posOriginal));
 
     if (!posicionCompatible) {
-      console.warn(`❌ Posición incompatible: ${jugador.posicion} no puede ir en ${posicionDestino}`);
+      this.mensajeErrorPosicion = `❌ ${jugador.nombre} no puede ser colocado en ${posicionDestino.toUpperCase()}.`;
+      setTimeout(() => this.mensajeErrorPosicion = null, 3000); // Se borra solo
       return;
     }
 
     if (destino.length >= 1 && event.previousContainer !== event.container) {
-      console.warn(`❌ Ya hay un jugador en la posición ${posicionDestino}`);
+      this.mensajeErrorPosicion = `❌ Ya hay un jugador en la posición ${posicionDestino.toUpperCase()}.`;
+      setTimeout(() => this.mensajeErrorPosicion = null, 3000);
       return;
     }
 
@@ -59,7 +60,6 @@ export class AlineacionComponent {
     }
   }
 
-  // 📦 Al soltar en banquillo
   onDropBanquillo(event: CdkDragDrop<Jugador[]>) {
     const jugador = event.item.data as Jugador;
     if (!jugador) return;
@@ -74,7 +74,6 @@ export class AlineacionComponent {
     }
   }
 
-  // 🚀 Acciones del menú emergente
   abrirMenu(jugador: Jugador) {
     this.jugadorSeleccionado = jugador;
     this.menuVisible = true;
@@ -95,7 +94,6 @@ export class AlineacionComponent {
     this.cerrarMenu();
   }
 
-  // 🧩 Utilidades
   private normalizarPosicion(pos: string): string {
     return pos
       .normalize('NFD')

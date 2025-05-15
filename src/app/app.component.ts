@@ -20,34 +20,36 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     console.log('🚀 [AppComponent] Cargando aplicación...');
 
-    const user = this.authService.getUser();
-    if (user) {
-      const ligaId = this.authService.getLigaId();
+    // ✅ Inicializar sesión (espera un poco para asegurarse que refreshUsuarioCompleto terminó)
+    this.authService.initSesionDesdeStorage();
 
-      if (ligaId) {
-        console.log('✅ Liga encontrada en AuthService:', ligaId);
-        return;
-      }
+    setTimeout(() => {
+      const user = this.authService.getUser();
+      if (user) {
+        const ligaId = this.authService.getLigaId();
 
-      console.log('ℹ️ No hay liga en memoria, buscando desde el backend...');
-      this.ligasService.obtenerLigaDelUsuario(user.id).subscribe({
-        next: (liga) => {
-          if (liga) {
-            this.authService.setLigaId(liga.id);     // ID
-            this.authService.setLiga(liga);          // Liga completa
-            this.router.navigate(['/mercado']);
-          } else {
+        if (ligaId) {
+          console.log('✅ Liga encontrada en AuthService:', ligaId);
+          return;
+        }
+
+        console.log('ℹ️ No hay liga en memoria, buscando desde el backend...');
+        this.ligasService.obtenerLigaDelUsuario(user.id).subscribe({
+          next: (liga) => {
+            if (liga) {
+              this.authService.setLigaId(liga.id);
+              this.authService.setLiga(liga);
+              this.router.navigate(['/mercado']);
+            } else {
+              this.router.navigate(['/ligas']);
+            }
+          },
+          error: () => {
+            console.log('❌ Error verificando liga');
             this.router.navigate(['/ligas']);
           }
-        },
-
-        error: () => {
-          console.log('❌ Error verificando liga');
-          this.router.navigate(['/ligas']);
-        }
-      });
-    }
+        });
+      }
+    }, 300);
   }
-
-
 }

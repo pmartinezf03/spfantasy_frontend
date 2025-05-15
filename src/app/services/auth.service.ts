@@ -39,6 +39,7 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   public usuarioCompletoSubject = new BehaviorSubject<Usuario | null>(null);
   public usuarioCompleto: Usuario | null = null;
+  private usuarioAutenticado: Usuario | null = null;
 
   usuarioCompleto$ = this.usuarioCompletoSubject.asObservable();
 
@@ -48,13 +49,12 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private usuarioService: UsuarioService,
-    private ligasService: LigasService
+    private ligasService: LigasService,
+
   ) {
     const id = this.getLigaId();
     this.ligaIdSubject.next(id);
-
-    // 👇 Al cargar el servicio, intenta cargar el usuario completo
-    this.restaurarSesionDesdeStorage();
+    this.cargarSesionDesdeStorage();
 
   }
 
@@ -105,7 +105,17 @@ export class AuthService {
     );
   }
 
-
+  cargarSesionDesdeStorage(): void {
+    const data = localStorage.getItem('usuario');
+    if (data) {
+      try {
+        this.usuarioAutenticado = JSON.parse(data);
+      } catch (e) {
+        console.error('❌ Error al cargar usuario desde localStorage. Reiniciando...');
+        this.logout(); // limpia si hay error
+      }
+    }
+  }
 
   logout(): void {
 
@@ -337,6 +347,43 @@ export class AuthService {
       error: err => console.error('❌ Error al registrar partida:', err)
     });
   }
+
+
+  getUsuario(): Usuario | null {
+    if (!this.usuarioCompleto) {
+      const data = localStorage.getItem('usuario');
+      if (data) {
+        try {
+          this.usuarioCompleto = JSON.parse(data);
+        } catch (e) {
+          console.error('❌ Usuario corrupto en localStorage. Cerrando sesión.');
+          this.logout();
+          return null;
+        }
+      }
+    }
+    return this.usuarioCompleto;
+  }
+
+  public initSesionDesdeStorage(): void {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const token = localStorage.getItem('token');
+
+      if (user && token) {
+        this.userSubject.next(user);
+        this.refreshUsuarioCompleto().subscribe(); // ahora sí, ya es seguro
+        this.registrarSesion(user.id);
+        this.registrarLogin(user.id);
+      } else {
+        this.logout();
+      }
+    } catch (error) {
+      console.error('❌ Error al restaurar sesión:', error);
+      this.logout();
+    }
+  }
+
 
 
 
