@@ -1,26 +1,25 @@
-<div class="crear-liga-panel bg-gradient-to-r from-[#292d5e] to-[#1b1f44] rounded-xl text-white shadow-lg p-6">
-  <h2 class="titulo text-center text-2xl text-[#ffd740] mb-6">🏗️ Crear Nueva Liga</h2>
+<div class="crear-liga-panel">
+  <h2 class="titulo">🏗️ Crear Nueva Liga</h2>
 
-  <!-- Mensaje de error -->
-  <div *ngIf="error" class="mensaje-error bg-red-600 text-white p-4 rounded-lg mb-6 text-center">
+  <!-- Error -->
+  <div *ngIf="error" class="mensaje-error">
     ❌ {{ error }}
   </div>
 
-  <!-- Formulario de creación de liga -->
-  <div class="p-fluid p-formgrid p-grid mb-6">
-    <div class="p-field p-col-12 p-md-6">
-      <label for="nombre" class="text-lg">🏀 Nombre de la Liga</label>
-      <input id="nombre" type="text" pInputText [(ngModel)]="nombre" placeholder="Ej: Los Increíbles 🧠" class="input-text mt-2 p-3 rounded-lg border-2 border-[#3949ab] focus:ring-2 focus:ring-[#ffd740]" />
+  <!-- Formulario -->
+  <form class="formulario">
+    <div class="campo">
+      <label for="nombre">🏀 Nombre de la Liga</label>
+      <input id="nombre" type="text" pInputText [(ngModel)]="nombre" placeholder="Ej: Los Increíbles 🧠" />
     </div>
 
-    <div class="p-field p-col-12 p-md-6">
-      <label for="codigo" class="text-lg">🔐 Código de Invitación</label>
-      <input id="codigo" type="text" pInputText [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" class="input-text mt-2 p-3 rounded-lg border-2 border-[#3949ab] focus:ring-2 focus:ring-[#ffd740]" />
+    <div class="campo">
+      <label for="codigo">🔐 Código de Invitación</label>
+      <input id="codigo" type="text" pInputText [(ngModel)]="codigoInvitacion" placeholder="Ej: ABC123" />
     </div>
-  </div>
 
-  <!-- Botón de crear liga -->
-  <div class="flex justify-center mt-6">
-    <button pButton type="button" icon="pi pi-star" label="🎯 Crear Liga" class="p-button-success py-2 px-6 rounded-lg shadow-lg" (click)="crearLiga()"></button>
-  </div>
+    <div class="boton-crear">
+      <button pButton type="button" icon="pi pi-star" label="🎯 Crear Liga" class="p-button-success" (click)="crearLiga()"></button>
+    </div>
+  </form>
 </div>

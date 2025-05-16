@@ -1,18 +1,18 @@
-<div class="jugador-card relative w-64 h-96 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105" 
+<div class="jugador-card relative w-64 h-96 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105"
   [ngStyle]="{'background-image': 'url(' + jugador.fotoUrl + ')'}" (click)="abrirMenu()">
-  
+
   <!-- Overlay con fondo oscuro y texto -->
   <div class="jugador-overlay absolute bottom-0 w-full p-3 bg-gradient-to-t from-black to-transparent text-white text-center font-semibold rounded-b-xl">
     <span class="text-lg">{{ jugador.nombre }}</span>
-    <button class="boton-menu absolute right-2 top-2 p-2 rounded-full bg-white/80 shadow-md hover:bg-white transition-all" 
+    <button class="boton-menu absolute right-2 top-2 p-2 rounded-full bg-white/80 shadow-md hover:bg-white transition-all"
             (click)="abrirMenu(); $event.stopPropagation()">⋮</button>
   </div>
 </div>
 
 <!-- Diálogo del menú con opciones -->
-<p-dialog [(visible)]="menuVisible" [modal]="true" [closable]="false" [style]="{ width: '300px' }" 
+<p-dialog [(visible)]="menuVisible" [modal]="true" [closable]="false" [style]="{ width: '300px' }"
           [baseZIndex]="10000" [draggable]="false" [dismissableMask]="true">
-  
+
   <ng-template pTemplate="header">
     <h3 class="text-center text-xl text-yellow-500">Opciones para {{ jugador.nombre }}</h3>
   </ng-template>

@@ -2,20 +2,36 @@
   <div *ngIf="ligaActual as liga">
     <div class="liga-activa-card">
       <h2 class="titulo-liga">
-        🏆 Estás en la liga:
-        <span>{{ liga.nombre }}</span>
+        🏆 Estás en la liga: <span>{{ liga.nombre }}</span>
       </h2>
 
       <button class="btn-salir-liga" (click)="salirLiga()">
         ❌ Salir de la liga
       </button>
 
-      <!-- Dashboard -->
+      <!-- BOTÓN GESTIONAR -->
+      <div *ngIf="esCreador && !ligaIniciada" class="text-center mb-4">
+        <button class="btn-gestionar-toggle" (click)="mostrarGestionar = !mostrarGestionar">
+          🛠️ {{ mostrarGestionar ? 'Ocultar' : 'Mostrar' }} Panel de Gestión
+        </button>
+      </div>
+
+      <!-- Panel Gestión desplegable -->
+      <app-gestionar-liga
+        *ngIf="esCreador && !ligaIniciada && mostrarGestionar"
+        [liga]="liga"
+        [miembros]="miembros"
+        (expulsado)="cargarMiembros()"
+        (ligaIniciada)="ligaIniciada = true">
+      </app-gestionar-liga>
+
+      <!-- Dashboard General -->
       <div class="liga-dashboard">
-        <!-- Ranking -->
-        <div class="ranking-card">
-          <h3>🏆 Clasificación de la Liga</h3>
-          <p-table [value]="ranking" [responsiveLayout]="'scroll'" class="p-datatable-sm">
+
+        <!-- Clasificación -->
+        <div class="dashboard-box">
+          <h3 class="subtitulo-seccion">🏆 Clasificación</h3>
+          <p-table [value]="ranking" [responsiveLayout]="'scroll'" class="tabla-ranking">
             <ng-template pTemplate="header">
               <tr><th>#</th><th>Jugador</th><th>Puntos</th></tr>
             </ng-template>
@@ -29,72 +45,73 @@
           </p-table>
         </div>
 
-        <!-- Gráfico -->
-        <div class="grafico-card">
-          <p-chart
-            type="bar"
-            [data]="graficoPuntos"
-            [options]="graficoOpciones"
-            class="p-mb-4"
-          ></p-chart>
+        <!-- Gráfico de puntos -->
+        <div class="dashboard-box">
+          <div class="grafico-header">
+            <h3 class="subtitulo-seccion">📈 Puntos Semanales</h3>
+            <button class="btn-expandir" (click)="graficoExpandido = true">🔍 Expandir</button>
+          </div>
+          <p-chart type="bar" [data]="graficoPuntos" [options]="graficoOpciones"></p-chart>
         </div>
 
         <!-- Miembros -->
-        <div class="miembros-grid">
-          <div *ngFor="let miembro of miembros" class="miembro-card">
-            <div class="avatar"><i class="pi pi-user"></i></div>
-            <div class="info">
-              <strong>{{ miembro.username }}</strong>
-              <small>{{ miembro.email }}</small>
+        <div class="dashboard-box">
+          <h3 class="subtitulo-seccion">👥 Miembros</h3>
+          <div class="miembros-grid">
+            <div *ngFor="let miembro of miembros" class="miembro-card">
+              <div class="avatar"><i class="pi pi-user"></i></div>
+              <div class="info">
+                <strong>{{ miembro.username }}</strong>
+                <small>{{ miembro.email }}</small>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Actividad reciente -->
-        <div class="actividad-card">
-          <h3>📅 Actividad Reciente</h3>
+        <!-- Actividad Reciente -->
+        <div class="dashboard-box">
+          <h3 class="subtitulo-seccion">📅 Actividad Reciente</h3>
           <ul class="actividad-list">
             <li *ngFor="let a of actividadReciente">
-              🕒 {{ a.timestamp | date : "short" }} —
-              <strong>{{ a.usuario.username }}</strong>: {{ a.descripcion }}
+              🕒 {{ a.timestamp | date : "short" }} — <strong>{{ a.usuario.username }}</strong>: {{ a.descripcion }}
+            </li>
+            <li *ngIf="actividadReciente.length === 0" class="text-center text-sm text-gray-400 italic">
+              Sin actividad registrada todavía.
             </li>
           </ul>
         </div>
       </div>
 
-      <app-gestionar-liga
-        *ngIf="esCreador && !ligaIniciada"
-        [liga]="liga"
-        [miembros]="miembros"
-        (expulsado)="cargarMiembros()"
-        (ligaIniciada)="ligaIniciada = true"
-      ></app-gestionar-liga>
-
+      <!-- Espera de jugadores si no es creador -->
       <app-esperando-miembros
         *ngIf="!esCreador || ligaIniciada"
         [liga]="liga"
-        [miembros]="miembros"
-      ></app-esperando-miembros>
+        [miembros]="miembros">
+      </app-esperando-miembros>
     </div>
   </div>
 
-  <!-- Vista si no estás en una liga -->
+  <!-- No estás en una liga -->
   <div *ngIf="!ligaActual" class="opciones-liga">
     <h2>⚙️ Gestión de Ligas</h2>
-
     <div class="acciones-liga">
-      <button
-        *ngIf="usuario?.role?.toLowerCase() === 'admin' || usuario?.role?.toLowerCase() === 'vip'"
-        class="btn-crear"
-        (click)="mostrarCrear()"
-      >🎯 Crear Liga</button>
-
+      <button *ngIf="usuario?.role?.toLowerCase() === 'admin' || usuario?.role?.toLowerCase() === 'vip'"
+              class="btn-crear" (click)="mostrarCrear()">🎯 Crear Liga</button>
       <button class="btn-unirse" (click)="mostrarUnirse()">🚀 Unirse a Liga</button>
     </div>
-
     <div class="panel-dinamico">
       <app-crear-liga *ngIf="mostrarCrearLiga" (ligaCreada)="onLigaCreada($event)"></app-crear-liga>
       <app-unirse-liga *ngIf="mostrarUnirseLiga" (unido)="onUnidoALiga($event)"></app-unirse-liga>
     </div>
   </div>
+
+  <!-- Modal gráfico ampliado -->
+  <p-dialog [(visible)]="graficoExpandido" modal [dismissableMask]="true" [style]="{width: '80vw'}">
+    <ng-template pTemplate="header">
+      <h3>📊 Gráfico de Puntos Semanales</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <p-chart type="bar" [data]="graficoPuntos" [options]="graficoOpciones" style="height: 500px;"></p-chart>
+    </ng-template>
+  </p-dialog>
 </div>

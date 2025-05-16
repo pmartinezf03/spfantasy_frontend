@@ -1,6 +1,5 @@
 <nav
-  class="w-full sticky top-0 z-50 bg-gradient-to-r from-fantasyDark via-black to-fantasyDark shadow-md px-4 py-3 flex items-center justify-between"
->
+  class="w-full sticky top-0 z-50 bg-gradient-to-r from-fantasyDark via-black to-fantasyDark shadow-md px-4 py-3 flex items-center justify-between">
   <!-- Logo -->
   <div class="flex items-center gap-3">
     <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-10 w-auto" />
@@ -8,17 +7,12 @@
   </div>
 
   <!-- Botón hamburguesa (visible en móviles) -->
-  <button
-    class="md:hidden text-white text-3xl"
-    (click)="menuAbierto = !menuAbierto"
-  >
+  <button class="md:hidden text-white text-3xl" (click)="menuAbierto = !menuAbierto">
     ☰
   </button>
 
   <!-- Menú principal (versión de escritorio) -->
-  <ul
-    class="hidden md:flex gap-5 text-white font-semibold text-sm uppercase tracking-wide"
-  >
+  <ul class="hidden md:flex gap-5 text-white font-semibold text-sm uppercase tracking-wide">
     <li><a routerLink="/" routerLinkActive="text-fantasyGold">🏠 Inicio</a></li>
     <li><a routerLink="/estadisticas-liga" routerLinkActive="text-fantasyGold">📊 Estadísticas</a></li>
     <li><a routerLink="/noticias" routerLinkActive="text-fantasyGold">📰 Noticias</a></li>
@@ -26,15 +20,15 @@
     <li *ngIf="isUserLoggedIn"><a routerLink="/plantilla" routerLinkActive="text-fantasyGold">🏀 Mi Plantilla</a></li>
     <li *ngIf="isUserLoggedIn"><a routerLink="/ligas" routerLinkActive="text-fantasyGold">🏆 Ligas</a></li>
     <li *ngIf="isUserLoggedIn"><a routerLink="/chat" routerLinkActive="text-fantasyGold">💬 Chat</a></li>
-    <li *ngIf="isUserLoggedIn"><a routerLink="/ofertas" routerLinkActive="text-fantasyGold">{{ tieneOfertasNuevas ? "Ofertas 🔴" : "Ofertas" }}</a></li>
+    <li *ngIf="isUserLoggedIn"><a routerLink="/ofertas" routerLinkActive="text-fantasyGold">{{ tieneOfertasNuevas ?
+        "Ofertas 🔴" : "Ofertas" }}</a></li>
     <li *ngIf="isUserLoggedIn"><a routerLink="/comparador" routerLinkActive="text-fantasyGold">📈 Comparador</a></li>
   </ul>
 
   <!-- Menú móvil desplegable -->
   <div
     class="absolute top-full left-0 w-full bg-black text-white p-4 flex flex-col gap-2 font-semibold uppercase text-sm md:hidden transition-all duration-300"
-    *ngIf="menuAbierto"
-  >
+    *ngIf="menuAbierto">
     <a routerLink="/" (click)="menuAbierto = false">🏠 Inicio</a>
     <a routerLink="/estadisticas-liga" (click)="menuAbierto = false">📊 Estadísticas</a>
     <a routerLink="/noticias" (click)="menuAbierto = false">📰 Noticias</a>
@@ -42,15 +36,37 @@
     <a *ngIf="isUserLoggedIn" routerLink="/plantilla" (click)="menuAbierto = false">🏀 Mi Plantilla</a>
     <a *ngIf="isUserLoggedIn" routerLink="/ligas" (click)="menuAbierto = false">🏆 Ligas</a>
     <a *ngIf="isUserLoggedIn" routerLink="/chat" (click)="menuAbierto = false">💬 Chat</a>
-    <a *ngIf="isUserLoggedIn" routerLink="/ofertas" (click)="menuAbierto = false">{{ tieneOfertasNuevas ? "Ofertas 🔴" : "Ofertas" }}</a>
+    <a *ngIf="isUserLoggedIn" routerLink="/ofertas" (click)="menuAbierto = false">
+      {{ tieneOfertasNuevas ? "Ofertas 🔴" : "Ofertas" }}
+    </a>
     <a *ngIf="isUserLoggedIn" routerLink="/comparador" (click)="menuAbierto = false">📈 Comparador</a>
+
+    <!-- ✅ Nuevo: Mi Perfil -->
+    <a *ngIf="isUserLoggedIn" routerLink="/perfil" (click)="menuAbierto = false">👤 Mi Perfil</a>
+
+    <!-- Iniciar Sesión -->
+    <button *ngIf="!isUserLoggedIn" (click)="reiniciarSesion(); menuAbierto = false"
+      class="bg-fantasyBlue hover:bg-fantasyGold text-white font-bold py-2 px-4 rounded-md shadow mt-2">
+      Iniciar Sesión
+    </button>
+
+    <!-- Cerrar Sesión -->
+    <button *ngIf="isUserLoggedIn" (click)="logout(); menuAbierto = false"
+      class="bg-red-600 hover:bg-red-400 text-white font-bold py-2 px-4 rounded-md shadow mt-2">
+      Cerrar Sesión
+    </button>
   </div>
 
+
+
+
   <!-- Usuario o Login -->
-  <div *ngIf="isUserLoggedIn && usuarioLogueado" class="hidden md:flex flex-col text-right text-white text-sm font-semibold items-end">
+  <div *ngIf="isUserLoggedIn && usuarioLogueado"
+    class="hidden md:flex flex-col text-right text-white text-sm font-semibold items-end">
     <!-- Avatar + nombre -->
     <div class="flex items-center gap-2 cursor-pointer hover:underline" (click)="router.navigate(['/perfil'])">
-      <div class="avatar-navbar" [ngStyle]="{ 'background-image': 'url(' + (avatarBase64 || 'assets/default-avatar.png') + ')' }"></div>
+      <div class="avatar-navbar"
+        [ngStyle]="{ 'background-image': 'url(' + (avatarBase64 || 'assets/default-avatar.png') + ')' }"></div>
       <span>{{ usuarioLogueado }}</span>
     </div>
 
@@ -58,19 +74,14 @@
     <div class="text-xs text-red-400">({{ usuarioDineroPendiente | currency : 'EUR' }} pendientes)</div>
     <div *ngIf="esVip()" class="vip-badge animate__animated animate__pulse animate__infinite">🌟 VIP</div>
 
-    <button
-      (click)="logout()"
-      class="mt-1 text-xs text-fantasyRed underline hover:text-red-300 transition-all"
-    >
+    <button (click)="logout()" class="mt-1 text-xs text-fantasyRed underline hover:text-red-300 transition-all">
       Cerrar sesión
     </button>
   </div>
 
   <div *ngIf="!isUserLoggedIn" class="hidden md:block">
-    <button
-      (click)="reiniciarSesion()"
-      class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
-    >
+    <button (click)="reiniciarSesion()"
+      class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all">
       Iniciar Sesión
     </button>
   </div>

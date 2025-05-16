@@ -1,21 +1,17 @@
 <div class="estadisticas-liga p-6">
   <!-- 🏀 Encabezado -->
   <div class="text-center mb-6">
-    <h2
-      class="text-3xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]"
-    >
+    <h2 class="text-3xl font-extrabold text-fantasyGold drop-shadow-[0_2px_8px_rgba(255,215,0,0.9)]">
       📊 Estadísticas de la Liga
     </h2>
-    <p class="text-gray-300">
-      Compara el rendimiento y haz ofertas inteligentes
-    </p>
+    <p class="text-gray-300">Compara el rendimiento y haz ofertas inteligentes</p>
   </div>
 
-  <!-- 📊 Tabla para escritorio -->
-  <div class="hidden md:block mb-5 overflow-x-auto">
-    <div class="bg-[#1f2937] rounded-xl p-5 shadow-xl">
+  <!-- 📊 Tabla Desktop Scrolleable -->
+  <div class="hidden md:block max-h-[650px] overflow-y-auto overflow-x-auto mb-5 custom-scroll">
+    <div class="bg-[#1f2937] rounded-xl p-5 shadow-xl min-w-[1024px]">
       <table class="min-w-full text-left text-sm text-gray-300">
-        <thead class="bg-gradient-to-r from-[#0f172a] to-[#1f2937]">
+        <thead class="bg-gradient-to-r from-[#0f172a] to-[#1f2937] sticky top-0 z-10">
           <tr>
             <th class="px-4 py-2">Jugador</th>
             <th class="px-4 py-2">Posición</th>
@@ -30,15 +26,9 @@
           </tr>
         </thead>
         <tbody class="bg-[#111827]">
-          <tr
-            *ngFor="let jugador of jugadores"
-            class="hover:bg-gray-700 transition duration-200"
-          >
+          <tr *ngFor="let jugador of jugadores" class="hover:bg-gray-700 transition duration-200">
             <td class="px-4 py-3 flex items-center gap-2">
-              <img
-                [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
-                class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md"
-              />
+              <img [src]="jugador.fotoUrl || 'assets/sin-foto.png'" class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md" />
               <span class="font-semibold text-white">{{ jugador.nombre }}</span>
             </td>
             <td class="px-4 py-3 text-white">{{ jugador.posicion }}</td>
@@ -49,34 +39,22 @@
             <td class="px-4 py-3 text-white">{{ jugador.t3 }}</td>
             <td class="px-4 py-3 text-white">{{ jugador.fp }}</td>
             <td class="px-4 py-3 text-white">
-              <ng-container
-                *ngIf="jugador.propietarioUsername !== 'Libre'; else libre"
-              >
-                <span class="text-primary font-semibold">{{
-                  jugador.propietarioUsername
-                }}</span>
+              <ng-container *ngIf="jugador.propietarioUsername !== 'Libre'; else libre">
+                <span class="text-primary font-semibold">{{ jugador.propietarioUsername }}</span>
               </ng-container>
               <ng-template #libre>
                 <span class="text-green-400 font-semibold">Libre</span>
               </ng-template>
             </td>
             <td class="px-4 py-3">
-              <button
-                *ngIf="
-                  !ofertasEnCurso[jugador.id] &&
-                  jugador.propietarioId &&
-                  jugador.propietarioId !== usuarioId
-                "
-                (click)="abrirDialogoOferta(jugador)"
-                class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
-              >
+              <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                      (click)="abrirDialogoOferta(jugador)"
+                      class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all">
                 Ofertar
               </button>
-              <button
-                *ngIf="ofertasEnCurso[jugador.id]"
-                (click)="cancelarOferta(jugador.id)"
-                class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
-              >
+              <button *ngIf="ofertasEnCurso[jugador.id]"
+                      (click)="cancelarOferta(jugador.id)"
+                      class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all">
                 Cancelar
               </button>
             </td>
@@ -86,12 +64,47 @@
     </div>
   </div>
 
-  <!-- 🎯 Radar de Mejores Jugadores -->
-  <div class="mt-5">
+  <!-- 📱 Cartas Mobile -->
+  <div class="md:hidden grid gap-4">
+    <div *ngFor="let jugador of jugadores"
+         class="bg-gradient-to-r from-[#1f2937] to-[#0f172a] rounded-xl shadow-xl p-4">
+      <div class="flex items-center gap-3">
+        <img [src]="jugador.fotoUrl || 'assets/sin-foto.png'" class="w-14 h-14 rounded-full border-4 border-fantasyGold shadow" />
+        <div>
+          <div class="text-lg font-bold text-white">{{ jugador.nombre }}</div>
+          <div class="text-sm text-gray-300">{{ jugador.posicion }}</div>
+        </div>
+        <div class="ml-auto text-sm" [ngClass]="jugador.propietarioUsername === 'Libre' ? 'text-green-400' : 'text-yellow-400'">
+          {{ jugador.propietarioUsername }}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-sm text-white mt-4">
+        <div>Pts: {{ jugador.pts }}</div>
+        <div>Min: {{ jugador.min }}</div>
+        <div>TL: {{ jugador.tl }}</div>
+        <div>T2: {{ jugador.t2 }}</div>
+        <div>T3: {{ jugador.t3 }}</div>
+        <div>Fp: {{ jugador.fp }}</div>
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button *ngIf="!ofertasEnCurso[jugador.id] && jugador.propietarioId && jugador.propietarioId !== usuarioId"
+                (click)="abrirDialogoOferta(jugador)"
+                class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-400 font-bold text-white">
+          Ofertar
+        </button>
+        <button *ngIf="ofertasEnCurso[jugador.id]"
+                (click)="cancelarOferta(jugador.id)"
+                class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-400 font-bold text-white">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radar y Diálogo -->
+  <div class="mt-8">
     <div class="bg-[#1f2937] p-6 rounded-xl shadow-lg">
-      <h4 class="text-xl font-bold text-indigo-500 text-center mb-5">
-        📡 Comparativa de los 3 Mejores Jugadores
-      </h4>
+      <h4 class="text-xl font-bold text-indigo-500 text-center mb-5">📡 Comparativa de los 3 Mejores Jugadores</h4>
       <div class="flex justify-center">
         <p-chart
           type="radar"
@@ -104,90 +117,25 @@
       </div>
     </div>
   </div>
-  <!-- Modal con Radar Ampliado -->
-  <p-dialog
-    [(visible)]="ampliarRadar"
-    [modal]="true"
-    [style]="{ width: '90vw', height: '90vh' }"
-    [closable]="true"
-    [resizable]="false"
-    [baseZIndex]="10000"
-    [dismissableMask]="true"
-    contentStyle="padding: 2rem;"
-    header="📡 Radar Comparativo Ampliado"
-  >
+
+  <!-- Modal Radar -->
+  <p-dialog [(visible)]="ampliarRadar"
+            [modal]="true"
+            [style]="{ width: '90vw', height: '90vh' }"
+            [closable]="true"
+            [resizable]="false"
+            [dismissableMask]="true"
+            header="📡 Radar Comparativo Ampliado">
     <div class="w-full h-full">
-      <p-chart
-        type="radar"
-        [data]="radarTopData"
-        [options]="radarTopOptions"
-        style="height: 100%; width: 100%"
-      ></p-chart>
+      <p-chart type="radar"
+               [data]="radarTopData"
+               [options]="radarTopOptions"
+               style="height: 100%; width: 100%">
+      </p-chart>
     </div>
   </p-dialog>
 
-  <!-- 📱 Fichas estilo Fantasy para móviles -->
-  <div class="md:hidden grid gap-3">
-    <div
-      *ngFor="let jugador of jugadores"
-      class="bg-gradient-to-r from-[#1f2937] to-[#0f172a] text-white rounded-xl p-4 shadow-xl hover:scale-105 transition-transform duration-200"
-    >
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <img
-            [src]="jugador.fotoUrl || 'assets/sin-foto.png'"
-            class="w-14 h-14 rounded-full object-cover border-4 border-fantasyGold shadow-md"
-          />
-          <div>
-            <div class="font-bold">{{ jugador.nombre }}</div>
-            <div class="text-sm">{{ jugador.posicion }}</div>
-          </div>
-        </div>
-        <span
-          *ngIf="jugador.propietarioUsername !== 'Libre'"
-          class="text-primary font-semibold"
-          >{{ jugador.propietarioUsername }}</span
-        >
-        <span
-          *ngIf="jugador.propietarioUsername === 'Libre'"
-          class="text-green-400 font-semibold"
-          >Libre</span
-        >
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 mt-3">
-        <div class="text-sm">Pts: {{ jugador.pts }}</div>
-        <div class="text-sm">Min: {{ jugador.min }}</div>
-        <div class="text-sm">Fp: {{ jugador.fp }}</div>
-        <div class="text-sm">TL: {{ jugador.tl }}</div>
-        <div class="text-sm">T2: {{ jugador.t2 }}</div>
-        <div class="text-sm">T3: {{ jugador.t3 }}</div>
-      </div>
-
-      <div class="flex justify-end gap-2 mt-3">
-        <button
-          *ngIf="
-            !ofertasEnCurso[jugador.id] &&
-            jugador.propietarioId &&
-            jugador.propietarioId !== usuarioId
-          "
-          (click)="abrirDialogoOferta(jugador)"
-          class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
-        >
-          Ofertar
-        </button>
-        <button
-          *ngIf="ofertasEnCurso[jugador.id]"
-          (click)="cancelarOferta(jugador.id)"
-          class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 📥 Diálogo -->
+  <!-- Diálogo de Oferta -->
   <app-oferta-dialogo
     [mostrarDialogo]="mostrarDialogo"
     [jugadorSeleccionado]="jugadorSeleccionado"
@@ -196,7 +144,6 @@
     [totalOfertasEnCurso]="totalOfertasEnCurso"
     [modo]="'oferta'"
     (cerrar)="cerrarDialogoOferta()"
-    (enviarOferta)="enviarOferta($event)"
-  >
+    (enviarOferta)="enviarOferta($event)">
   </app-oferta-dialogo>
 </div>

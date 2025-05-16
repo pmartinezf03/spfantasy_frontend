@@ -1,23 +1,23 @@
-<div class="unirse-panel bg-gradient-to-br from-blue-900 to-blue-800 text-white rounded-lg shadow-xl p-6">
-  <h2 class="titulo text-xl text-center text-yellow-500 mb-6">🔑 Unirse a una Liga Privada</h2>
+<div class="unirse-panel">
+  <h2 class="titulo">🔑 Unirse a una Liga Privada</h2>
 
-  <div *ngIf="error" class="mensaje-error bg-red-600 text-white p-3 rounded-lg mb-4 text-center">
+  <div *ngIf="error" class="mensaje-error">
     ❌ {{ error }}
   </div>
 
-  <div class="p-fluid p-formgrid p-grid mb-4">
-    <div class="p-field p-col-12">
-      <label class="text-white">💌 Código de invitación</label>
-      <input pInputText [(ngModel)]="codigo" placeholder="Ej: FANTASY23" class="p-inputtext p-component text-black rounded-lg" />
+  <div class="formulario">
+    <div class="campo">
+      <label>💌 Código de invitación</label>
+      <input pInputText [(ngModel)]="codigo" placeholder="Ej: FANTASY23" />
     </div>
 
-    <div class="p-field p-col-12">
-      <label class="text-white">🔒 Contraseña (si aplica)</label>
-      <input pInputText type="password" [(ngModel)]="contrasena" placeholder="Contraseña secreta" class="p-inputtext p-component text-black rounded-lg" />
+    <div class="campo">
+      <label>🔒 Contraseña (si aplica)</label>
+      <input pInputText type="password" [(ngModel)]="contrasena" placeholder="Contraseña secreta" />
     </div>
   </div>
 
-  <div class="p-d-flex p-jc-center mt-4">
-    <button pButton icon="pi pi-sign-in" label="🚀 Unirme" class="p-button-info p-button-lg w-52 hover:bg-blue-600 transition-all duration-300" (click)="unirse()"></button>
+  <div class="acciones">
+    <button pButton icon="pi pi-sign-in" label="🚀 Unirme" class="p-button-info" (click)="unirse()"></button>
   </div>
 </div>

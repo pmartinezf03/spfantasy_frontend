@@ -20,7 +20,8 @@ export class LigasComponent implements OnInit {
   ligaIniciada = false;
   usuario: any = null;
   actividadReciente: ActividadLiga[] = [];
-
+  mostrarGestionar: boolean = false;
+  graficoExpandido: boolean = false;
   constructor(
     public authService: AuthService,
     private ligasService: LigasService,
@@ -29,20 +30,20 @@ export class LigasComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-  
+
     if (user && user.id) {
       this.usuarioId = user.id;
-  
+
       this.ligasService.obtenerLigaDelUsuario(this.usuarioId).subscribe({
         next: (liga) => {
           if (liga && liga.id) {
             this.authService.setLigaId(liga.id);
             this.authService.setLiga(liga);
-  
+
             this.ligaActual = liga;
             this.ligaIniciada = liga.iniciada;
             this.esCreador = liga.creadorId === this.usuarioId;
-  
+
             this.cargarMiembros();
             this.cargarActividad(liga.id);
             this.cargarRanking(); // ✅ carga el ranking real
@@ -55,13 +56,13 @@ export class LigasComponent implements OnInit {
         }
       });
     }
-  
+
     // Obtener datos reactivos del usuario completo
     this.authService.usuarioCompleto$.subscribe(user => {
       this.usuario = user;
     });
   }
-  
+
 
   cargarLigaDelUsuario(): void {
     if (!this.usuarioId) return;
@@ -156,7 +157,7 @@ export class LigasComponent implements OnInit {
 
   cargarRanking(): void {
     if (!this.ligaActual?.id) return;
-  
+
     this.ligasService.obtenerRanking(this.ligaActual.id).subscribe({
       next: ranking => {
         this.ranking = ranking;
@@ -170,12 +171,12 @@ export class LigasComponent implements OnInit {
             }
           ]
         };
-        
+
       },
       error: err => console.error('❌ Error al cargar ranking:', err)
     });
   }
-  
+
 
   // Datos de ejemplo para el gráfico
   ranking: any[] = [];

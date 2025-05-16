@@ -1,13 +1,78 @@
 .ofertas-container {
-  max-width: 800px;
+  max-width: 1440px;
   margin: auto;
   text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  .oferta-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+  }
+
+  .jugador-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+  }
+
+  .grid > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Scroll personalizado */
+  .grid {
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+  }
+
+  .grid::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .grid::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .text-lg {
+      font-size: 1rem;
+    }
+
+    .text-2xl {
+      font-size: 1.25rem;
+    }
+
+    .w-16 {
+      width: 3rem !important;
+    }
+
+    .h-16 {
+      height: 3rem !important;
+    }
+
+    .btn-custom-success,
+    .btn-custom-danger,
+    .btn-custom-warning {
+      min-width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
 }
 
-.p-button {
-  margin-right: 5px;
-}
-
+/* Estados */
 .pendiente {
   color: orange;
   font-weight: bold;
@@ -27,81 +92,77 @@
   color: blue;
   font-weight: bold;
 }
-/* === BOTONES TIPO VIDEOJUEGO PARA PRIMENG === */
 
+/* Botones tipo videojuego (sin Tailwind @apply) */
 .btn-custom-success {
-  @apply bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-2 rounded-lg shadow transition;
+  background-color: #16a34a;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
 }
+.btn-custom-success:hover {
+  background-color: #15803d;
+}
+
 .btn-custom-danger {
-  @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-2 rounded-lg shadow transition;
+  background-color: #dc2626;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
 }
+.btn-custom-danger:hover {
+  background-color: #b91c1c;
+}
+
 .btn-custom-warning {
-  @apply bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-3 py-2 rounded-lg shadow transition;
+  background-color: #facc15;
+  color: #000;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+.btn-custom-warning:hover {
+  background-color: #fbbf24;
 }
 
-.ofertas-container ::ng-deep .p-table {
-  @apply w-full text-sm text-white;
+/* PRIMENG */
+:host ::ng-deep .p-button .pi {
+  font-size: 1rem;
 }
-
-.ofertas-container ::ng-deep th,
-.ofertas-container ::ng-deep td {
-  @apply px-4 py-3 border-b border-gray-700;
-}
-
-.ofertas-container ::ng-deep thead {
-  @apply bg-gray-800 text-left uppercase tracking-wider text-xs;
-}
-
-.ofertas-container ::ng-deep tr:hover {
-  @apply bg-gray-800 transition;
+:host ::ng-deep .p-button {
+  min-width: 2.5rem;
+  height: 2.5rem;
 }
 :host ::ng-deep img {
   object-fit: cover;
 }
 
-:host ::ng-deep .p-button .pi {
-  font-size: 1rem;
+:host ::ng-deep .p-table {
+  width: 100%;
+  font-size: 0.875rem;
+  color: white;
 }
-
-:host ::ng-deep .p-button {
-  min-width: 2.5rem;
-  height: 2.5rem;
+:host ::ng-deep th,
+:host ::ng-deep td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #374151;
 }
-/* 🛡️ Garantiza que todos los textos largos no rompan la tarjeta */
-
-.ofertas-container .text-truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 100%;
+:host ::ng-deep thead {
+  background-color: #1f2937;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
 }
-
-.ofertas-container .jugador-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.ofertas-container .text-truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 100%;
-}
-
-
-/* 🧱 Tarjeta bien alineada y que no se deforme */
-.ofertas-container .oferta-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
-}
-
-/* Asegura espacio vertical entre tarjetas en grid */
-.ofertas-container .grid > div {
-  display: flex;
-  flex-direction: column;
+:host ::ng-deep tr:hover {
+  background-color: #1f2937;
+  transition: background-color 0.3s ease;
 }

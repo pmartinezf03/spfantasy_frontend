@@ -1,51 +1,35 @@
-/* Estilos base para el jugador card */
 .jugador-card {
-  @apply relative w-64 h-96 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105;
+  border: 2px solid #1f2937;
+  background-color: #111827;
+  transition: all 0.2s ease-in-out;
 }
 
-/* Overlay de la tarjeta del jugador con gradiente */
+.jugador-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
 .jugador-overlay {
-  @apply absolute bottom-0 w-full p-3 bg-gradient-to-t from-black to-transparent text-white text-center font-semibold rounded-b-xl;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+  color: #ffffff;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 0.85rem;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
 }
 
-/* Botón de menú de las opciones */
 .boton-menu {
-  @apply absolute top-2 right-2 p-2 rounded-full bg-white/80 shadow-md hover:bg-white transition-all;
+  border: none;
+  padding: 0.3rem 0.5rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  background-color: rgba(17, 24, 39, 0.85);
+  color: #f3f4f6;
+  border-radius: 9999px;
+  cursor: pointer;
 }
 
-/* Menú de opciones flotante */
-.jugador-menu {
-  @apply absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-black/90 rounded-xl p-4 shadow-2xl text-white text-center;
-}
-
-.jugador-menu button {
-  @apply w-full bg-indigo-600 text-white p-3 mt-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-indigo-500;
-}
-
-.jugador-menu button:hover {
-  @apply bg-indigo-500;
-}
-
-/* Para el botón de cerrar, usar un color rojo */
-.jugador-menu button.cerrar-menu {
-  @apply bg-red-600 text-white font-bold;
-}
-
-/* Responsividad para pantallas pequeñas */
-@media (max-width: 768px) {
-  .jugador-card {
-    @apply w-full h-auto;
-  }
-
-  .jugador-overlay {
-    @apply p-2 text-sm font-semibold;
-  }
-
-  .boton-menu {
-    @apply p-2 text-lg;
-  }
-
-  .jugador-menu button {
-    @apply p-2 text-sm;
-  }
+.boton-menu:hover {
+  background-color: rgba(17, 24, 39, 1);
 }

@@ -42,3 +42,26 @@ img {
   background-color: #111827 !important;
   color: #FACC15 !important;
 }
+/* Scroll vertical elegante en tabla */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #facc15 #111827;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #facc15;
+  border-radius: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+/* Fijar cabecera en scroll largo */
+table thead tr {
+  position: sticky;
+  top: 0;
+  background-color: #0f172a;
+  z-index: 10;
+}

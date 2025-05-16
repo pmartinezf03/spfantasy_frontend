@@ -1,123 +1,138 @@
-.mi-plantilla {
+.plantilla-wrapper {
+  padding: 2rem;
   background-color: #0f172a;
-  color: #f3f4f6;
+  color: #f1f5f9;
   min-height: 100vh;
 }
 
-/* Encabezado */
-.mi-plantilla h2 {
-  color: #facc15;
+.plantilla-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-.mi-plantilla .text-green-600 {
+.plantilla-header h1 {
+  font-size: 2rem;
+  color: #facc15;
+  margin-bottom: 0.5rem;
+}
+
+.plantilla-header p {
+  margin: 0.2rem 0;
+}
+
+.plantilla-header .dinero {
+  font-weight: bold;
   color: #22c55e;
 }
 
-/* Toggle de botones */
-.p-button-info {
-  background-color: #2563eb;
-  border: none;
-  color: white;
+.vista-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Tabla escritorio */
-.jugadores-table {
+
+
+.guardar-section {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.btn-guardar {
+  background-color: #10b981;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-guardar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+}
+
+.lista-section {
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+.tabla-jugadores {
   width: 100%;
   border-collapse: collapse;
-  border-spacing: 0;
   background-color: #1f2937;
   border-radius: 1rem;
   overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
-.jugadores-table th,
-.jugadores-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #374151;
+.tabla-jugadores th {
+  background-color: #111827;
+  color: #facc15;
+  padding: 0.75rem;
+  font-size: 0.8rem;
   text-align: left;
+  text-transform: uppercase;
+}
+
+.tabla-jugadores td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #374151;
+  color: #e5e7eb;
   vertical-align: middle;
 }
 
-.jugadores-table th {
-  color: #facc15;
-  background-color: #111827;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-}
-
-.jugadores-table td {
-  color: #f9fafb;
-}
-
-.jugador-info img {
-  object-fit: cover;
-}
-
-/* Botón vender */
-.vender-jugador {
-  background-color: #ef4444;
-  color: white;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  border: none;
-  transition: background-color 0.2s;
-}
-
-.vender-jugador:hover {
-  background-color: #dc2626;
-}
-
-/* Fichas móviles */
-.jugador-card-mobile {
-  background-color: #1f2937;
-  padding: 1rem;
-  border-radius: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-  color: #f3f4f6;
-  overflow: hidden;
-}
-
-.jugador-card-mobile .jugador-header {
+.jugador-info {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.75rem;
 }
 
-.jugador-detalles {
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  text-align: center;
+.mini-avatar {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 9999px;
+  border: 2px solid #facc15;
 }
 
-.vender-btn {
-  margin-top: 0.75rem;
-  background-color: #ef4444;
+.rol {
+  font-size: 0.75rem;
+  color: #60a5fa;
+}
+
+.btn-vender {
+  background-color: #dc2626;
   color: white;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 9999px;
   border: none;
+  font-weight: bold;
+  cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.vender-btn:hover {
-  background-color: #dc2626;
+.btn-vender:hover {
+  background-color: #b91c1c;
 }
 
-/* Guardar plantilla */
-.guardar-plantilla-btn {
-  background-color: #10b981;
-  padding: 0.6rem 1.2rem;
-  color: white;
-  font-weight: bold;
-  border-radius: 9999px;
-  border: none;
-  transition: background-color 0.3s;
+.cancha-section {
+  background-image: url('../../assets/fullhd.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 3rem 1rem;
+  border-radius: 1rem;
 }
-
-.guardar-plantilla-btn:hover {
-  background-color: #059669;
+.vista-lista {
+  background-image: url('/assets/campofantasy.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 2rem;
+  border-radius: 1rem;
+  min-height: 600px;
 }

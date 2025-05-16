@@ -1,0 +1,65 @@
+.unirse-panel {
+  background: linear-gradient(to bottom right, #1e3a8a, #1e40af);
+  color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.titulo {
+  text-align: center;
+  color: #facc15;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.mensaje-error {
+  background-color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.campo input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .unirse-panel {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .titulo {
+    font-size: 1.2rem;
+  }
+}

@@ -1,23 +1,35 @@
 .jugador-card {
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 100%; /* ✅ importante */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
+  border: 2px solid #1f2937;
+  background-color: #111827;
+  transition: all 0.2s ease-in-out;
 }
 
+.jugador-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
 
 .jugador-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+  color: #ffffff;
+  padding: 0.5rem;
+  font-weight: bold;
   font-size: 0.85rem;
-  position: relative;
-  color: white;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
 }
 
 .boton-menu {
+  border: none;
+  padding: 0.3rem 0.5rem;
   font-size: 1.2rem;
   line-height: 1;
-  z-index: 10;
+  background-color: rgba(17, 24, 39, 0.85);
+  color: #f3f4f6;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.boton-menu:hover {
+  background-color: rgba(17, 24, 39, 1);
 }

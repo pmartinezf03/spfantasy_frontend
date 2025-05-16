@@ -1,0 +1,104 @@
+.gestionar-panel {
+  background: linear-gradient(to top, #0f172a, #1c1f2f);
+  color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 750px;
+  margin: 2rem auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.titulo {
+  text-align: center;
+  color: #facc15;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.subtitulo {
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.campo {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.campo input {
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  border: 2px solid #3949ab;
+  font-size: 1rem;
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: #facc15;
+  box-shadow: 0 0 5px rgba(250, 204, 21, 0.5);
+}
+
+.guardar {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.miembros-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.miembro-card {
+  background-color: #1f2937;
+  color: white;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 220px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .formulario {
+    flex-direction: column;
+  }
+
+  .campo {
+    flex: 1 1 100%;
+  }
+
+  .miembro-card {
+    width: 100%;
+  }
+}
+
+.guardar-btn {
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.guardar-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.7);
+}

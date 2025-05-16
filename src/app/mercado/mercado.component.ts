@@ -131,6 +131,9 @@ export class MercadoComponent implements OnInit {
   }
 
 
+  get totalOfertasEnCurso(): number {
+    return Object.keys(this.ofertasEnCurso).length;
+  }
 
 
   cargarOfertasUsuario(): void {
@@ -242,7 +245,8 @@ export class MercadoComponent implements OnInit {
   }
 
 
-  enviarOferta(monto: number): void {
+  enviarOferta(oferta: { monto: number }): void {
+    const monto = oferta.monto;
     if (!this.jugadorSeleccionado?.id || !this.jugadorSeleccionado?.propietarioId) {
       console.error('Datos de jugador no válidos al enviar oferta');
       return;

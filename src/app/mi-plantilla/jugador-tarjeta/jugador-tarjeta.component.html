@@ -1,6 +1,6 @@
 <!-- Mini tarjeta clicable -->
 <div
-  class="jugador-card relative w-44 h-60 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105"
+  class="jugador-card relative w-44 h-60 bg-cover bg-center rounded-xl shadow-lg cursor-pointer transition-transform duration-300 hover:scale-105"
   [ngStyle]="{ 'background-image': 'url(' + jugador.fotoUrl + ')' }"
   (click)="onAbrirMenu($event)"
 >
@@ -9,7 +9,7 @@
   >
     <span class="text-sm truncate block">{{ jugador.nombre }}</span>
     <button
-      class="boton-menu absolute right-2 top-2 p-1 rounded-full bg-white/80 shadow hover:bg-white"
+      class="boton-menu absolute right-2 top-2 p-1 rounded-full bg-black/70 text-white hover:bg-black"
       (click)="onAbrirMenu($event)"
     >
       ⋮

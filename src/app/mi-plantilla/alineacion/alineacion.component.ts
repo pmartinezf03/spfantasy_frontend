@@ -22,8 +22,9 @@ export class AlineacionComponent {
   mensajeErrorPosicion: string | null = null;
 
   get idDropLists(): string[] {
-    return [...Object.keys(this.jugadoresPorPosicion).map(p => `drop-${p}`), 'banquillo'];
+    return [...Object.keys(this.jugadoresPorPosicion).map(p => `drop-${p}`), 'drop-banquillo'];
   }
+
 
   onDropEnSlot(event: CdkDragDrop<Jugador[]>, posicionDestino: string) {
     const jugador = event.item.data as Jugador;
@@ -64,15 +65,23 @@ export class AlineacionComponent {
     const jugador = event.item.data as Jugador;
     if (!jugador) return;
 
-    const origen = event.previousContainer.data;
+    // Eliminar el jugador de su posición original si estaba ahí
+    for (const pos in this.jugadoresPorPosicion) {
+      const idx = this.jugadoresPorPosicion[pos].indexOf(jugador);
+      if (idx !== -1) {
+        this.jugadoresPorPosicion[pos].splice(idx, 1);
+        break;
+      }
+    }
 
     if (event.previousContainer === event.container) {
       moveItemInArray(this.banquillo, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(origen, this.banquillo, event.previousIndex, event.currentIndex);
+      this.banquillo.splice(event.currentIndex, 0, jugador);
       this.cambiarJugador.emit({ jugador, tipo: 'banquillo' });
     }
   }
+
 
   abrirMenu(jugador: Jugador) {
     this.jugadorSeleccionado = jugador;

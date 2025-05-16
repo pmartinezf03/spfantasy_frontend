@@ -1,204 +1,70 @@
-<div class="mi-plantilla p-4">
-  <!-- Diálogos y notificaciones -->
+<div class="plantilla-wrapper">
   <p-confirmDialog></p-confirmDialog>
   <p-toast></p-toast>
 
   <!-- Encabezado -->
-  <div class="text-center mb-4">
-    <h2 class="text-3xl font-bold text-indigo-800">🏀 Mi Plantilla</h2>
-    <p class="text-sm text-gray-500">📅 Fecha: {{ fechaActual }}</p>
-    <p class="text-green-600 text-lg font-semibold">
-      💰 Dinero disponible: {{ usuarioDinero | currency : "EUR" }}
-    </p>
+  <div class="plantilla-header">
+    <h1>🏀 Mi Plantilla</h1>
+    <p>📅 Fecha: {{ fechaActual }}</p>
+    <p class="dinero">💰 Disponible: {{ usuarioDinero | currency : 'EUR' }}</p>
   </div>
 
-  <!-- Toggle de vistas -->
-  <div class="flex justify-center gap-3 mb-4">
-    <button
-      pButton
-      class="p-button-outlined"
-      [class.p-button-info]="vistaActual === 'cancha'"
-      (click)="cambiarVista('cancha')"
-    >
-      🏟️ Ver cancha
-    </button>
-    <button
-      pButton
-      class="p-button-outlined"
-      [class.p-button-info]="vistaActual === 'lista'"
-      (click)="cambiarVista('lista')"
-    >
-      📋 Ver lista
-    </button>
+  <!-- Botones de vista -->
+  <div class="vista-toggle">
+    <button pButton label="🏟️ Ver cancha" class="p-button-sm" [class.p-button-info]="vistaActual === 'cancha'" (click)="cambiarVista('cancha')"></button>
+    <button pButton label="📋 Ver lista" class="p-button-sm" [class.p-button-info]="vistaActual === 'lista'" (click)="cambiarVista('lista')"></button>
   </div>
 
-  <div class="grid">
-    <!-- Principal -->
-    <div class="col-12 lg:col-9">
-      <!-- Cancha -->
-      <div *ngIf="vistaActual === 'cancha'" class="fade-in">
-        <app-tarjeta-informacion
-          *ngIf="mostrarModalInformacion"
-          [jugador]="jugadorSeleccionado!"
-          (cerrar)="cerrarInformacion()"
-        ></app-tarjeta-informacion>
+  <!-- Cancha -->
+  <div *ngIf="vistaActual === 'cancha'" class="cancha-section">
+    <app-alineacion
+      [jugadoresPorPosicion]="jugadoresPorPosicion"
+      [banquillo]="jugadoresBanquillo"
+      (cambiarJugador)="moverJugador($event)"
+      (vender)="venderJugador($event)"
+      (mostrarInfo)="mostrarInformacion($event)"
+    ></app-alineacion>
 
-        <app-alineacion
-          [jugadoresPorPosicion]="jugadoresPorPosicion"
-          [banquillo]="jugadoresBanquillo"
-          (cambiarJugador)="moverJugador($event)"
-          (vender)="venderJugador($event)"
-          (mostrarInfo)="mostrarInformacion($event)"
-        >
-        </app-alineacion>
-
-        <div class="text-center mt-4">
-          <button class="guardar-plantilla-btn" (click)="guardarPlantilla()">
-            💾 Guardar Plantilla
-          </button>
-        </div>
-      </div>
-
-      <!-- Lista -->
-      <div *ngIf="vistaActual === 'lista'" class="fade-in">
-        <!-- Móviles -->
-        <div class="fichas-mobile" *ngIf="esMovil()">
-          <div
-            *ngFor="let jugador of jugadoresCompletos"
-            class="jugador-card-mobile"
-          >
-            <div class="jugador-header">
-              <img [src]="jugador.fotoUrl" alt="{{ jugador.nombre }}" />
-              <div class="nombre">{{ jugador.nombre }}</div>
-              <div class="rol">
-                {{ jugador.esTitular ? "Titular" : "Banquillo" }}
-              </div>
-            </div>
-            <div class="jugador-detalles">
-              <p>📍 {{ jugador.posicion }}</p>
-              <p>💰 {{ jugador.precioVenta | currency }}</p>
-              <p>📈 Rendimiento: {{ jugador.fp }}</p>
-              <p>
-                ⭐ Semana:
-                {{ puntosSemanales[jugador.idLiga] || "Cargando..." }}
-              </p>
-            </div>
-            <button class="vender-btn" (click)="venderJugador(jugador)">
-              💸 Vender
-            </button>
-          </div>
-        </div>
-
-        <!-- Escritorio -->
-        <table class="jugadores-table" *ngIf="!esMovil()">
-          <thead>
-            <tr>
-              <th>Jugador</th>
-              <th>Posición</th>
-              <th>Precio</th>
-              <th>Rendimiento</th>
-              <th>Puntos</th>
-              <th>Rol</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let jugador of jugadoresCompletos">
-              <td class="jugador-info flex items-center gap-3">
-                <div class="text-base font-semibold truncate">
-                  {{ jugador.nombre }}
-                </div>
-                <div class="text-sm text-gray-400 truncate">
-                  {{ jugador.esTitular ? "Titular" : "Banquillo" }}
-                </div>
-
-                <span class="truncate">{{ jugador.nombre }}</span>
-              </td>
-
-              <td>{{ jugador.posicion }}</td>
-              <td>{{ jugador.precioVenta | currency }}</td>
-              <td>{{ jugador.fp }}</td>
-              <td>{{ puntosSemanales[jugador.idLiga] || "Cargando..." }}</td>
-              <td>{{ jugador.esTitular ? "Titular" : "Banquillo" }}</td>
-              <td>
-                <button class="vender-jugador" (click)="venderJugador(jugador)">
-                  💸 Vender
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Radar + Estadísticas -->
-      <div class="grid mt-5">
-        <div class="col-12 md:col-6">
-          <div class="grid">
-            <div class="col-6" *ngFor="let card of resumenStats">
-              <p-card class="stat-card shadow-2">
-                <ng-template pTemplate="content">
-                  <div
-                    class="flex flex-column align-items-center text-center gap-2"
-                  >
-                    <span class="text-3xl">{{ card.icono }}</span>
-                    <div class="text-sm text-600">{{ card.titulo }}</div>
-                    <div class="text-xl font-bold text-primary">
-                      {{ card.valor }}
-                    </div>
-                  </div>
-                </ng-template>
-              </p-card>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="grid mt-5">
-        <!-- Porcentajes de tiro -->
-        <div class="col-12 md:col-6">
-          <p-card>
-            <ng-template pTemplate="header">
-              <h4 class="text-lg font-bold text-black">🏀 % Tiro Titulares</h4>
-            </ng-template>
-            <ng-template pTemplate="content">
-              <p-chart
-                type="radar"
-                [data]="graficoPorcentajes"
-                style="height: 400px"
-              ></p-chart>
-            </ng-template>
-          </p-card>
-        </div>
-
-        <!-- Rendimiento diario -->
-        <div class="col-12 md:col-6">
-          <p-card>
-            <ng-template pTemplate="header">
-              <h4 class="text-lg font-bold text-black">
-                📈 Rendimiento Diario
-              </h4>
-            </ng-template>
-            <ng-template pTemplate="content">
-              <p-chart
-                type="line"
-                [data]="graficoRendimiento"
-                style="height: 400px"
-              ></p-chart>
-            </ng-template>
-          </p-card>
-        </div>
-
-        <p-chart
-          type="line"
-          [data]="graficoRendimiento"
-          [options]="graficoRendimientoOptions"
-          style="height: 400px"
-        ></p-chart>
-      </div>
+    <div class="guardar-section">
+      <button class="btn-guardar" (click)="guardarPlantilla()">💾 Guardar Plantilla</button>
     </div>
 
-    <!-- Sidebar -->
-    <div class="col-12 lg:col-3 mt-4 lg:mt-0">
-      <app-sidebar></app-sidebar>
-    </div>
+    <app-tarjeta-informacion *ngIf="mostrarModalInformacion" [jugador]="jugadorSeleccionado!" (cerrar)="cerrarInformacion()"></app-tarjeta-informacion>
+  </div>
+
+  <!-- Lista -->
+  <div *ngIf="vistaActual === 'lista'" class="lista-section">
+    <table class="tabla-jugadores">
+      <thead>
+        <tr>
+          <th>Jugador</th>
+          <th>Posición</th>
+          <th>Precio</th>
+          <th>Rendimiento</th>
+          <th>Puntos</th>
+          <th>Rol</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let jugador of jugadoresCompletos">
+          <td class="jugador-info">
+            <img [src]="jugador.fotoUrl" class="mini-avatar" />
+            <div>
+              <strong>{{ jugador.nombre }}</strong><br />
+              <span class="rol">{{ jugador.esTitular ? 'Titular' : 'Banquillo' }}</span>
+            </div>
+          </td>
+          <td>{{ jugador.posicion }}</td>
+          <td>{{ jugador.precioVenta | currency }}</td>
+          <td>{{ jugador.fp }}</td>
+          <td>{{ puntosSemanales[jugador.idLiga] || 'Cargando...' }}</td>
+          <td>{{ jugador.esTitular ? 'Titular' : 'Banquillo' }}</td>
+          <td>
+            <button class="btn-vender" (click)="venderJugador(jugador)">💸 Vender</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

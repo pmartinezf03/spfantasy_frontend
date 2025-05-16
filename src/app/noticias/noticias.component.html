@@ -1,6 +1,7 @@
 <div class="noticias-container">
 
-  <h2 style="text-align:center; font-size: 2rem; margin-bottom: 1rem;">🗞️ Titulares destacados</h2>
+  <!-- 🗞️ Carrusel principal -->
+  <h2 class="text-center text-2xl mb-4">🗞️ Titulares destacados</h2>
   <section>
     <p-carousel *ngIf="noticias.length > 0"
                 [value]="noticias"
@@ -9,32 +10,46 @@
                 [circular]="true"
                 [autoplayInterval]="6000">
       <ng-template pTemplate="item" let-noticia>
-        <p-card class="carousel-card" [header]="noticia.title">
-          <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
-          <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
-          <a pButton label="Leer más" icon="pi pi-external-link" class="p-button-text p-button-sm"
-             [href]="noticia.url" target="_blank"></a>
+        <p-card class="carousel-card">
+          <ng-template pTemplate="header">
+            <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
+          </ng-template>
+
+          <div class="p-3">
+            <h3 class="text-lg font-bold text-white mb-2">{{ noticia.title }}</h3>
+            <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
+            <a pButton label="Leer más" icon="pi pi-external-link"
+               class="p-button-text p-button-sm mt-2"
+               [href]="noticia.url" target="_blank"></a>
+          </div>
         </p-card>
       </ng-template>
     </p-carousel>
   </section>
 
-  <h2 style="text-align:center; font-size: 2rem; margin-top: 2rem;">📰 Más Noticias</h2>
+  <!-- 📰 Sección de más noticias -->
+  <h2 class="text-center text-2xl mt-8">📰 Más Noticias</h2>
   <div class="noticias-grid">
-    <p-card *ngFor="let noticia of noticias" class="noticia-card-grid" [header]="noticia.title">
-      <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="grid-img" />
+    <p-card *ngFor="let noticia of noticias" class="noticia-card-grid">
+      <ng-template pTemplate="header">
+        <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="grid-img" />
+      </ng-template>
+
       <div class="noticia-info">
+        <h4 class="text-white font-bold mb-1">{{ noticia.title }}</h4>
         <p class="fecha">{{ noticia.publishedAt | date:'medium' }}</p>
         <p class="fuente">📰 {{ noticia.source.name }}</p>
-        <p>{{ noticia.description }}</p>
+        <p class="text-gray-300">{{ noticia.description }}</p>
       </div>
+
       <div class="acciones">
-        <a pButton label="Ver Noticia" icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-info"
+        <a pButton label="Ver Noticia" icon="pi pi-eye"
+           class="p-button-sm p-button-rounded p-button-info"
            [href]="noticia.url" target="_blank"></a>
-        <button pButton icon="pi pi-thumbs-up" class="p-button-sm p-button-rounded p-button-secondary"
+        <button pButton icon="pi pi-thumbs-up"
+                class="p-button-sm p-button-rounded p-button-secondary"
                 (click)="darLike(noticia.title)"></button>
       </div>
     </p-card>
   </div>
-
 </div>
