@@ -1,55 +1,20 @@
-<div class="noticias-container">
+<div class="noticias-wrapper">
+  <h2 class="titulo-seccion">🗞️ Noticias de Baloncesto</h2>
 
-  <!-- 🗞️ Carrusel principal -->
-  <h2 class="text-center text-2xl mb-4">🗞️ Titulares destacados</h2>
-  <section>
-    <p-carousel *ngIf="noticias.length > 0"
-                [value]="noticias"
-                [numVisible]="1"
-                [numScroll]="1"
-                [circular]="true"
-                [autoplayInterval]="6000">
-      <ng-template pTemplate="item" let-noticia>
-        <p-card class="carousel-card">
-          <ng-template pTemplate="header">
-            <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="carousel-img" />
-          </ng-template>
+  <div class="grid-noticias">
+    <div *ngFor="let noticia of noticias" class="card-noticia" (click)="abrirNoticia(noticia.url)">
+      <img [src]="noticia.urlToImage || 'assets/default-news.jpg'" alt="Imagen noticia" class="imagen-noticia" />
 
-          <div class="p-3">
-            <h3 class="text-lg font-bold text-white mb-2">{{ noticia.title }}</h3>
-            <p class="carousel-descripcion">{{ noticia.description || 'Sin descripción.' }}</p>
-            <a pButton label="Leer más" icon="pi pi-external-link"
-               class="p-button-text p-button-sm mt-2"
-               [href]="noticia.url" target="_blank"></a>
-          </div>
-        </p-card>
-      </ng-template>
-    </p-carousel>
-  </section>
-
-  <!-- 📰 Sección de más noticias -->
-  <h2 class="text-center text-2xl mt-8">📰 Más Noticias</h2>
-  <div class="noticias-grid">
-    <p-card *ngFor="let noticia of noticias" class="noticia-card-grid">
-      <ng-template pTemplate="header">
-        <img *ngIf="noticia.urlToImage" [src]="noticia.urlToImage" class="grid-img" />
-      </ng-template>
-
-      <div class="noticia-info">
-        <h4 class="text-white font-bold mb-1">{{ noticia.title }}</h4>
-        <p class="fecha">{{ noticia.publishedAt | date:'medium' }}</p>
-        <p class="fuente">📰 {{ noticia.source.name }}</p>
-        <p class="text-gray-300">{{ noticia.description }}</p>
+      <div class="contenido">
+        <h3 class="titulo">{{ noticia.title }}</h3>
+        <p class="fuente">📰 {{ noticia.source.name }} — 📅 {{ noticia.publishedAt | date:'medium' }}</p>
+        <p class="descripcion">{{ noticia.description || 'Sin descripción disponible.' }}</p>
       </div>
 
       <div class="acciones">
-        <a pButton label="Ver Noticia" icon="pi pi-eye"
-           class="p-button-sm p-button-rounded p-button-info"
-           [href]="noticia.url" target="_blank"></a>
-        <button pButton icon="pi pi-thumbs-up"
-                class="p-button-sm p-button-rounded p-button-secondary"
-                (click)="darLike(noticia.title)"></button>
+        <button class="btn-ver" (click)="abrirNoticia(noticia.url); $event.stopPropagation()">🔗 Ver Noticia</button>
+        <button class="btn-like" (click)="darLike(noticia.title); $event.stopPropagation()">👍</button>
       </div>
-    </p-card>
+    </div>
   </div>
 </div>

@@ -1,107 +1,99 @@
 .ofertas-container {
-  max-width: 1440px;
-  margin: auto;
-  text-align: center;
-  padding-left: 1rem;
-  padding-right: 1rem;
-
-  .oferta-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 100%;
-  }
-
-  .jugador-info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .text-truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 100%;
-  }
-
-  .grid > div {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Scroll personalizado */
-  .grid {
-    scrollbar-width: thin;
-    scrollbar-color: #888 transparent;
-  }
-
-  .grid::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .grid::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 6px;
-  }
-
-  @media (max-width: 768px) {
-    .text-lg {
-      font-size: 1rem;
-    }
-
-    .text-2xl {
-      font-size: 1.25rem;
-    }
-
-    .w-16 {
-      width: 3rem !important;
-    }
-
-    .h-16 {
-      height: 3rem !important;
-    }
-
-    .btn-custom-success,
-    .btn-custom-danger,
-    .btn-custom-warning {
-      min-width: 2.25rem;
-      height: 2.25rem;
-    }
-  }
+  position: relative;
+  background: url('../../assets/contrato.png');
+  background-size: cover;
+  padding: 3rem 1rem;
+  min-height: 100vh;
+  color: #ffffff;
+  overflow-x: hidden;
 }
 
-/* Estados */
-.pendiente {
-  color: orange;
-  font-weight: bold;
+/* Capa oscura encima del fondo */
+.ofertas-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  z-index: -1;
 }
 
-.aceptada {
-  color: green;
-  font-weight: bold;
+.ofertas-container .bg-gray-900 {
+  background-color: rgba(17, 24, 39, 0.9) !important;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.8s ease-in-out;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);
 }
 
-.rechazada {
-  color: red;
-  font-weight: bold;
+/* Tarjetas */
+.oferta-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  animation: zoomIn 0.4s ease;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.contraoferta {
-  color: blue;
-  font-weight: bold;
+.oferta-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
 }
 
-/* Botones tipo videojuego (sin Tailwind @apply) */
+.jugador-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+
+/* Grid ofertas */
+.grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scroll personalizado */
+.grid {
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
+.grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.grid::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 6px;
+}
+
+/* Botones personalizados */
+.btn-custom-success,
+.btn-custom-danger,
+.btn-custom-warning {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
 .btn-custom-success {
   background-color: #16a34a;
-  color: #fff;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
+  color: white;
 }
 .btn-custom-success:hover {
   background-color: #15803d;
@@ -109,12 +101,7 @@
 
 .btn-custom-danger {
   background-color: #dc2626;
-  color: #fff;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
+  color: white;
 }
 .btn-custom-danger:hover {
   background-color: #b91c1c;
@@ -122,21 +109,31 @@
 
 .btn-custom-warning {
   background-color: #facc15;
-  color: #000;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
+  color: #1e1e1e;
 }
 .btn-custom-warning:hover {
   background-color: #fbbf24;
 }
 
-/* PRIMENG */
-:host ::ng-deep .p-button .pi {
-  font-size: 1rem;
+/* Tipos de estado */
+.pendiente { color: orange; font-weight: bold; }
+.aceptada { color: green; font-weight: bold; }
+.rechazada { color: red; font-weight: bold; }
+.contraoferta { color: deepskyblue; font-weight: bold; }
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes zoomIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* PrimeNG */
+:host ::ng-deep .p-button .pi { font-size: 1rem; }
 :host ::ng-deep .p-button {
   min-width: 2.5rem;
   height: 2.5rem;
@@ -144,7 +141,6 @@
 :host ::ng-deep img {
   object-fit: cover;
 }
-
 :host ::ng-deep .p-table {
   width: 100%;
   font-size: 0.875rem;
@@ -165,4 +161,35 @@
 :host ::ng-deep tr:hover {
   background-color: #1f2937;
   transition: background-color 0.3s ease;
+}
+
+/* 📱 Responsive Móvil */
+@media (max-width: 768px) {
+  .ofertas-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .oferta-card {
+    padding: 1rem;
+  }
+
+  .text-2xl, .text-3xl {
+    font-size: 1.25rem !important;
+  }
+
+  .oferta-card img {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .btn-custom-success,
+  .btn-custom-danger,
+  .btn-custom-warning {
+    min-width: 2.25rem;
+    height: 2.25rem;
+  }
 }

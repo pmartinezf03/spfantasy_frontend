@@ -1,0 +1,12 @@
+.historial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 2px solid #facc15;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+  transition: transform 0.2s ease-in-out;
+}
+.historial-avatar:hover {
+  transform: scale(1.08);
+}

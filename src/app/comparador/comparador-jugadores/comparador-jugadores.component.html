@@ -1,5 +1,5 @@
 <div class="comparador-container">
-  <!-- Selección -->
+  <!-- Selector -->
   <div class="selector-jugadores">
     <select [(ngModel)]="jugador1">
       <option [ngValue]="null" disabled selected>Jugador 1</option>
@@ -14,9 +14,9 @@
     <button (click)="comparar()">Comparar</button>
   </div>
 
-  <!-- Cromos comparativos -->
+  <!-- Cromos -->
   <div *ngIf="mostrarComparacion && jugador1 && jugador2" class="cromos-wrapper">
-    <div class="cromo">
+    <div class="cromo animate-fadeInLeft">
       <img [src]="jugador1.fotoUrl" alt="Jugador 1" />
       <h3>{{ jugador1.nombre }}</h3>
       <ul>
@@ -27,9 +27,9 @@
       </ul>
     </div>
 
-    <div class="vs-box">VS</div>
+    <div class="vs-box animate-fadeIn">VS</div>
 
-    <div class="cromo">
+    <div class="cromo animate-fadeInRight">
       <img [src]="jugador2.fotoUrl" alt="Jugador 2" />
       <h3>{{ jugador2.nombre }}</h3>
       <ul>

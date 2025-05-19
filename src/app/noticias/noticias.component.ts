@@ -29,4 +29,9 @@ export class NoticiasComponent implements OnInit {
   darLike(titulo: string) {
     console.log('👍 Me gusta en:', titulo);
   }
+
+  abrirNoticia(url: string) {
+  window.open(url, '_blank');
+}
+
 }

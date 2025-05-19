@@ -31,6 +31,15 @@ export class MercadoComponent implements OnInit {
   primeraCargaRealizada: boolean = false;
   esVip: boolean = false;
 
+
+  // 🔍 Filtros
+  filtroNombre: string = '';
+  filtroPosicion: string = '';
+  precioMin: number | null = null;
+  precioMax: number | null = null;
+  posicionesDisponibles: string[] = []; // para el select
+
+
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
@@ -104,7 +113,23 @@ export class MercadoComponent implements OnInit {
       this.usuarioDinero = usuario?.dinero ?? 0;
       this.cdr.detectChanges();
     });
+
+    this.posicionesDisponibles = [...new Set(this.jugadores.map((j: Jugador) => j.posicion))].filter((p): p is string => !!p);
+
   }
+
+  get jugadoresFiltrados(): Jugador[] {
+    return this.jugadores.filter(j => {
+      const nombreCoincide = this.filtroNombre === '' || this.obtenerNombreJugador(j).toLowerCase().includes(this.filtroNombre.toLowerCase());
+      const posicionCoincide = this.filtroPosicion === '' || j.posicion === this.filtroPosicion;
+      const precioCoincide =
+        (this.precioMin === null || j.precioVenta >= this.precioMin) &&
+        (this.precioMax === null || j.precioVenta <= this.precioMax);
+
+      return nombreCoincide && posicionCoincide && precioCoincide;
+    });
+  }
+
 
 
 

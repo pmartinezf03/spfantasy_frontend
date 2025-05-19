@@ -1,4 +1,5 @@
-<div class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] text-white rounded-xl shadow-2xl p-6 h-[600px] overflow-y-auto">
+<div
+  class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] text-white rounded-xl shadow-2xl p-6 h-[600px] overflow-y-auto">
   <h3 class="text-3xl font-extrabold text-fantasyGold text-center mb-6 drop-shadow-[0_2px_8px_rgba(255,215,0,0.8)]">
     📜 Historial de Transacciones
   </h3>
@@ -7,19 +8,16 @@
   <div class="flex justify-center mb-6">
     <span class="relative w-full max-w-md">
       <i class="pi pi-search absolute top-1/2 left-3 -translate-y-1/2 text-white/70"></i>
-      <input pInputText type="text" placeholder="Buscar jugador..."
-             [(ngModel)]="filtroNombre"
-             (input)="filtrar()"
-             class="w-full bg-white/10 text-white px-10 py-3 rounded-lg border border-fantasyBlue placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-fantasyGold" />
+      <input pInputText type="text" placeholder="Buscar jugador..." [(ngModel)]="filtroNombre" (input)="filtrar()"
+        class="w-full bg-white/10 text-white px-10 py-3 rounded-lg border border-fantasyBlue placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-fantasyGold" />
     </span>
   </div>
 
   <!-- 🧾 Tabla con estilo y scroll interno -->
   <div class="rounded-xl border border-fantasyBlue shadow-inner">
-    <p-table [value]="historialFiltrado"
-             responsiveLayout="scroll"
-             class="p-datatable-sm p-datatable-gridlines text-white">
-             
+    <p-table [value]="historialFiltrado" responsiveLayout="scroll"
+      class="p-datatable-sm p-datatable-gridlines text-white">
+
       <ng-template pTemplate="header">
         <tr class="bg-gradient-to-r from-[#0f172a] to-[#1f2937] text-fantasyGold text-sm uppercase tracking-wide">
           <th>Jugador</th>
@@ -33,20 +31,18 @@
       <ng-template pTemplate="body" let-rowData>
         <tr class="hover:bg-white/5 transition duration-150 ease-in-out text-sm">
           <td class="flex items-center gap-2 py-3">
-            <img [src]="rowData.fotoUrl || 'assets/sin-foto.png'"
-                 class="w-8 h-8 rounded-full border-2 border-fantasyGold shadow-md" />
+            <img [src]="rowData.fotoUrl || 'assets/sin-foto.png'" class="historial-avatar" />
+
             <span class="font-semibold text-white">{{ rowData.nombreJugador }}</span>
           </td>
           <td>
-            <p-chip *ngIf="rowData.compradorUsername"
-                    [label]="rowData.compradorUsername"
-                    class="bg-green-500/20 text-green-300 font-medium px-2 py-1 rounded" />
+            <p-chip *ngIf="rowData.compradorUsername" [label]="rowData.compradorUsername"
+              class="bg-green-500/20 text-green-300 font-medium px-2 py-1 rounded" />
             <span *ngIf="!rowData.compradorUsername">—</span>
           </td>
           <td>
-            <p-chip *ngIf="rowData.vendedorUsername"
-                    [label]="rowData.vendedorUsername"
-                    class="bg-pink-500/20 text-pink-300 font-medium px-2 py-1 rounded" />
+            <p-chip *ngIf="rowData.vendedorUsername" [label]="rowData.vendedorUsername"
+              class="bg-pink-500/20 text-pink-300 font-medium px-2 py-1 rounded" />
             <span *ngIf="!rowData.vendedorUsername" class="italic text-gray-400">Mercado libre</span>
           </td>
           <td>

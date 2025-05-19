@@ -1,184 +1,154 @@
+/* Contenedor principal */
 .mercado-container {
-  width: 95%;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
 }
 
-.spinner-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.spinner-global {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(255, 255, 255, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9998;
-}
-
-.spinner-center {
-  width: 80px;
-  height: 80px;
-}
-
-
-
-
-
-.cardJugador {
-  width: 100%;
-  max-width: 460px;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+/* 🔍 Filtros */
+.filtros-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
-  transition: transform 0.3s;
+  margin-bottom: 1.5rem;
 }
 
-.cardJugador:hover {
-  transform: translateY(-5px);
+.filtros-container label {
+  color: #facc15;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
 }
 
-.fotoJugador {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+.filtros-container input,
+.filtros-container select {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.filtros-container input:focus,
+.filtros-container select:focus {
+  border-color: #facc15;
+  outline: none;
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
+}
+
+/* 🟨 Scrollable 2 columnas */
+.contenedor-scroll {
+  display: grid;
+  grid-template-columns: 0.4fr 0.6fr;
+  gap: 2rem;
+  height: 70vh;
+}
+
+.scroll-col {
+  background-color: rgba(17, 24, 39, 0.7);
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+/* Scroll personalizado */
+.scroll-col::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-col::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+/* Historial sin scroll horizontal */
+.historial-scroll {
+  overflow-x: hidden;
+}
+
+.historial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  /* círculo completo */
   object-fit: cover;
-  border: 3px solid #3f51b5;
+  /* recorte para evitar abombamiento */
+  border: 2px solid #facc15;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
-.contenido {
-  flex: 1;
-  text-align: left;
+
+/* Botones tipo videojuego */
+.btn-comprar {
+  background: linear-gradient(to right, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
 }
 
-.nombreJugador {
-  margin: 0 0 0.25rem;
+.btn-oferta {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
 }
 
-.posicion, .precio, .propietario {
-  font-size: 0.9rem;
-  margin: 0.15rem 0;
+.btn-cancelar {
+  background: linear-gradient(to right, #ef4444, #b91c1c);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
 }
 
-.acciones button {
-  margin: 0.25rem 0.5rem 0 0;
+/* Responsive */
+@media (max-width: 1024px) {
+  .contenedor-scroll {
+    grid-template-columns: 1fr;
+  }
+
+  .scroll-col {
+    max-height: 60vh;
+  }
+
+  .filtros-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-  .cardJugador {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .scroll-col {
+    max-height: 50vh;
   }
 
-  .contenido {
-    align-items: center;
-  }
-
-  .acciones {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .acciones button {
+  .btn-comprar,
+  .btn-oferta,
+  .btn-cancelar {
     width: 100%;
-    margin: 0.25rem 0;
+    padding: 0.5rem;
   }
 }
 
-
-
-/* === 🎮 ESTILO PERSONALIZADO PARA p-confirmDialog PrimeNG === */
-::ng-deep .p-confirm-dialog {
-  background-color: #1e1e2f !important;
-  color: #ffffff !important;
-  border-radius: 1rem !important;
-  padding: 2rem;
-  max-width: 90vw;
-  width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+.historial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 2px solid #facc15;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+  transition: transform 0.2s ease;
 }
 
-::ng-deep .p-confirm-dialog .p-dialog-header {
-  background-color: #111827 !important;
-  color: #FACC15 !important;
-  font-weight: bold;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #333;
-}
-
-::ng-deep .p-confirm-dialog .p-dialog-content {
-  background-color: #1e1e2f !important;
-  color: #d1d5db !important; /* texto claro */
-  font-size: 1rem;
-  padding: 1rem 0.5rem !important;
-}
-
-::ng-deep .p-confirm-dialog .p-dialog-footer {
-  background-color: #1e1e2f !important;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  border-top: 1px solid #333;
-}
-
-::ng-deep .p-confirm-dialog .p-confirm-dialog-icon {
-  font-size: 2rem;
-  color: #facc15;
-  margin-right: 0.5rem;
-}
-
-/* ✅ Botón Aceptar */
-::ng-deep .p-button.p-confirm-dialog-accept {
-  background: linear-gradient(to right, #22c55e, #16a34a) !important;
-  border: none !important;
-  color: white !important;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1.25rem;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-  transition: 0.3s;
-}
-
-::ng-deep .p-button.p-confirm-dialog-accept:hover {
-  background: linear-gradient(to right, #4ade80, #22c55e) !important;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
-}
-
-/* ✅ Botón Rechazar */
-::ng-deep .p-button.p-confirm-dialog-reject {
-  background: linear-gradient(to right, #ef4444, #dc2626) !important;
-  border: none !important;
-  color: white !important;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1.25rem;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
-  transition: 0.3s;
-}
-
-::ng-deep .p-button.p-confirm-dialog-reject:hover {
-  background: linear-gradient(to right, #f87171, #ef4444) !important;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+.historial-avatar:hover {
+  transform: scale(1.05);
 }
