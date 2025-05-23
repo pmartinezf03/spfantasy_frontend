@@ -16,6 +16,7 @@ export class RegisterComponent implements OnInit {
   recaptchaSiteKey: string = '6LeXEgUrAAAAAE1MO62uBhHxZYfa4uWPQhsLyCLY';
   loading: boolean = false;
   showModal: boolean = false;
+  mostrarTerminos: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -32,8 +33,10 @@ export class RegisterComponent implements OnInit {
           Validators.minLength(8),
           Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$')
         ]
-      ]
+      ],
+      terminos: [false, Validators.requiredTrue] // 👈 AÑADIDO
     });
+
   }
 
   ngOnInit(): void {
