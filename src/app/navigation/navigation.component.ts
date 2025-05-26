@@ -157,20 +157,12 @@ export class NavigationComponent implements OnInit {
   }
 
   logout(): void {
+    console.log('🔐 Cerrando sesión...');
     this.authService.logout();
 
-    this.usuarioLogueado = null;
-    this.usuarioDinero = 0;
-    this.usuarioDineroPendiente = 0;
-    this.isUserLoggedIn = false;
-    this.datosUsuarioCargados = false;
-
-    console.log('🔐 Usuario desconectado');
-
-    this.router.navigate(['/auth']).then(() => {
-      this.construirMenu();
-    });
+    this.reiniciarSesion();
   }
+
 
   esVip(): boolean {
     const vipHasta = this.authService.getUser()?.vipHasta;

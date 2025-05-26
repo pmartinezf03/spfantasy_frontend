@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';  // Importa ChartType
 import { AuthService } from '../services/auth.service';
 import { NoticiasService } from '../services/noticias.service';
@@ -7,6 +7,7 @@ import { Jugador } from '../models/jugador.model';
 import { Noticia } from '../models/noticia.model';
 import { Usuario } from '../models/usuario.model';
 import { HttpClient } from '@angular/common/http';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-inicio',
@@ -20,6 +21,7 @@ export class InicioComponent implements OnInit {
 
   ranking: any[] = [];
   noticias: Noticia[] = [];
+  tutorialVisto = false;
 
   topT3: Jugador[] = [];
   topFp: Jugador[] = [];
@@ -106,11 +108,46 @@ export class InicioComponent implements OnInit {
     private authService: AuthService,
     private estadisticasService: EstadisticasService,
     private http: HttpClient,
+    private tutorialService: TutorialService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.authService.usuarioCompleto$.subscribe(usuario => {
       this.usuario = usuario;
+      if (usuario) {
+        this.tutorialVisto = localStorage.getItem('tutorial_inicio') === 'true'
+          || localStorage.getItem('tutorial_global') === 'true'
+          || usuario.tutorialVisto === true;
+        this.cdr.detectChanges();
+
+        if (!this.tutorialVisto) {
+          if (
+            !localStorage.getItem('tutorial_global') &&
+            !usuario.tutorialVisto
+          ) {
+            this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_inicio', [
+              {
+                element: '.dashboard-container',
+                intro: '👋 Bienvenido a tu panel principal. Aquí tienes un resumen de tu plantilla y estadísticas.'
+              },
+              {
+                element: '.section:nth-child(1)',
+                intro: '📊 Comparativa visual entre tus puntos y la media de tu liga.'
+              },
+              {
+                element: '.section:nth-child(2)',
+                intro: '📈 Estadísticas individuales de cada jugador que puedes ampliar haciendo clic.'
+              },
+              {
+                element: '.section:nth-child(5)',
+                intro: '📰 Aquí verás las últimas noticias sobre baloncesto.'
+              }
+            ]);
+          }
+        }
+      }
+
 
       if (usuario) {
         const rachaActual = usuario.rachaLogin ?? 0;
@@ -348,4 +385,14 @@ export class InicioComponent implements OnInit {
     this.selectedChartType = 'bar';
     this.selectedChartOptions = null;
   }
+
+  saltarTutorial(): void {
+    if (this.usuario) {
+      this.tutorialService.finalizarTutorial(this.usuario.id, 'tutorial_comparador');
+      this.tutorialVisto = true;
+    }
+  }
+
+
+
 }

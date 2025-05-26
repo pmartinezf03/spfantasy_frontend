@@ -6,6 +6,7 @@ import { Oferta } from '../models/oferta.model';
 import { Jugador } from '../models/jugador.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { take } from 'rxjs';
+import { TutorialService } from '../services/tutorial.service';
 
 
 @Component({
@@ -36,18 +37,55 @@ export class OfertasComponent implements OnInit {
     private ofertasService: OfertasService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private tutorialService: TutorialService
   ) { }
 
   ngOnInit(): void {
     console.log("📥 Entrando a la pestaña de ofertas...");
 
-    const user = this.authService.getUser();
-    if (user && user.id) {
-      this.usuarioId = user.id;
-      console.log("🧠 Usuario ID detectado:", this.usuarioId);
+    const usuario = this.authService.getUsuario(); // ✅ mismo método que usas en Comparador
+    if (!usuario?.id) return;
 
-      // ✅ Suscribirse al usuario completo para obtener dinero actualizado
+    this.usuarioService.obtenerUsuarioCompleto(usuario.id).subscribe(usuario => {
+      this.usuarioId = usuario.id;
+      this.usuarioDinero = usuario.dinero ?? 0;
+      this.dineroActual = usuario.dinero ?? 0;
+      this.dineroPendiente = usuario.dineroPendiente ?? 0;
+
+      // ✅ Marcar tutorial como visto si aplica
+      const tutorialVisto = localStorage.getItem('tutorial_ofertas') === 'true'
+        || localStorage.getItem('tutorial_global') === 'true'
+        || usuario.tutorialVisto === true;
+
+      this.cdr.detectChanges();
+
+      if (!tutorialVisto) {
+        this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_ofertas', [
+          {
+            element: '.ofertas-container > div:nth-child(1) h2',
+            intro: 'Aquí verás todas las ofertas que te han hecho por tus jugadores.',
+          },
+          {
+            element: '.ofertas-container > div:nth-child(1) .oferta-card',
+            intro: 'Estas son ofertas recibidas. Puedes aceptarlas, rechazarlas o contraofertar.',
+          },
+          {
+            element: '.ofertas-container > div:nth-child(2) h2',
+            intro: 'Aquí tienes las ofertas que tú has enviado a otros jugadores.',
+          },
+          {
+            element: '.ofertas-container > div:nth-child(3) h2',
+            intro: 'Si alguien responde con una contraoferta, aparecerá aquí.',
+          },
+          {
+            element: '.ofertas-container',
+            intro: 'Cuando estés listo, ¡empieza a negociar como un GM profesional! 😉',
+          }
+        ]);
+      }
+
+      // ✅ Dinero en tiempo real
       this.authService.usuarioCompleto$.subscribe(usuario => {
         if (usuario) {
           this.usuarioDinero = usuario.dinero ?? 0;
@@ -70,10 +108,9 @@ export class OfertasComponent implements OnInit {
         console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
         this.ofertasService.notificarLeido();
       });
-    } else {
-      console.error("❌ No se encontró el usuario autenticado.");
-    }
+    });
   }
+
 
 
 

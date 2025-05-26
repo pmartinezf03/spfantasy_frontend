@@ -5,7 +5,7 @@
   align-items: center;
   height: 100vh;
   padding: 1rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   position: relative; /* Necesario para posicionar el fondo y el formulario correctamente */
   overflow: hidden; /* Asegura que no se desborde el contenido */
   text-align: center; /* Asegura que el formulario esté centrado */
@@ -18,11 +18,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../../../assets/inicio.gif');
+  background-image: url("../../../assets/inicio.gif");
   background-size: cover;
   background-position: center;
   z-index: -1; /* Asegura que el fondo quede detrás del formulario */
-  filter: blur(8px); /* Desenfoque del fondo para mejorar la legibilidad del formulario */
+  filter: blur(
+    8px
+  ); /* Desenfoque del fondo para mejorar la legibilidad del formulario */
 }
 
 /* Caja del formulario */
@@ -193,4 +195,21 @@ p-progressSpinner {
 span {
   display: block;
   margin-top: 10px;
+}
+/* Ajusta verticalmente checkbox */
+input[type="checkbox"] {
+  transform: scale(1.1);
+  margin-top: 0.25rem;
+}
+
+/* Mejora alineación de términos */
+.terminos-label {
+  line-height: 1.3;
+  font-size: 0.85rem;
+}
+
+/* Evita que el mensaje de éxito empuje el contenido */
+.text-success-msg {
+  min-height: 24px;
+  font-size: 0.9rem;
 }

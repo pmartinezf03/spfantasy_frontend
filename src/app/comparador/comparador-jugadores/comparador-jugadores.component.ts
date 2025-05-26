@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { JugadorService } from '../../services/jugador.service';
 import { Jugador } from '../../models/jugador.model';
-import introJs from 'intro.js';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../models/usuario.model';
+import { TutorialService } from '../../services/tutorial.service';
 
 @Component({
   selector: 'app-comparador-jugadores',
@@ -24,42 +24,48 @@ export class ComparadorJugadoresComponent implements OnInit {
   chartOptions: any;
 
   usuario!: Usuario;
+  tutorialVisto = false;
 
   constructor(
     private authService: AuthService,
     private jugadorService: JugadorService,
     private cdr: ChangeDetectorRef,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private tutorialService: TutorialService
   ) { }
 
   ngOnInit(): void {
-    const usuario = this.authService.getUsuario(); // Asegúrate de que devuelva el usuario con ID
+    const usuario = this.authService.getUsuario();
+    if (!usuario?.id) return;
 
-    if (!usuario?.id) {
-      console.error('❌ No se pudo obtener el ID del usuario.');
-      return;
-    }
-
-    // 1. Cargar datos del usuario
     this.usuarioService.obtenerUsuarioCompleto(usuario.id).subscribe(usuario => {
       this.usuario = usuario;
 
-      const ligaId = this.authService.getLigaId();
+      // Solo si el usuario ha SALTADO explícitamente el tutorial (globalmente), no lo mostramos más
+      this.tutorialVisto = localStorage.getItem('tutorial_comparador') === 'true'
+        || localStorage.getItem('tutorial_global') === 'true'
+        || usuario.tutorialVisto === true;
 
+      this.cdr.detectChanges();
+
+      if (!this.tutorialVisto) {
+        this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_comparador', [
+          { element: '#paso-selector', intro: 'Selecciona dos jugadores para compararlos' },
+          { element: '#paso-boton', intro: 'Haz clic en "Comparar" para continuar.' },
+          { element: '#paso-cromos', intro: 'Estas cartas muestran las estadísticas comparadas de cada jugador' },
+          { element: '#paso-grafico', intro: 'Gráfico comparativo entre ambos jugadores' }
+        ]);
+      }
+
+      const ligaId = this.authService.getLigaId();
       if (ligaId) {
         this.jugadorService.obtenerJugadoresPorLiga(ligaId).subscribe(jugadores => {
           this.jugadores = jugadores;
-
-          // 2. Mostrar tutorial si no está marcado en localStorage y no lo ha visto aún
-          if (!localStorage.getItem('tutorial_comparador') && !usuario.tutorialVisto) {
-            this.lanzarTutorial();
-            localStorage.setItem('tutorial_comparador', 'true');
-          }
+          this.cdr.detectChanges();
         });
       }
     });
 
-    // 3. Configuración de gráfico
     this.chartOptions = {
       plugins: {
         legend: { labels: { color: '#ffffff' } }
@@ -78,12 +84,14 @@ export class ComparadorJugadoresComponent implements OnInit {
 
   comparar(): void {
     if (this.jugador1 && this.jugador2) {
-      console.log('Jugador 1:', this.jugador1);
-      console.log('Jugador 2:', this.jugador2);
       this.mostrarComparacion = true;
       this.updateChart();
-    } else {
-      console.warn('❌ Debes seleccionar dos jugadores');
+
+      if (!this.tutorialVisto) {
+        setTimeout(() => {
+          this.tutorialService.manualNextStep();
+        }, 500);
+      }
     }
   }
 
@@ -117,29 +125,13 @@ export class ComparadorJugadoresComponent implements OnInit {
     };
   }
 
-  lanzarTutorial(): void {
-    const intro = introJs();
-    intro.setOptions({
-      nextLabel: 'Siguiente',
-      prevLabel: 'Anterior',
-      skipLabel: 'Saltar',
-      doneLabel: '¡Entendido!',
-      hidePrev: false,
-      hideNext: false,
-      showProgress: true,
-      showBullets: false
-    });
-
-    intro.oncomplete(() => {
-      if (this.usuario && !this.usuario.tutorialVisto) {
-        this.usuarioService.marcarTutorialVisto(this.usuario.id).subscribe(() => {
-          this.usuario.tutorialVisto = true;
-        });
-      }
-    });
-
-    intro.start();
+  saltarTutorial(): void {
+    if (this.usuario) {
+      this.tutorialService.finalizarTutorial(this.usuario.id, 'tutorial_comparador');
+      this.tutorialVisto = true;
+    }
   }
+
 
 
 }

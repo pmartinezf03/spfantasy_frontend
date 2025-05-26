@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { LoaderService } from '../../../shared/loader.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private router: Router
   ) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4)]],
@@ -79,6 +81,10 @@ export class RegisterComponent implements OnInit {
         this.authService.logout();
         this.registerForm.reset();
         this.captchaToken = null;
+
+        setTimeout(() => {
+          this.router.navigate(['/auth/login']);
+        }, 1500);
       },
       error: error => {
         this.loading = false;

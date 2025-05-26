@@ -1,5 +1,5 @@
-@import 'animate.css/animate.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+@import "animate.css/animate.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap");
 
 @import "primeicons/primeicons.css";
 @import "primeng/resources/themes/lara-light-indigo/theme.css";
@@ -10,7 +10,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -33,7 +34,9 @@ html, body {
     background-color: #f9f9f9;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: 1.3rem;
     text-align: center;
   }
@@ -70,7 +73,7 @@ html, body {
     background: white;
     border-radius: 12px;
     padding: 1rem;
-    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
   }
 
   .header-ficha {
@@ -196,8 +199,116 @@ html, body {
   .p-button-danger {
     @apply bg-red-500 hover:bg-red-400 shadow hover:shadow-red-300/40;
   }
-
+}
+/* 🧼 Limpieza de estilos inline generados por intro.js */
+.introjs-button,
+.introjs-skipbutton {
+  all: unset !important;
+  display: inline-block !important;
+  font-family: "Segoe UI", sans-serif !important;
 }
 
+/* 🧭 Tooltip principal */
+.introjs-tooltip {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-radius: 12px !important;
+  padding: 18px !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 0 16px rgba(15, 23, 42, 0.8) !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
 
+/* 📌 Flecha del tooltip */
+.introjs-arrow {
+  border-color: #0f172a !important;
+}
 
+/* 🔹 Título */
+.introjs-tooltip-title {
+  color: #93c5fd !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+  margin-bottom: 10px !important;
+}
+
+/* 🔘 Botones de navegación */
+.introjs-button {
+  background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  margin: 6px 6px 0 6px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.6) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.introjs-button:hover {
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.7) !important;
+}
+
+/* ❌ Botón Saltar */
+.introjs-skipbutton {
+  background-color: transparent !important;
+  border: 1px solid #475569 !important;
+  color: #cbd5e1 !important;
+  padding: 6px 14px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  margin-right: 12px !important;
+  margin-top: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.introjs-skipbutton:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+  box-shadow: 0 0 6px #64748b !important;
+}
+
+/* 🧼 Limpia todo lo anterior de intro.js */
+.introjs-progressbar,
+.introjs-progress {
+  all: unset !important;
+}
+
+/* 📊 Barra externa (contenedor) */
+.introjs-progressbar {
+  width: 100% !important;
+  height: 8px !important;
+  margin-top: 16px !important;
+  border-radius: 8px !important;
+  background-color: #1e293b !important; /* gris oscuro visible */
+  overflow: hidden !important;
+  position: relative !important;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 📈 Barra interna (relleno dinámico) */
+.introjs-progress {
+  display: block !important;
+  height: 100% !important;
+  width: 0% !important; /* ← intro.js lo actualiza por inline */
+  background: linear-gradient(to right, #3b82f6, #6366f1) !important;
+  transition: width 0.3s ease-in-out !important;
+  border-radius: 8px !important;
+}
+
+/* ✨ Efecto al 100% de progreso */
+.introjs-progress[style*="width: 100%"] {
+  background: linear-gradient(
+    to right,
+    #10b981,
+    #22c55e
+  ) !important; /* Verde éxito */
+  box-shadow: 0 0 12px #22c55e !important;
+  transition: all 0.3s ease-in-out !important;
+}

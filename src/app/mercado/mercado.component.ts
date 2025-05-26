@@ -10,6 +10,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { LoaderService } from '../shared/loader.service';
 import { Router } from '@angular/router';
 import { HistorialComponent } from '../ofertas/historial/historial.component';
+import { Usuario } from '../models/usuario.model';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-mercado',
@@ -40,6 +42,10 @@ export class MercadoComponent implements OnInit {
   posicionesDisponibles: string[] = []; // para el select
 
 
+  tutorialVisto = false;
+  usuario: Usuario | null = null;
+
+
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
@@ -50,7 +56,8 @@ export class MercadoComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private loaderService: LoaderService,
-    public router: Router
+    public router: Router,
+    public tutorialService: TutorialService
   ) { }
 
   ngOnInit(): void {
@@ -60,7 +67,7 @@ export class MercadoComponent implements OnInit {
     if (!user || !user.id) {
       console.warn('❌ Usuario no encontrado, cancelando carga.');
       this.loaderService.hideBarraCarga();
-      this.cargandoInicial = false; // <- asegúrate de esto también
+      this.cargandoInicial = false;
       return;
     }
 
@@ -68,7 +75,7 @@ export class MercadoComponent implements OnInit {
     if (!ligaId) {
       console.warn('❌ Liga no encontrada, cancelando carga.');
       this.loaderService.hideBarraCarga();
-      this.cargandoInicial = false; // <- igual aquí
+      this.cargandoInicial = false;
       return;
     }
 
@@ -97,26 +104,67 @@ export class MercadoComponent implements OnInit {
         this.cdr.detectChanges();
 
         this.loaderService.hideBarraCarga();
-        this.cargandoInicial = false; // ✅ IMPORTANTE PARA MOSTRAR LA VISTA
+        this.cargandoInicial = false;
 
         console.log('[ngOnInit] Datos iniciales cargados. Vista mostrada.');
         this.suscribirseAWebSocket();
+
+        // ⚠ Importante: solo en este punto están cargados los jugadores, así que calculamos posiciones aquí
+        this.posicionesDisponibles = [...new Set(this.jugadores.map((j: Jugador) => j.posicion))].filter((p): p is string => !!p);
       })
       .catch(err => {
         console.error('❌ Error al cargar datos iniciales:', err);
         this.loaderService.hideBarraCarga();
-        this.cargandoInicial = false; // ✅ mostrar aunque haya error
+        this.cargandoInicial = false;
       });
 
     this.authService.usuarioCompleto$.subscribe(usuario => {
-      console.log('[usuarioCompleto$] Usuario actualizado. Dinero actualizado:', usuario?.dinero);
       this.usuarioDinero = usuario?.dinero ?? 0;
+      this.usuario = usuario;
+
+      this.tutorialVisto =
+        localStorage.getItem('tutorial_mercado') === 'true' ||
+        localStorage.getItem('tutorial_global') === 'true' ||
+        (usuario?.tutorialVisto === true);
+
+
       this.cdr.detectChanges();
+
+      if (!this.tutorialVisto && usuario) {
+        this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_mercado', [
+          {
+            element: '.scouting-box',
+            intro: '💡 Aquí puedes acceder al Scouting automático con sugerencias de fichajes (solo para usuarios VIP).'
+          },
+          {
+            element: '.filtros-container',
+            intro: '🔍 Usa estos filtros para buscar jugadores por nombre, posición o precio.'
+          },
+          {
+            element: '.jugadores-scroll',
+            intro: '🛒 Esta es la lista de jugadores disponibles. Puedes comprar directamente o hacer ofertas.'
+          },
+          {
+            element: '.historial-scroll',
+            intro: '📜 Aquí puedes ver el historial de compras, ventas y ofertas de todos los usuarios.'
+          }
+        ]);
+      }
     });
 
-    this.posicionesDisponibles = [...new Set(this.jugadores.map((j: Jugador) => j.posicion))].filter((p): p is string => !!p);
-
   }
+
+
+
+  saltarTutorial(): void {
+    if (this.usuario) {
+      this.tutorialService.finalizarTutorial(this.usuario.id, 'tutorial_comparador');
+      this.tutorialVisto = true;
+    }
+  }
+
+
+
 
   get jugadoresFiltrados(): Jugador[] {
     return this.jugadores.filter(j => {

@@ -1,91 +1,183 @@
-<div class="relative min-h-screen flex items-center justify-center font-futuristic overflow-hidden px-4">
+<div
+  class="relative min-h-screen flex items-center justify-center font-futuristic overflow-hidden px-4"
+>
   <!-- Fondo animado desenfocado -->
-  <div class="absolute inset-0 -z-10 bg-cover bg-center blur-sm opacity-40"
-    style="background-image: url('assets/inicio.gif');">
-  </div>
+  <div
+    class="absolute inset-0 -z-10 bg-cover bg-center blur-sm opacity-40"
+    style="background-image: url('assets/inicio.gif')"
+  ></div>
 
   <!-- Caja de registro -->
-  <div class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl px-8 py-10 space-y-6 animate-fade-in">
+  <div
+    class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl px-8 py-10 space-y-6 animate-fade-in"
+  >
     <div class="text-center">
-      <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-20 mx-auto mb-4" />
+      <img
+        src="https://i.imgur.com/YLu7obR.png"
+        alt="Logo"
+        class="h-20 mx-auto mb-4"
+      />
       <h2 class="text-2xl text-fantasyDark font-bold">Registro</h2>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="registrarUsuario()" class="space-y-4">
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="registrarUsuario()"
+      class="space-y-4"
+    >
       <!-- Usuario -->
       <div>
-        <label class="block text-gray-700 font-semibold mb-1">Nombre de usuario</label>
-        <input type="text" formControlName="username"
-          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
-        <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-          class="text-xs text-red-500">Debe tener al menos 4 caracteres.</small>
+        <label class="block text-gray-700 font-semibold mb-1"
+          >Nombre de usuario</label
+        >
+        <input
+          type="text"
+          formControlName="username"
+          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed"
+        />
+        <small
+          *ngIf="
+            registerForm.get('username')?.invalid &&
+            registerForm.get('username')?.touched
+          "
+          class="text-xs text-red-500"
+          >Debe tener al menos 4 caracteres.</small
+        >
       </div>
 
       <!-- Email -->
       <div>
-        <label class="block text-gray-700 font-semibold mb-1">Correo electrónico</label>
-        <input type="email" formControlName="email"
-          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
-        <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-          class="text-xs text-red-500">Ingresa un correo válido.</small>
+        <label class="block text-gray-700 font-semibold mb-1"
+          >Correo electrónico</label
+        >
+        <input
+          type="email"
+          formControlName="email"
+          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed"
+        />
+        <small
+          *ngIf="
+            registerForm.get('email')?.invalid &&
+            registerForm.get('email')?.touched
+          "
+          class="text-xs text-red-500"
+          >Ingresa un correo válido.</small
+        >
       </div>
 
       <!-- Contraseña -->
       <div>
         <label class="block text-gray-700 font-semibold mb-1">Contraseña</label>
-        <input type="password" formControlName="password"
-          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed" />
-        <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-          class="text-xs text-red-500">Debe tener al menos 8 caracteres, incluir mayúscula, minúscula y un
-          número.</small>
+        <input
+          type="password"
+          formControlName="password"
+          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fantasyRed"
+        />
+        <small
+          *ngIf="
+            registerForm.get('password')?.invalid &&
+            registerForm.get('password')?.touched
+          "
+          class="text-xs text-red-500"
+          >Debe tener al menos 8 caracteres, incluir mayúscula, minúscula y un
+          número.</small
+        >
       </div>
 
       <!-- reCAPTCHA -->
       <div>
-        <re-captcha (resolved)="onCaptchaResolved($event!)" [siteKey]="recaptchaSiteKey"></re-captcha>
-        <small *ngIf="captchaInvalido" class="text-xs text-red-500">Por favor, verifica que no eres un robot.</small>
+        <re-captcha
+          (resolved)="onCaptchaResolved($event!)"
+          [siteKey]="recaptchaSiteKey"
+        ></re-captcha>
+        <small *ngIf="captchaInvalido" class="text-xs text-red-500"
+          >Por favor, verifica que no eres un robot.</small
+        >
       </div>
       <!-- Checkbox de aceptación de términos -->
+      <!-- Checkbox de términos -->
       <div class="flex items-start gap-2">
-        <input type="checkbox" id="aceptaTerminos" formControlName="terminos" class="mt-1" />
-        <label for="aceptaTerminos" class="text-sm text-gray-700">
+        <input type="checkbox" id="aceptaTerminos" formControlName="terminos" />
+        <label for="aceptaTerminos" class="terminos-label">
           Acepto los
-          <a (click)="mostrarTerminos = !mostrarTerminos"
-            class="text-fantasyBlue font-bold hover:underline cursor-pointer">
+          <a
+            (click)="mostrarTerminos = !mostrarTerminos"
+            class="text-fantasyBlue font-bold hover:underline cursor-pointer"
+          >
             términos y condiciones
-          </a> de la aplicación.
+          </a>
+          de la aplicación.
         </label>
       </div>
-      <small *ngIf="registerForm.get('terminos')?.invalid && registerForm.get('terminos')?.touched"
-        class="text-xs text-red-500">
+
+      <small
+        *ngIf="
+          registerForm.get('terminos')?.invalid &&
+          registerForm.get('terminos')?.touched
+        "
+        class="text-xs text-red-500"
+      >
         Debes aceptar los términos para continuar.
       </small>
 
       <!-- Desplegable de los términos -->
-      <div *ngIf="mostrarTerminos"
-        class="bg-gray-100 text-sm text-gray-700 p-4 mt-2 rounded-md max-h-40 overflow-y-auto">
+      <div
+        *ngIf="mostrarTerminos"
+        class="bg-gray-100 text-sm text-gray-700 p-4 mt-2 rounded-md max-h-40 overflow-y-auto"
+      >
         <p><strong>SPFantasy - Términos y Condiciones</strong></p>
-        <p>Esta aplicación es un juego de simulación sin relación oficial con ninguna liga real.</p>
-        <p>Los usuarios deben respetar las normas del juego, no hacer trampas y mantener un lenguaje apropiado.</p>
-        <p>No se permite el uso de la app con fines comerciales sin autorización.</p>
-        <p>Los datos personales serán tratados según la política de privacidad.</p>
-        <p>Nos reservamos el derecho a suspender cuentas por comportamiento indebido.</p>
+        <p>
+          Esta aplicación es un juego de simulación sin relación oficial con
+          ninguna liga real.
+        </p>
+        <p>
+          Los usuarios deben respetar las normas del juego, no hacer trampas y
+          mantener un lenguaje apropiado.
+        </p>
+        <p>
+          No se permite el uso de la app con fines comerciales sin autorización.
+        </p>
+        <p>
+          Los datos personales serán tratados según la política de privacidad.
+        </p>
+        <p>
+          Nos reservamos el derecho a suspender cuentas por comportamiento
+          indebido.
+        </p>
       </div>
 
       <!-- Botón -->
       <!-- Botón -->
-      <button type="submit" [disabled]="registerForm.invalid || !registerForm.get('terminos')?.value"
-        class="w-full bg-fantasyRed hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition">
-        ✅ Registrarse
+      <button
+        type="submit"
+        [disabled]="
+          registerForm.invalid ||
+          !registerForm.get('terminos')?.value ||
+          loading
+        "
+        class="w-full bg-fantasyRed hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition flex items-center justify-center gap-2"
+      >
+        <p-progressSpinner
+          *ngIf="loading"
+          styleClass="w-5 h-5"
+          strokeWidth="4"
+        ></p-progressSpinner>
+        <span *ngIf="!loading">✅ Registrarse</span>
+        <span *ngIf="loading">Registrando...</span>
       </button>
-
     </form>
 
     <p class="text-center text-sm mt-4 text-gray-600">
       ¿Ya tienes una cuenta?
-      <a routerLink="/auth/login" class="text-fantasyBlue hover:underline font-bold">Iniciar Sesión</a>
+      <a
+        routerLink="/auth/login"
+        class="text-fantasyBlue hover:underline font-bold"
+        >Iniciar Sesión</a
+      >
     </p>
 
-    <p *ngIf="mensaje" class="text-green-600 text-center font-semibold mt-4">{{ mensaje }}</p>
+    <p *ngIf="mensaje" class="text-green-600 text-center font-semibold mt-4">
+      {{ mensaje }}
+    </p>
   </div>
 </div>
