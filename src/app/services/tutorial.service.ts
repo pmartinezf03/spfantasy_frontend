@@ -33,9 +33,14 @@ export class TutorialService {
     });
 
     this.intro.oncomplete(() => {
-      this.finalizarTutorial(usuario.id, storageKey);
+      // solo salir, NO guardar como visto
+      try {
+        this.intro.exit();  // 💥 esto evita quedarse en estado "activo"
+      } catch (e) { }
       if (onFinish) onFinish();
     });
+
+
 
     this.intro.onbeforeexit(() => {
       const skipButton = document.querySelector('.introjs-skipbutton');
@@ -70,9 +75,15 @@ export class TutorialService {
 
   manualNextStep = () => {
     try {
-      this.intro.nextStep();
+      // validamos que el tutorial esté activo usando métodos públicos
+      const state = this.intro?.currentStep(); // método válido
+      if (typeof state === 'number') {
+        this.intro.nextStep();
+      }
     } catch (e) {
       console.warn('❌ No se pudo avanzar el paso del tutorial');
     }
   };
+
+
 }

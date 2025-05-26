@@ -1,5 +1,3 @@
-// 🔧 COMPLETO: chat.component.ts con scroll automático y mensajes agrupados por día
-
 import { Component, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { WebSocketService } from '../../app/services/websocket.service';
 import { AuthService } from '../services/auth.service';
@@ -10,6 +8,7 @@ import { UsuarioService } from '../services/usuario.service';
 import { GrupoChat } from '../models/grupochat.model';
 import { environment } from '../../environments/environment';
 import { take } from 'rxjs/operators';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-chat',
@@ -33,13 +32,15 @@ export class ChatComponent implements OnInit, OnChanges {
   notificacionesPendientes: Set<string> = new Set();
   ultimosLeidos: Map<string, number> = new Map();
   isMobileView: boolean = false;
+  tutorialVisto: boolean = false;
 
   constructor(
     private webSocketService: WebSocketService,
     private authService: AuthService,
     private http: HttpClient,
     private changeDetector: ChangeDetectorRef,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private tutorialService: TutorialService
   ) { }
 
 
@@ -48,6 +49,33 @@ export class ChatComponent implements OnInit, OnChanges {
       if (!user) return;
 
       this.currentUser = user;
+
+      // ✅ Mostrar tutorial si no está completado
+      this.tutorialVisto = localStorage.getItem('tutorial_chat') === 'true'
+        || localStorage.getItem('tutorial_global') === 'true'
+        || user.tutorialVisto === true;
+
+      if (!this.tutorialVisto) {
+        this.tutorialService.lanzarTutorialManual(user, 'tutorial_chat', [
+          {
+            element: '#paso-contactos',
+            intro: '📨 Aquí puedes ver tus conversaciones privadas. Pulsa en un usuario para abrir el chat.'
+          },
+          {
+            element: '#paso-grupos',
+            intro: '🧑‍🤝‍🧑 Aquí está el grupo de tu liga, donde podéis hablar todos.'
+          },
+          {
+            element: '#paso-volver',
+            intro: '📱 En móvil puedes usar este botón para volver a la lista de chats.'
+          },
+          {
+            element: '#paso-mensajes',
+            intro: '💬 Aquí verás los mensajes del chat seleccionado. ¡Escribe algo y participa!'
+          }
+        ]);
+      }
+
 
       const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
@@ -96,7 +124,7 @@ export class ChatComponent implements OnInit, OnChanges {
 
       // 4. Escuchar mensajes entrantes
       this.webSocketService.getMessages().subscribe((message: Message) => {
-        console.log("📥 Mensaje capturado en ChatComponent:", message); // AÑADE ESTO
+        console.log("📥 Mensaje capturado en ChatComponent:", message);
 
         const clave = this.getClaveConversacion(message);
         const claveActual = this.getClaveActual();
@@ -123,12 +151,12 @@ export class ChatComponent implements OnInit, OnChanges {
           } else {
             this.notificacionesPendientes.add(clave);
           }
-
         }
       });
 
     });
   }
+
 
 
 
@@ -169,17 +197,18 @@ export class ChatComponent implements OnInit, OnChanges {
     this.grupoSeleccionado = null;
 
     const clave = this.generarClavePrivada(this.currentUser!.id, usuarioId);
-
     const mensajes = this.mensajesPorConversacion.get(`privado-${clave}`) || [];
-    this.messages = [...mensajes]; // mostrar en pantalla
-
-    // marcar como leídos
+    this.messages = [...mensajes];
     const ultimoId = mensajes.length ? mensajes[mensajes.length - 1].id ?? 0 : 0;
     this.markAsRead(`privado-${clave}`, ultimoId);
 
     this.changeDetector.detectChanges();
-    this.scrollChatToBottom(); // 👈 scroll automático
+    this.scrollChatToBottom();
+
+    // Avanzar tutorial
+    this.tutorialService.manualNextStep();
   }
+
 
 
 
@@ -189,7 +218,11 @@ export class ChatComponent implements OnInit, OnChanges {
     this.grupoSeleccionado = this.gruposUsuario.find(g => g.id === grupoId) || null;
     this.contactoSeleccionado = null;
     this.loadMessages();
+
+    // Avanzar tutorial
+    this.tutorialService.manualNextStep();
   }
+
 
   loadMessages(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
