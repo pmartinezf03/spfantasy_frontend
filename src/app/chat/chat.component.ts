@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit, OnChanges {
   mensajesPorConversacion: Map<string, Message[]> = new Map();
   notificacionesPendientes: Set<string> = new Set();
   ultimosLeidos: Map<string, number> = new Map();
+  isMobileView: boolean = false;
 
   constructor(
     private webSocketService: WebSocketService,
@@ -69,6 +70,8 @@ export class ChatComponent implements OnInit, OnChanges {
           });
 
           this.refreshVistaActual();
+          this.checkMobileView();
+          window.addEventListener('resize', this.checkMobileView.bind(this));
         },
         error: (err) => console.error("Error al precargar mensajes:", err)
       });
@@ -129,6 +132,16 @@ export class ChatComponent implements OnInit, OnChanges {
 
 
 
+  checkMobileView() {
+    this.isMobileView = window.innerWidth <= 768;
+  }
+
+  volverALista() {
+    this.selectedUserId = null;
+    this.selectedGroupId = null;
+    this.contactoSeleccionado = null;
+    this.grupoSeleccionado = null;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedGroupId'] || changes['selectedUserId']) {

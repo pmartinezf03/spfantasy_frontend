@@ -1,11 +1,15 @@
-<div
-  class="flex h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white font-sans"
->
-  <!-- 📋 PANEL IZQUIERDO -->
+<!-- 📱 ESTRUCTURA ADAPTADA -->
+<div class="h-screen flex flex-col md:flex-row text-white font-sans">
+  <!-- 📋 PANEL IZQUIERDO (contactos y grupos) -->
   <div
-    class="w-80 bg-gray-800 border-r border-gray-700 p-4 flex flex-col gap-4 overflow-y-auto"
+    class="bg-gray-800 border-r border-gray-700 p-4 gap-4 overflow-y-auto"
+    [ngClass]="{
+      hidden: isMobileView && (selectedUserId || selectedGroupId),
+      'flex flex-col w-full':
+        isMobileView && !(selectedUserId || selectedGroupId),
+      'flex flex-col md:w-80': !isMobileView
+    }"
   >
-    <!-- 👥 Contactos -->
     <app-contact-list
       *ngIf="currentUser"
       [usuarioActual]="currentUser"
@@ -13,10 +17,8 @@
       [mensajesPorConversacion]="mensajesPorConversacion"
       [ultimosLeidos]="ultimosLeidos"
       (usuarioSeleccionado)="onUsuarioSeleccionado($event)"
-    >
-    </app-contact-list>
+    ></app-contact-list>
 
-    <!-- 📂 Grupos -->
     <app-grupos
       *ngIf="currentUser"
       [usuarioActual]="currentUser"
@@ -24,17 +26,44 @@
       [mensajesPorConversacion]="mensajesPorConversacion"
       [ultimosLeidos]="ultimosLeidos"
       (grupoSeleccionado)="onGrupoSeleccionado($event)"
-    >
-    </app-grupos>
+    ></app-grupos>
   </div>
 
   <!-- 💬 PANEL DERECHO -->
-  <div class="flex-1 flex flex-col bg-gray-900">
-    <!-- 🧠 CABECERA -->
+  <div
+    class="flex-1 flex flex-col bg-gray-900"
+    [ngClass]="{
+      hidden: isMobileView && !(selectedUserId || selectedGroupId),
+      flex:
+        !isMobileView || (isMobileView && (selectedUserId || selectedGroupId))
+    }"
+  >
     <div
-      class="h-16 flex items-center justify-between px-6 bg-gray-800 border-b border-gray-700 shadow-md"
+      class="md:hidden flex items-center px-4 py-2 bg-gradient-to-r from-gray-800 via-gray-900 to-black shadow-md border-b border-gray-700"
     >
-      <div class="text-lg font-bold text-fantasyGold tracking-wide">
+      <button
+        *ngIf="isMobileView"
+        (click)="volverALista()"
+        class="text-sm font-semibold bg-gray-700 text-white px-3 py-1 rounded-md shadow hover:bg-gray-600 mr-4"
+      >
+        ← Volver
+      </button>
+
+      <div
+        class="text-lg font-extrabold text-yellow-400 tracking-wide uppercase"
+      >
+        {{
+          contactoSeleccionado?.username || grupoSeleccionado?.nombre || "Chat"
+        }}
+      </div>
+    </div>
+
+    <div
+      class="hidden md:flex h-16 items-center justify-between px-6 bg-gradient-to-r from-gray-800 via-gray-900 to-black border-b border-gray-700 shadow-md"
+    >
+      <div
+        class="text-xl font-extrabold text-yellow-400 tracking-wider uppercase"
+      >
         {{
           contactoSeleccionado?.username ||
             grupoSeleccionado?.nombre ||
@@ -43,24 +72,23 @@
       </div>
     </div>
 
-    <!-- ✅ SOLO si hay chat seleccionado -->
+    <!-- ✅ Chat activo -->
     <app-chat-window
       *ngIf="(selectedUserId || selectedGroupId) && currentUser"
       [mensajes]="messages"
       [usuarioActual]="currentUser"
       (enviarMensaje)="sendMessage($event)"
       class="flex-1 overflow-y-auto"
-    >
-    </app-chat-window>
+    ></app-chat-window>
 
-    <!-- ⛔ NINGÚN chat seleccionado -->
+    <!-- ⛔ Ningún chat seleccionado -->
     <div
       *ngIf="!selectedUserId && !selectedGroupId"
       class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 px-4"
     >
       <i class="pi pi-comments text-5xl mb-4 text-fantasyBlue"></i>
       <h2 class="text-2xl font-semibold mb-2">Ningún chat seleccionado</h2>
-      <p>Elige un usuario o grupo a la izquierda para empezar a chatear.</p>
+      <p>Elige un usuario o grupo para empezar a chatear.</p>
     </div>
   </div>
 </div>

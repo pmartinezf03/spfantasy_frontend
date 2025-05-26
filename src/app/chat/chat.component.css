@@ -2,7 +2,7 @@
   height: 100vh;
   background: linear-gradient(to bottom right, #0f172a, #1f2937);
   color: #f3f4f6;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 /* Panel izquierdo */
@@ -15,11 +15,16 @@
 .h-16 {
   background-color: #1f2937;
   border-bottom: 1px solid #374151;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .text-yellow-400 {
   color: #facc15;
+}
+
+.text-black{
+  color:#0f172a
+
 }
 
 /* Botones comunes */
@@ -38,4 +43,26 @@ button:hover {
 /* Fondo general del chat */
 .flex-1.flex.flex-col {
   background-color: #0f172a;
+}
+.text-fantasyBlue {
+  color: #181819;
+}
+.text-fantasyGold {
+  color: #facc15;
+}
+
+.btn-volver {
+  background-color: #1f2937;
+  color: #f8fafc;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s ease;
+}
+
+.btn-volver:hover {
+  background-color: #334155;
 }

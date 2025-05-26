@@ -95,7 +95,7 @@ export class ComparadorJugadoresComponent implements OnInit {
           },
           ticks: {
             color: '#f1f5f9',
-            backdropColor: 'transparent', // 🔥 Esto quita el fondo blanco feo
+            backdropColor: 'transparent',
             font: {
               size: 12
             }
