@@ -68,17 +68,42 @@ export class ComparadorJugadoresComponent implements OnInit {
 
     this.chartOptions = {
       plugins: {
-        legend: { labels: { color: '#ffffff' } }
+        legend: {
+          labels: {
+            color: '#facc15', // Amarillo NBA
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        }
       },
       scales: {
         r: {
-          angleLines: { color: '#888' },
-          grid: { color: '#444' },
-          pointLabels: { color: '#fff' },
-          ticks: { color: '#fff' }
+          angleLines: {
+            color: '#334155' // líneas radiales suaves
+          },
+          grid: {
+            color: '#475569' // líneas circulares
+          },
+          pointLabels: {
+            color: '#93c5fd', // etiquetas (Pts, Min...) celestes
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          },
+          ticks: {
+            color: '#f1f5f9',
+            backdropColor: 'transparent', // 🔥 Esto quita el fondo blanco feo
+            font: {
+              size: 12
+            }
+          }
         }
       }
     };
+
   }
 
 
@@ -131,6 +156,15 @@ export class ComparadorJugadoresComponent implements OnInit {
       this.tutorialVisto = true;
     }
   }
+
+  get jugadoresParaJugador1(): Jugador[] {
+    return this.jugadores.filter(j => j !== this.jugador2);
+  }
+
+  get jugadoresParaJugador2(): Jugador[] {
+    return this.jugadores.filter(j => j !== this.jugador1);
+  }
+
 
 
 

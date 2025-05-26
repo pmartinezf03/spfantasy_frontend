@@ -8,12 +8,16 @@
   >
     <select [(ngModel)]="jugador1">
       <option [ngValue]="null" disabled selected>Jugador 1</option>
-      <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
+      <option *ngFor="let j of jugadoresParaJugador1" [ngValue]="j">
+        {{ j.nombre }}
+      </option>
     </select>
 
     <select [(ngModel)]="jugador2">
       <option [ngValue]="null" disabled selected>Jugador 2</option>
-      <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
+      <option *ngFor="let j of jugadoresParaJugador2" [ngValue]="j">
+        {{ j.nombre }}
+      </option>
     </select>
 
     <button
@@ -80,5 +84,4 @@
       styleClass="radar-style"
     ></p-chart>
   </div>
-
 </div>
