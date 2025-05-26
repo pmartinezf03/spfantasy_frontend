@@ -30,6 +30,7 @@
     "chart.js": "^4.4.9",
     "cloudinary": "^2.5.1",
     "firebase": "^11.4.0",
+    "intro.js": "^7.2.0",
     "ng-recaptcha": "^13.2.1",
     "ng2-charts": "^4.1.1",
     "primeflex": "^4.0.0",

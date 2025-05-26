@@ -112,22 +112,38 @@ export class InicioComponent implements OnInit {
     this.authService.usuarioCompleto$.subscribe(usuario => {
       this.usuario = usuario;
 
-      // Verifica si la racha de login es mayor o igual a 1
-      if (usuario && (usuario.rachaLogin ?? 0) >= 2) {
-        this.congratsMessage = `🎉 ¡Felicidades ${usuario.username}! Has iniciado sesión durante ${usuario.rachaLogin} día/s consecutivos. ¡Sigue así!`;
-        this.showCongratsModal = true;  // Mostrar el modal de felicitación
+      if (usuario) {
+        const rachaActual = usuario.rachaLogin ?? 0;
+
+        if (rachaActual >= 2 && !usuario.rachasFelicitadas?.includes(rachaActual)) {
+          this.congratsMessage = `🎉 ¡Felicidades ${usuario.username}! Has iniciado sesión durante ${rachaActual} día/s consecutivos. ¡Sigue así!`;
+          this.showCongratsModal = true;
+
+          // Llamada al backend para registrar la racha como felicitada
+          this.http.post(`/api/usuarios/${usuario.id}/racha-felicitada?racha=${rachaActual}`, {}).subscribe({
+            next: () => {
+              console.log('✅ Racha registrada correctamente en backend');
+              usuario.rachasFelicitadas = [...(usuario.rachasFelicitadas ?? []), rachaActual];
+            },
+            error: err => {
+              console.warn('⚠️ No se pudo registrar la racha (puede que ya esté registrada):', err);
+            }
+          });
+        }
       }
+
     });
 
     this.authService.getLigaObservable().subscribe(ligaId => {
       const usuarioId = this.authService.getUserId();
-
       if (ligaId && usuarioId) {
         this.ligaId = ligaId;
         this.cargarDatos(ligaId, usuarioId);
       }
     });
   }
+
+
 
 
 

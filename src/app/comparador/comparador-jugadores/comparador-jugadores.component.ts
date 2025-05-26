@@ -1,14 +1,16 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { JugadorService } from '../../services/jugador.service';
-import { Jugador } from '../../models/jugador.model'; // ← usamos tu modelo base aquí
+import { Jugador } from '../../models/jugador.model';
+import introJs from 'intro.js';
+import { UsuarioService } from '../../services/usuario.service';
+import { Usuario } from '../../models/usuario.model';
 
 @Component({
   selector: 'app-comparador-jugadores',
   templateUrl: './comparador-jugadores.component.html',
   styleUrls: ['./comparador-jugadores.component.css']
 })
-
 export class ComparadorJugadoresComponent implements OnInit {
   jugadores: Jugador[] = [];
 
@@ -21,21 +23,43 @@ export class ComparadorJugadoresComponent implements OnInit {
   chartData: any;
   chartOptions: any;
 
+  usuario!: Usuario;
+
   constructor(
     private authService: AuthService,
     private jugadorService: JugadorService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
-    const ligaId = this.authService.getLigaId();
+    const usuario = this.authService.getUsuario(); // Asegúrate de que devuelva el usuario con ID
 
-    if (ligaId) {
-      this.jugadorService.obtenerJugadoresPorLiga(ligaId).subscribe(jugadores => {
-        this.jugadores = jugadores;
-      });
+    if (!usuario?.id) {
+      console.error('❌ No se pudo obtener el ID del usuario.');
+      return;
     }
 
+    // 1. Cargar datos del usuario
+    this.usuarioService.obtenerUsuarioCompleto(usuario.id).subscribe(usuario => {
+      this.usuario = usuario;
+
+      const ligaId = this.authService.getLigaId();
+
+      if (ligaId) {
+        this.jugadorService.obtenerJugadoresPorLiga(ligaId).subscribe(jugadores => {
+          this.jugadores = jugadores;
+
+          // 2. Mostrar tutorial si no está marcado en localStorage y no lo ha visto aún
+          if (!localStorage.getItem('tutorial_comparador') && !usuario.tutorialVisto) {
+            this.lanzarTutorial();
+            localStorage.setItem('tutorial_comparador', 'true');
+          }
+        });
+      }
+    });
+
+    // 3. Configuración de gráfico
     this.chartOptions = {
       plugins: {
         legend: { labels: { color: '#ffffff' } }
@@ -51,6 +75,7 @@ export class ComparadorJugadoresComponent implements OnInit {
     };
   }
 
+
   comparar(): void {
     if (this.jugador1 && this.jugador2) {
       console.log('Jugador 1:', this.jugador1);
@@ -61,10 +86,6 @@ export class ComparadorJugadoresComponent implements OnInit {
       console.warn('❌ Debes seleccionar dos jugadores');
     }
   }
-
-
-
-
 
   updateChart(): void {
     this.chartData = {
@@ -95,5 +116,30 @@ export class ComparadorJugadoresComponent implements OnInit {
       ]
     };
   }
+
+  lanzarTutorial(): void {
+    const intro = introJs();
+    intro.setOptions({
+      nextLabel: 'Siguiente',
+      prevLabel: 'Anterior',
+      skipLabel: 'Saltar',
+      doneLabel: '¡Entendido!',
+      hidePrev: false,
+      hideNext: false,
+      showProgress: true,
+      showBullets: false
+    });
+
+    intro.oncomplete(() => {
+      if (this.usuario && !this.usuario.tutorialVisto) {
+        this.usuarioService.marcarTutorialVisto(this.usuario.id).subscribe(() => {
+          this.usuario.tutorialVisto = true;
+        });
+      }
+    });
+
+    intro.start();
+  }
+
 
 }

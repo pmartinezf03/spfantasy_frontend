@@ -1,6 +1,6 @@
 <div class="comparador-container">
   <!-- Selector -->
-  <div class="selector-jugadores">
+  <div class="selector-jugadores" id="paso-selector" data-intro="Selecciona dos jugadores para compararlos" data-step="1">
     <select [(ngModel)]="jugador1">
       <option [ngValue]="null" disabled selected>Jugador 1</option>
       <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
@@ -11,11 +11,13 @@
       <option *ngFor="let j of jugadores" [ngValue]="j">{{ j.nombre }}</option>
     </select>
 
-    <button (click)="comparar()">Comparar</button>
+    <button (click)="comparar()" id="paso-boton" data-intro="Haz clic para comparar a los jugadores seleccionados" data-step="2">
+      Comparar
+    </button>
   </div>
 
   <!-- Cromos -->
-  <div *ngIf="mostrarComparacion && jugador1 && jugador2" class="cromos-wrapper">
+  <div *ngIf="mostrarComparacion && jugador1 && jugador2" class="cromos-wrapper" id="paso-cromos" data-intro="Estas cartas muestran las estadísticas comparadas de cada jugador" data-step="3">
     <div class="cromo animate-fadeInLeft">
       <img [src]="jugador1.fotoUrl" alt="Jugador 1" />
       <h3>{{ jugador1.nombre }}</h3>
@@ -42,7 +44,7 @@
   </div>
 
   <!-- Gráfico -->
-  <div *ngIf="chartData" class="grafico-container">
+  <div *ngIf="chartData" class="grafico-container" id="paso-grafico" data-intro="Gráfico comparativo entre ambos jugadores" data-step="4">
     <p-chart type="radar" [data]="chartData" [options]="chartOptions" styleClass="radar-style"></p-chart>
   </div>
 </div>

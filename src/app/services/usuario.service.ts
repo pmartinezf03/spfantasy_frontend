@@ -149,8 +149,14 @@ export class UsuarioService {
 
   aumentarExperiencia(usuarioId: number, puntos: number): Observable<any> {
 
-    return this.http.post(`${this.apiUrl}/api/usuarios/${usuarioId}/experiencia`, { puntos });
+    return this.http.post(`${this.apiUrl}/${usuarioId}/experiencia`, { puntos });
   }
+
+  marcarTutorialVisto(id: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/tutorial/visto`, {});
+  }
+
+
 
 
 

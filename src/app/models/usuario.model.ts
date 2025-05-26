@@ -25,4 +25,6 @@ export interface Usuario {
   rachaLogin?: number;
   partidasJugadas?: number;
   nivel: number;
+  rachasFelicitadas?: number[];
+  tutorialVisto: boolean;
 }
