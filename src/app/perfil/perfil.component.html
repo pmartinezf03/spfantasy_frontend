@@ -6,8 +6,9 @@
   <!-- Layout responsivo con cambio de orden en móvil -->
   <div class="perfil-grid flex flex-col lg:grid lg:grid-cols-2 gap-6">
     <!-- 🎭 Avatar + Info -->
-    <div class="perfil-card bg-[#1e293b] p-6 rounded-xl shadow-xl w-full">
+    <div id="perfil-avatar-card" class="perfil-card bg-[#1e293b] p-6 rounded-xl shadow-xl w-full">
       <div
+        id="perfil-avatar-preview"
         class="perfil-avatar-preview mx-auto mb-4"
         [ngStyle]="{
           'background-image':
@@ -18,6 +19,7 @@
       ></div>
 
       <input
+        id="perfil-input-avatar"
         type="file"
         accept="image/*"
         (change)="onAvatarSelected($event)"
@@ -25,6 +27,7 @@
       />
 
       <button
+        id="perfil-boton-aplicar-avatar"
         *ngIf="avatarPreview"
         (click)="aplicarNuevoAvatar()"
         class="btn-aplicar w-full mt-2 bg-fantasyGold text-black px-3 py-2 rounded-md shadow hover:bg-yellow-300 transition"
@@ -32,7 +35,7 @@
         ✅ Aplicar Avatar
       </button>
 
-      <div class="perfil-text text-sm mt-4 space-y-2 text-white text-center lg:text-left">
+      <div id="perfil-info-basica" class="perfil-text text-sm mt-4 space-y-2 text-white text-center lg:text-left">
         <p><strong>👤 Usuario:</strong> {{ usuarioLogueado.username }}</p>
         <p><strong>📧 Email:</strong> {{ usuarioLogueado.email || "-" }}</p>
         <p><strong>💰 Dinero:</strong> {{ usuarioDinero | currency : 'EUR' }}</p>
@@ -43,7 +46,7 @@
     </div>
 
     <!-- 🏆 Logros -->
-    <div class="perfil-card bg-[#0f172a] p-6 rounded-xl shadow-xl w-full">
+    <div id="perfil-logros-card" class="perfil-card bg-[#0f172a] p-6 rounded-xl shadow-xl w-full">
       <h3 class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse">
         🏆 Logros Desbloqueados
       </h3>
@@ -68,7 +71,7 @@
   </div>
 
   <!-- 🎮 Progreso -->
-  <div class="widget bg-[#0f172a] p-6 rounded-xl shadow-xl text-white mt-10 w-full">
+  <div id="perfil-progreso-card" class="widget bg-[#0f172a] p-6 rounded-xl shadow-xl text-white mt-10 w-full">
     <h3 class="text-xl font-bold text-fantasyGold text-center mb-4">
       🎮 Progreso de Nivel
     </h3>

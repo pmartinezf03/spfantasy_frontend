@@ -7,6 +7,7 @@ import { OfertasService } from '../services/ofertas.service';
 import { Usuario } from '../models/usuario.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-navigation',
@@ -38,19 +39,17 @@ export class NavigationComponent implements OnInit {
     private ofertasService: OfertasService,
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
-    private http: HttpClient
+    private http: HttpClient,
+    private tutorialService: TutorialService,
   ) { }
 
   ngOnInit(): void {
-    console.log('📍 NavigationComponent inicializado');
 
     // 🔁 Suscribirse al usuario completo
     this.authService.usuarioCompleto$.subscribe(usuario => {
 
-      console.log('[usuarioCompleto$] Datos del usuario actual:', usuario);
 
       if (!usuario) {
-        console.warn('⚠️ usuarioCompleto$ emitió null. No actualizo navbar.');
         return;
       }
 
@@ -83,10 +82,7 @@ export class NavigationComponent implements OnInit {
         this.usuarioDineroPendiente = usuario.dineroPendiente ?? 0;
         this.datosUsuarioCargados = true;
 
-        console.log('✅ Datos del usuario en navbar:');
-        console.log('   👤 Username:', this.usuarioLogueado);
-        console.log('   💰 Dinero:', this.usuarioDinero);
-        console.log('   🔴 Pendiente:', this.usuarioDineroPendiente);
+
 
         this.construirMenu();
         this.cdr.detectChanges(); // fuerza actualización visual
@@ -119,16 +115,30 @@ export class NavigationComponent implements OnInit {
         if (usuarioActualizado) {
           this.authService.getLigaObservable().subscribe(ligaId => {
             if (ligaId) {
-              console.log('📌 Liga detectada al iniciar navbar:', ligaId);
               this.construirMenu();
               this.cdr.detectChanges();
             }
           });
         } else {
-          console.warn('❌ No se pudo actualizar el usuario al iniciar');
         }
       });
     }
+    setTimeout(() => {
+      const yaVisto = localStorage.getItem('tutorial_navbar') === 'true';
+      const primerClickKey = 'tutorial_navbar_click_detected';
+
+      if (!yaVisto && !localStorage.getItem(primerClickKey)) {
+        const enlaces = document.querySelectorAll('a[routerLink]');
+        const listener = (e: any) => {
+          localStorage.setItem(primerClickKey, 'true');
+          enlaces.forEach(enlace => enlace.removeEventListener('click', listener));
+          this.onClickNavbarLink();
+        };
+        enlaces.forEach(enlace => enlace.addEventListener('click', listener));
+      }
+    }, 500);
+
+
   }
 
   construirMenu(): void {
@@ -156,6 +166,56 @@ export class NavigationComponent implements OnInit {
     ];
   }
 
+  onClickNavbarLink(): void {
+    this.tutorialService.cancelarTutorial();
+    const usuario = this.authService.getUser();
+    if (!usuario || localStorage.getItem('tutorial_navbar') === 'true') return;
+
+    // Evita conflictos si otro tutorial ya está en marcha
+    if ((window as any).Shepherd?.activeTour) {
+      console.warn('⛔ Otro tutorial ya está activo. Se cancela el del navbar.');
+      return;
+    }
+
+    const pasos = [
+      {
+        id: 'logo',
+        attachTo: { element: '.logo-navbar', on: 'bottom' },
+        title: '🏀 Bienvenido a SP Fantasy',
+        text: 'Este es el logo oficial de la aplicación.',
+      },
+      {
+        id: 'inicio',
+        attachTo: { element: '.menu-item-inicio', on: 'bottom' },
+        title: '🏠 Inicio',
+        text: 'Desde aquí puedes volver a la página principal.',
+      },
+      {
+        id: 'plantilla',
+        attachTo: { element: '.menu-item-plantilla', on: 'bottom' },
+        title: '🏀 Mi Plantilla',
+        text: 'Aquí puedes ver y editar tu plantilla.',
+      },
+      {
+        id: 'ofertas',
+        attachTo: { element: '.menu-item-ofertas', on: 'bottom' },
+        title: '📩 Ofertas',
+        text: 'Accede a tus ofertas desde aquí.',
+      },
+      {
+        id: 'perfil',
+        attachTo: { element: '#nav-avatar', on: 'left' },
+        title: '👤 Perfil',
+        text: 'Tu avatar y opciones de usuario están aquí.',
+      }
+    ];
+
+    this.tutorialService.lanzarTutorial(usuario, 'tutorial_navbar', pasos, () => {
+      console.log('✅ Tutorial navbar completado');
+    });
+  }
+
+
   logout(): void {
     console.log('🔐 Cerrando sesión...');
     this.authService.logout();
@@ -171,7 +231,7 @@ export class NavigationComponent implements OnInit {
 
   reiniciarSesion(): void {
     console.log('🧹 Reiniciando sesión: limpiando localStorage y forzando recarga');
-    localStorage.clear(); // Limpia todo
+    localStorage.clear();
 
     this.router.navigateByUrl('/auth').then(() => {
       setTimeout(() => {
@@ -179,6 +239,8 @@ export class NavigationComponent implements OnInit {
       }, 100);
     });
   }
+
+
 
 
 

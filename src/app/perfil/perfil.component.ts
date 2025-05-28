@@ -6,6 +6,7 @@ import { UsuarioService } from '../services/usuario.service';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../services/toast.service';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-perfil',
@@ -37,15 +38,16 @@ export class PerfilComponent implements OnInit {
     private logrosService: LogrosService,
     private usuarioService: UsuarioService,
     private http: HttpClient,
-    private toastService: ToastService  // Inyectar el ToastService
+    private tutorialService: TutorialService
+
+
   ) { }
 
   ngOnInit(): void {
     this.authService.refreshUsuarioCompleto().subscribe(usuario => {
       if (!usuario) return;
-        usuario.nivel = this.calcularNivel(usuario.experiencia ?? 0);
 
-
+      usuario.nivel = this.calcularNivel(usuario.experiencia ?? 0);
       this.usuarioLogueado = usuario;
       this.rachaLogin = usuario.rachaLogin ?? 0;
       this.usuarioDinero = usuario.dinero ?? 0;
@@ -72,16 +74,59 @@ export class PerfilComponent implements OnInit {
         }
       }
 
-
-      // Cargar logros (verifica que el backend devuelva los logros)
+      // Cargar logros
       if (usuario.id) {
         this.logrosService.getTodosConEstado(usuario.id).subscribe({
           next: logros => this.logros = logros,
           error: err => console.error('❌ Error cargando logros en perfil:', err)
         });
       }
+
+      // ⬇️ Lanzar tutorial del perfil si no se ha visto
+      const yaVisto = localStorage.getItem('tutorial_perfil') === 'true';
+      if (!yaVisto) {
+        this.lanzarTutorialPerfil(usuario);
+      }
     });
   }
+
+  lanzarTutorialPerfil(usuario: any): void {
+    // 🧼 Limpia cualquier tutorial activo antes de iniciar este
+    this.tutorialService.cancelarTutorial();
+
+    const pasos = [
+      {
+        id: 'avatar',
+        attachTo: { element: '#perfil-avatar-preview', on: 'bottom' },
+        title: '🧑 Personaliza tu Avatar',
+        text: 'Puedes subir una imagen personalizada para destacar tu perfil.',
+      },
+      {
+        id: 'info',
+        attachTo: { element: '#perfil-info-basica', on: 'bottom' },
+        title: '📄 Información de Usuario',
+        text: 'Aquí puedes ver tu nombre, email y saldo actual.',
+      },
+      {
+        id: 'logros',
+        attachTo: { element: '#perfil-logros-card', on: 'top' },
+        title: '🏆 Logros',
+        text: 'Consulta los logros que has desbloqueado en tu aventura.',
+      },
+      {
+        id: 'progreso',
+        attachTo: { element: '#perfil-progreso-card', on: 'top' },
+        title: '📈 Nivel y Experiencia',
+        text: 'Observa tu progreso hacia el siguiente nivel aquí.',
+      }
+    ];
+
+    this.tutorialService.lanzarTutorial(usuario, 'tutorial_perfil', pasos, () => {
+      console.log('✅ Tutorial del perfil completado');
+    });
+  }
+
+
 
   calcularExperienciaPorcentaje(experiencia: number, nivel: number): number {
     let xpTotalAnterior = 0;

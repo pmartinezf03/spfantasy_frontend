@@ -1,61 +1,80 @@
+// tutorial.service.ts
 import { Injectable } from '@angular/core';
+import Shepherd from 'shepherd.js';
+import type { Tour } from 'shepherd.js';
+import 'shepherd.js/dist/css/shepherd.css';
 import { UsuarioService } from './usuario.service';
-import introJs from 'intro.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TutorialService {
-  private intro = introJs();
-  private tutorialYaMarcado = false; // ✅ Nueva bandera para evitar múltiples llamadas
+  private shepherd: Tour;
+  private tutorialYaMarcado = false;
 
-  constructor(private usuarioService: UsuarioService) { }
+  constructor(private usuarioService: UsuarioService) {
+    this.shepherd = new Shepherd.Tour({
+      defaultStepOptions: {
+        scrollTo: true,
+        cancelIcon: {
+          enabled: true
+        },
+        classes: 'shadow-md bg-purple-dark',
+        buttons: [
+          {
+            text: '⏭ Siguiente',
+            action: () => this.shepherd.next()
+          },
+          {
+            text: '❌ Cancelar',
+            action: () => this.shepherd.cancel()
+          },
+          {
+            text: '🚫 Saltar tutorial',
+            action: () => {
+              const usuarioId = localStorage.getItem('usuario_id');
+              const storageKey = localStorage.getItem('tutorial_key');
 
-  lanzarTutorialManual(usuario: any, storageKey: string, pasos: any[], onFinish?: () => void) {
-    if (
-      localStorage.getItem(storageKey) === 'true' ||
-      localStorage.getItem('tutorial_global') === 'true'
-    ) return;
-
-    this.intro.setOptions({
-      steps: pasos,
-      showProgress: true,
-      showBullets: false,
-      showStepNumbers: false,
-      nextLabel: 'Siguiente',
-      prevLabel: 'Anterior',
-      doneLabel: 'Finalizar',
-      skipLabel: 'Saltar tutorial',
-      exitOnEsc: false,
-      exitOnOverlayClick: false,
-      disableInteraction: false,
-      showButtons: true
-    });
-
-    this.intro.oncomplete(() => {
-      // solo salir, NO guardar como visto
-      try {
-        this.intro.exit();  // 💥 esto evita quedarse en estado "activo"
-      } catch (e) { }
-      if (onFinish) onFinish();
-    });
-
-
-
-    this.intro.onbeforeexit(() => {
-      const skipButton = document.querySelector('.introjs-skipbutton');
-      if (document.activeElement === skipButton) {
-        this.finalizarTutorial(usuario.id, storageKey);
+              if (usuarioId && storageKey) {
+                this.finalizarTutorial(+usuarioId, storageKey);
+                this.shepherd.cancel();
+              }
+            }
+          }
+        ]
       }
-      if (onFinish) onFinish();
-      return true;
     });
-
-    this.intro.start();
   }
 
+
+  lanzarTutorial(usuario: any, storageKey: string, pasos: any[], onFinish?: () => void) {
+    if (localStorage.getItem(storageKey) === 'true') return;
+
+    // Limpieza de pasos previos
+    this.shepherd.cancel();     // Por si había uno activo
+    this.shepherd.steps = [];   // Vacía los pasos anteriores
+
+    localStorage.setItem('usuario_id', usuario.id.toString());
+    localStorage.setItem('tutorial_key', storageKey);
+
+    pasos.forEach(paso => this.shepherd.addStep(paso));
+
+    this.shepherd.on('complete', () => {
+      if (onFinish) onFinish(); // Solo si tú decides marcar como visto
+    });
+
+    this.shepherd.on('cancel', () => {
+      // Nada
+    });
+
+    this.shepherd.start();
+  }
+
+
+
+
   finalizarTutorial(usuarioId: number, storageKey: string) {
-    if (this.tutorialYaMarcado) return; // ⛔ evitar que se ejecute más de una vez
+    if (this.tutorialYaMarcado) return;
     this.tutorialYaMarcado = true;
 
     localStorage.setItem('tutorial_global', 'true');
@@ -65,25 +84,32 @@ export class TutorialService {
       next: () => console.log('✅ Tutorial marcado como visto'),
       error: err => console.error('❌ Error al marcar tutorial:', err)
     });
+  }
 
+
+  manualNextStep(): void {
     try {
-      this.intro.exit(true);
+      this.shepherd.next();
     } catch (e) {
-      console.warn('Tutorial ya estaba cerrado');
+      console.warn('⚠️ No se pudo avanzar al siguiente paso del tutorial:', e);
     }
   }
 
-  manualNextStep = () => {
+  manualPrevStep(): void {
     try {
-      // validamos que el tutorial esté activo usando métodos públicos
-      const state = this.intro?.currentStep(); // método válido
-      if (typeof state === 'number') {
-        this.intro.nextStep();
-      }
+      this.shepherd.back();
     } catch (e) {
-      console.warn('❌ No se pudo avanzar el paso del tutorial');
+      console.warn('⚠️ No se pudo retroceder al paso anterior del tutorial:', e);
     }
-  };
+  }
+
+  cancelarTutorial(): void {
+    try {
+      this.shepherd.cancel();
+    } catch (e) {
+      console.warn('⚠️ No se pudo cancelar el tutorial:', e);
+    }
+  }
 
 
 }

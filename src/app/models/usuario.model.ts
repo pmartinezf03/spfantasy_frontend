@@ -27,4 +27,5 @@ export interface Usuario {
   nivel: number;
   rachasFelicitadas?: number[];
   tutorialVisto: boolean;
+  ultimoLogin?: string;
 }

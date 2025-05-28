@@ -79,7 +79,6 @@ import { LogroDetalleModalComponent } from './shared/logro-detalle-modal/logro-d
 import { JugadorTarjetaComponent } from './mi-plantilla/jugador-tarjeta/jugador-tarjeta.component';
 
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -155,6 +154,7 @@ import { JugadorTarjetaComponent } from './mi-plantilla/jugador-tarjeta/jugador-
     ChipModule,
     ConfirmDialogModule,
     DropdownModule,
+
   ],
   providers: [
     provideAnimations(),

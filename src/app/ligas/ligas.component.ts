@@ -3,6 +3,11 @@ import { AuthService } from '../services/auth.service';
 import { ActividadLiga, LigasService, MiembroLiga } from '../services/ligas.service';
 import { Router } from '@angular/router';
 import { Liga } from '../models/liga.model';
+import Shepherd from 'shepherd.js';
+import 'shepherd.js/dist/css/shepherd.css';
+import { TutorialService } from '../services/tutorial.service';
+import { UsuarioService } from '../services/usuario.service';
+import { Usuario } from '../models/usuario.model';
 
 @Component({
   selector: 'app-ligas',
@@ -22,10 +27,15 @@ export class LigasComponent implements OnInit {
   actividadReciente: ActividadLiga[] = [];
   mostrarGestionar: boolean = false;
   graficoExpandido: boolean = false;
+  tutorialVisto = false;
+
+
   constructor(
     public authService: AuthService,
     private ligasService: LigasService,
-    private router: Router
+    private router: Router,
+    public tutorialService: TutorialService,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -60,8 +70,46 @@ export class LigasComponent implements OnInit {
     // Obtener datos reactivos del usuario completo
     this.authService.usuarioCompleto$.subscribe(user => {
       this.usuario = user;
+
+      if (user && user.id) {
+        this.tutorialService.cancelarTutorial();
+
+        this.tutorialService.lanzarTutorial(user, 'tutorial_ligas', [
+          {
+            id: 'liga-actual',
+            title: '🏆 Liga actual',
+            text: 'Aquí puedes ver la liga activa, salir de ella o gestionarla.',
+            attachTo: { element: '.liga-activa-card', on: 'bottom' }
+          },
+          {
+            id: 'ranking',
+            title: '📊 Clasificación',
+            text: 'Consulta la posición de los miembros según sus puntos.',
+            attachTo: { element: '.tabla-ranking', on: 'top' }
+          },
+          {
+            id: 'grafico',
+            title: '📈 Gráfico',
+            text: 'Este gráfico muestra la evolución de puntos semanales.',
+            attachTo: { element: '.grafico-header', on: 'top' }
+          },
+          {
+            id: 'miembros',
+            title: '👥 Miembros',
+            text: 'Aquí puedes ver quién forma parte de la liga.',
+            attachTo: { element: '.miembros-grid', on: 'top' }
+          },
+          {
+            id: 'actividad',
+            title: '📅 Actividad',
+            text: 'Actividad reciente de los jugadores en la liga.',
+            attachTo: { element: '.actividad-list', on: 'top' }
+          }
+        ]);
+      }
     });
   }
+
 
 
   cargarLigaDelUsuario(): void {
@@ -86,11 +134,31 @@ export class LigasComponent implements OnInit {
   }
 
   cargarActividad(ligaId: number): void {
-    this.ligasService.obtenerActividadLiga(ligaId).subscribe({
-      next: (actividad) => this.actividadReciente = actividad,
-      error: (err) => console.error('❌ Error al cargar actividad:', err)
+    this.ligasService.obtenerMiembros(ligaId).subscribe({
+      next: (miembros: MiembroLiga[]) => {
+        this.actividadReciente = miembros
+          .filter(m => m.ultimoLogin)
+          .map(m => ({
+            id: m.id,
+            tipo: 'login',
+            descripcion: 'Último acceso',
+            timestamp: m.ultimoLogin,
+            usuario: {
+              id: m.id,
+              username: m.username,
+              ultimoLogin: m.ultimoLogin
+            }
+          }))
+          .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+          .slice(0, 5);
+      },
+      error: err => {
+        console.error('❌ Error al cargar miembros para actividad:', err);
+        this.actividadReciente = [];
+      }
     });
   }
+
 
   cargarMiembros(): void {
     if (!this.ligaActual?.id) return;
@@ -138,7 +206,7 @@ export class LigasComponent implements OnInit {
     this.esCreador = true;
     this.ligaIniciada = false;
     this.cargarMiembros();
-    this.cargarActividad(liga.id); // ✅ NUEVO
+    this.cargarActividad(liga.id);
     this.router.navigate(['/mercado']);
     this.authService.refreshUsuarioCompleto();
   }
@@ -151,7 +219,7 @@ export class LigasComponent implements OnInit {
     this.esCreador = false;
     this.ligaIniciada = false;
     this.cargarMiembros();
-    this.cargarActividad(liga.id); // ✅ NUEVO
+    this.cargarActividad(liga.id);
     this.router.navigate(['/mercado']);
   }
 

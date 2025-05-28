@@ -11,8 +11,11 @@
 
       <!-- BOTÓN GESTIONAR -->
       <div *ngIf="esCreador && !ligaIniciada" class="text-center mb-4">
-        <button class="btn-gestionar-toggle" (click)="mostrarGestionar = !mostrarGestionar">
-          🛠️ {{ mostrarGestionar ? 'Ocultar' : 'Mostrar' }} Panel de Gestión
+        <button
+          class="btn-gestionar-toggle"
+          (click)="mostrarGestionar = !mostrarGestionar"
+        >
+          🛠️ {{ mostrarGestionar ? "Ocultar" : "Mostrar" }} Panel de Gestión
         </button>
       </div>
 
@@ -22,24 +25,34 @@
         [liga]="liga"
         [miembros]="miembros"
         (expulsado)="cargarMiembros()"
-        (ligaIniciada)="ligaIniciada = true">
+        (ligaIniciada)="ligaIniciada = true"
+      >
       </app-gestionar-liga>
 
       <!-- Dashboard General -->
       <div class="liga-dashboard">
-
         <!-- Clasificación -->
         <div class="dashboard-box">
           <h3 class="subtitulo-seccion">🏆 Clasificación</h3>
-          <p-table [value]="ranking" [responsiveLayout]="'scroll'" class="tabla-ranking">
+          <p-table
+            [value]="ranking"
+            [responsiveLayout]="'scroll'"
+            class="tabla-ranking"
+          >
             <ng-template pTemplate="header">
-              <tr><th>#</th><th>Jugador</th><th>Puntos</th></tr>
+              <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Puntos</th>
+              </tr>
             </ng-template>
             <ng-template pTemplate="body" let-row let-i="rowIndex">
               <tr>
                 <td>{{ i + 1 }}</td>
                 <td>👤 {{ row.nombre }}</td>
-                <td><span class="puntos">{{ row.puntosTotales }}</span></td>
+                <td>
+                  <span class="puntos">{{ row.puntosTotales }}</span>
+                </td>
               </tr>
             </ng-template>
           </p-table>
@@ -49,9 +62,15 @@
         <div class="dashboard-box">
           <div class="grafico-header">
             <h3 class="subtitulo-seccion">📈 Puntos Semanales</h3>
-            <button class="btn-expandir" (click)="graficoExpandido = true">🔍 Expandir</button>
+            <button class="btn-expandir" (click)="graficoExpandido = true">
+              🔍 Expandir
+            </button>
           </div>
-          <p-chart type="bar" [data]="graficoPuntos" [options]="graficoOpciones"></p-chart>
+          <p-chart
+            type="bar"
+            [data]="graficoPuntos"
+            [options]="graficoOpciones"
+          ></p-chart>
         </div>
 
         <!-- Miembros -->
@@ -62,7 +81,12 @@
               <div class="avatar"><i class="pi pi-user"></i></div>
               <div class="info">
                 <strong>{{ miembro.username }}</strong>
-                <small>{{ miembro.email }}</small>
+                <small>{{ miembro.email }}</small
+                ><br />
+                <small class="text-gray-400 italic"
+                  >Último login:
+                  {{ miembro.ultimoLogin | date : "short" }}</small
+                >
               </div>
             </div>
           </div>
@@ -73,9 +97,14 @@
           <h3 class="subtitulo-seccion">📅 Actividad Reciente</h3>
           <ul class="actividad-list">
             <li *ngFor="let a of actividadReciente">
-              🕒 {{ a.timestamp | date : "short" }} — <strong>{{ a.usuario.username }}</strong>: {{ a.descripcion }}
+              🕒 {{ a.timestamp | date : "short" }} —
+              <strong>{{ a.usuario.username }}</strong
+              >: {{ a.descripcion }}
             </li>
-            <li *ngIf="actividadReciente.length === 0" class="text-center text-sm text-gray-400 italic">
+            <li
+              *ngIf="actividadReciente.length === 0"
+              class="text-center text-sm text-gray-400 italic"
+            >
               Sin actividad registrada todavía.
             </li>
           </ul>
@@ -86,7 +115,8 @@
       <app-esperando-miembros
         *ngIf="!esCreador || ligaIniciada"
         [liga]="liga"
-        [miembros]="miembros">
+        [miembros]="miembros"
+      >
       </app-esperando-miembros>
     </div>
   </div>
@@ -95,23 +125,49 @@
   <div *ngIf="!ligaActual" class="opciones-liga">
     <h2>⚙️ Gestión de Ligas</h2>
     <div class="acciones-liga">
-      <button *ngIf="usuario?.role?.toLowerCase() === 'admin' || usuario?.role?.toLowerCase() === 'vip'"
-              class="btn-crear" (click)="mostrarCrear()">🎯 Crear Liga</button>
-      <button class="btn-unirse" (click)="mostrarUnirse()">🚀 Unirse a Liga</button>
+      <button
+        *ngIf="
+          usuario?.role?.toLowerCase() === 'admin' ||
+          usuario?.role?.toLowerCase() === 'vip'
+        "
+        class="btn-crear"
+        (click)="mostrarCrear()"
+      >
+        🎯 Crear Liga
+      </button>
+      <button class="btn-unirse" (click)="mostrarUnirse()">
+        🚀 Unirse a Liga
+      </button>
     </div>
     <div class="panel-dinamico">
-      <app-crear-liga *ngIf="mostrarCrearLiga" (ligaCreada)="onLigaCreada($event)"></app-crear-liga>
-      <app-unirse-liga *ngIf="mostrarUnirseLiga" (unido)="onUnidoALiga($event)"></app-unirse-liga>
+      <app-crear-liga
+        *ngIf="mostrarCrearLiga"
+        (ligaCreada)="onLigaCreada($event)"
+      ></app-crear-liga>
+      <app-unirse-liga
+        *ngIf="mostrarUnirseLiga"
+        (unido)="onUnidoALiga($event)"
+      ></app-unirse-liga>
     </div>
   </div>
 
   <!-- Modal gráfico ampliado -->
-  <p-dialog [(visible)]="graficoExpandido" modal [dismissableMask]="true" [style]="{width: '80vw'}">
+  <p-dialog
+    [(visible)]="graficoExpandido"
+    modal
+    [dismissableMask]="true"
+    [style]="{ width: '80vw' }"
+  >
     <ng-template pTemplate="header">
       <h3>📊 Gráfico de Puntos Semanales</h3>
     </ng-template>
     <ng-template pTemplate="content">
-      <p-chart type="bar" [data]="graficoPuntos" [options]="graficoOpciones" style="height: 500px;"></p-chart>
+      <p-chart
+        type="bar"
+        [data]="graficoPuntos"
+        [options]="graficoOpciones"
+        style="height: 500px"
+      ></p-chart>
     </ng-template>
   </p-dialog>
 </div>

@@ -4,12 +4,13 @@ import { JugadorService } from '../../services/jugador.service';
 import { Jugador } from '../../models/jugador.model';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../models/usuario.model';
+import 'shepherd.js/dist/css/shepherd.css';
 import { TutorialService } from '../../services/tutorial.service';
 
 @Component({
   selector: 'app-comparador-jugadores',
   templateUrl: './comparador-jugadores.component.html',
-  styleUrls: ['./comparador-jugadores.component.css']
+  styleUrls: ['./comparador-jugadores.component.css'],
 })
 export class ComparadorJugadoresComponent implements OnInit {
   jugadores: Jugador[] = [];
@@ -24,7 +25,7 @@ export class ComparadorJugadoresComponent implements OnInit {
   chartOptions: any;
 
   usuario!: Usuario;
-  tutorialVisto = false;
+
 
   constructor(
     private authService: AuthService,
@@ -41,21 +42,39 @@ export class ComparadorJugadoresComponent implements OnInit {
     this.usuarioService.obtenerUsuarioCompleto(usuario.id).subscribe(usuario => {
       this.usuario = usuario;
 
-      // Solo si el usuario ha SALTADO explícitamente el tutorial (globalmente), no lo mostramos más
-      this.tutorialVisto = localStorage.getItem('tutorial_comparador') === 'true'
-        || localStorage.getItem('tutorial_global') === 'true'
-        || usuario.tutorialVisto === true;
-
       this.cdr.detectChanges();
 
-      if (!this.tutorialVisto) {
-        this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_comparador', [
-          { element: '#paso-selector', intro: 'Selecciona dos jugadores para compararlos' },
-          { element: '#paso-boton', intro: 'Haz clic en "Comparar" para continuar.' },
-          { element: '#paso-cromos', intro: 'Estas cartas muestran las estadísticas comparadas de cada jugador' },
-          { element: '#paso-grafico', intro: 'Gráfico comparativo entre ambos jugadores' }
-        ]);
-      }
+      this.tutorialService.lanzarTutorial(
+        usuario,
+        'tutorial_comparador',
+        [
+          {
+            id: 'paso-selector',
+            title: 'Paso 1: Selección',
+            text: 'Selecciona dos jugadores para compararlos.',
+            attachTo: { element: '#paso-selector', on: 'bottom' }
+          },
+          {
+            id: 'paso-boton',
+            title: 'Paso 2: Comparar',
+            text: 'Haz clic en "Comparar" para generar la visualización.',
+            attachTo: { element: '#paso-boton', on: 'bottom' }
+          },
+          {
+            id: 'paso-cromos',
+            title: 'Paso 3: Estadísticas',
+            text: 'Aquí se muestran las estadísticas comparadas como cromos.',
+            attachTo: { element: '#paso-cromos', on: 'bottom' }
+          },
+          {
+            id: 'paso-grafico',
+            title: 'Paso 4: Gráfico',
+            text: 'Gráfico interactivo con los valores comparados.',
+            attachTo: { element: '#paso-grafico', on: 'top' }
+          }
+        ]
+      );
+
 
       const ligaId = this.authService.getLigaId();
       if (ligaId) {
@@ -70,7 +89,7 @@ export class ComparadorJugadoresComponent implements OnInit {
       plugins: {
         legend: {
           labels: {
-            color: '#facc15', // Amarillo NBA
+            color: '#facc15',
             font: {
               size: 14,
               weight: 'bold'
@@ -80,45 +99,26 @@ export class ComparadorJugadoresComponent implements OnInit {
       },
       scales: {
         r: {
-          angleLines: {
-            color: '#334155' // líneas radiales suaves
-          },
-          grid: {
-            color: '#475569' // líneas circulares
-          },
+          angleLines: { color: '#334155' },
+          grid: { color: '#475569' },
           pointLabels: {
-            color: '#93c5fd', // etiquetas (Pts, Min...) celestes
-            font: {
-              size: 14,
-              weight: 'bold'
-            }
+            color: '#93c5fd',
+            font: { size: 14, weight: 'bold' }
           },
           ticks: {
             color: '#f1f5f9',
             backdropColor: 'transparent',
-            font: {
-              size: 12
-            }
+            font: { size: 12 }
           }
         }
       }
     };
-
   }
 
 
-  comparar(): void {
-    if (this.jugador1 && this.jugador2) {
-      this.mostrarComparacion = true;
-      this.updateChart();
 
-      if (!this.tutorialVisto) {
-        setTimeout(() => {
-          this.tutorialService.manualNextStep();
-        }, 500);
-      }
-    }
-  }
+
+
 
   updateChart(): void {
     this.chartData = {
@@ -149,13 +149,14 @@ export class ComparadorJugadoresComponent implements OnInit {
       ]
     };
   }
-
-  saltarTutorial(): void {
-    if (this.usuario) {
-      this.tutorialService.finalizarTutorial(this.usuario.id, 'tutorial_comparador');
-      this.tutorialVisto = true;
+  comparar(): void {
+    if (this.jugador1 && this.jugador2) {
+      this.mostrarComparacion = true;
+      this.updateChart();
     }
   }
+
+
 
   get jugadoresParaJugador1(): Jugador[] {
     return this.jugadores.filter(j => j !== this.jugador2);
@@ -164,8 +165,4 @@ export class ComparadorJugadoresComponent implements OnInit {
   get jugadoresParaJugador2(): Jugador[] {
     return this.jugadores.filter(j => j !== this.jugador1);
   }
-
-
-
-
 }

@@ -121,31 +121,7 @@ export class InicioComponent implements OnInit {
           || usuario.tutorialVisto === true;
         this.cdr.detectChanges();
 
-        if (!this.tutorialVisto) {
-          if (
-            !localStorage.getItem('tutorial_global') &&
-            !usuario.tutorialVisto
-          ) {
-            this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_inicio', [
-              {
-                element: '.dashboard-container',
-                intro: '👋 Bienvenido a tu panel principal. Aquí tienes un resumen de tu plantilla y estadísticas.'
-              },
-              {
-                element: '.section:nth-child(1)',
-                intro: '📊 Comparativa visual entre tus puntos y la media de tu liga.'
-              },
-              {
-                element: '.section:nth-child(2)',
-                intro: '📈 Estadísticas individuales de cada jugador que puedes ampliar haciendo clic.'
-              },
-              {
-                element: '.section:nth-child(5)',
-                intro: '📰 Aquí verás las últimas noticias sobre baloncesto.'
-              }
-            ]);
-          }
-        }
+
       }
 
 

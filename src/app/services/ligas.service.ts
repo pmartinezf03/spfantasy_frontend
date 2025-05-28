@@ -16,9 +16,14 @@ export interface ActividadLiga {
   descripcion: string;
   timestamp: string;
   usuario: {
+    id: number;
     username: string;
+    ultimoLogin: string;
   };
 }
+
+
+
 
 
 export interface UnirseLigaDTO {
@@ -33,7 +38,9 @@ export interface MiembroLiga {
   id: number;
   username: string;
   email: string;
+  ultimoLogin: string;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +62,10 @@ export class LigasService {
   obtenerMiembros(ligaId: number): Observable<MiembroLiga[]> {
     return this.http.get<MiembroLiga[]>(`${this.apiUrl}/${ligaId}/miembros`);
   }
+  obtenerMiembrosLiga(ligaId: number): Observable<MiembroLiga[]> {
+    return this.http.get<MiembroLiga[]>(`${this.apiUrl}/${ligaId}/miembros`);
+  }
+
 
   salirDeLiga(ligaId: number, usuarioId: number): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${ligaId}/salir/${usuarioId}`, { responseType: 'text' });

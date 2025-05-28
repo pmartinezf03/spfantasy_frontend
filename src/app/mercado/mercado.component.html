@@ -3,20 +3,19 @@
     <p-confirmDialog></p-confirmDialog>
     <p-toast></p-toast>
 
-
-
-
-
-
     <!-- 🔶 Sugerencia de Scouting (full width arriba) -->
     <div
+      id="paso-scouting"
       class="scouting-box mb-6 p-4 rounded-xl border-2 border-yellow-400 bg-gradient-to-br from-yellow-900 via-yellow-700 to-yellow-800 text-center shadow-lg animate__animated animate__pulse animate__infinite"
-      (click)="irAScouting()" style="cursor: pointer">
+      (click)="irAScouting()"
+      style="cursor: pointer"
+    >
       <h3 class="text-lg font-bold text-yellow-300 mb-1">
         📈 ¿No sabes a quién fichar?
       </h3>
       <p class="text-sm text-white">
-        Haz clic aquí para ver recomendaciones automáticas de jugadores destacados
+        Haz clic aquí para ver recomendaciones automáticas de jugadores
+        destacados
       </p>
       <p class="mt-2 text-sm text-yellow-400 font-semibold">
         🔒 Solo para usuarios VIP
@@ -25,16 +24,19 @@
 
     <!-- 🟨 Contenedor de 2 columnas -->
     <div class="contenedor-scroll">
-
       <!-- 🎮 Zona izquierda - Jugadores + Filtros -->
       <div class="scroll-col jugadores-scroll">
-
         <!-- 🔍 Filtros -->
-        <div class="filtros-container mb-6">
+        <div id="paso-filtros" class="filtros-container mb-6">
           <!-- Nombre -->
           <div>
             <label for="nombre" class="block">🔤 Nombre</label>
-            <input id="nombre" type="text" [(ngModel)]="filtroNombre" placeholder="Buscar por nombre..." />
+            <input
+              id="nombre"
+              type="text"
+              [(ngModel)]="filtroNombre"
+              placeholder="Buscar por nombre..."
+            />
           </div>
 
           <!-- Posición -->
@@ -42,50 +44,94 @@
             <label for="posicion" class="block">🧩 Posición</label>
             <select id="posicion" [(ngModel)]="filtroPosicion">
               <option value="">Todas</option>
-              <option *ngFor="let p of posicionesDisponibles" [value]="p">{{ p }}</option>
+              <option *ngFor="let p of posicionesDisponibles" [value]="p">
+                {{ p }}
+              </option>
             </select>
           </div>
 
           <!-- Precio mínimo -->
           <div>
             <label for="precioMin" class="block">💸 Precio Mínimo</label>
-            <input id="precioMin" type="number" [(ngModel)]="precioMin" placeholder="Ej: 500000" />
+            <input
+              id="precioMin"
+              type="number"
+              [(ngModel)]="precioMin"
+              placeholder="Ej: 500000"
+            />
           </div>
 
           <!-- Precio máximo -->
           <div>
             <label for="precioMax" class="block">💰 Precio Máximo</label>
-            <input id="precioMax" type="number" [(ngModel)]="precioMax" placeholder="Ej: 3000000" />
+            <input
+              id="precioMax"
+              type="number"
+              [(ngModel)]="precioMax"
+              placeholder="Ej: 3000000"
+            />
           </div>
         </div>
 
         <!-- 📋 Lista de jugadores filtrados -->
-        <div *ngFor="let jugador of jugadoresFiltrados" class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] rounded-xl p-5 shadow-xl flex flex-col
-     md:flex-row items-center gap-5 border border-fantasyBlue hover:scale-[1.02] transition-transform duration-200
-     mb-4">
-
-          <img [src]="jugador.fotoUrl"
+        <div
+          id="paso-jugadores"
+          *ngFor="let jugador of jugadoresFiltrados"
+          class="bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0f172a] rounded-xl p-5 shadow-xl flex flex-col md:flex-row items-center gap-5 border border-fantasyBlue hover:scale-[1.02] transition-transform duration-200 mb-4"
+        >
+          <img
+            [src]="jugador.fotoUrl"
             class="w-20 h-20 rounded-full border-4 border-fantasyGold object-contain shadow-inner"
-            [alt]="obtenerNombreJugador(jugador)" />
+            [alt]="obtenerNombreJugador(jugador)"
+          />
 
           <div class="flex-1 text-white text-center md:text-left">
-            <h4 class="text-2xl font-bold text-fantasyGold mb-1">{{ obtenerNombreJugador(jugador) }}</h4>
+            <h4 class="text-2xl font-bold text-fantasyGold mb-1">
+              {{ obtenerNombreJugador(jugador) }}
+            </h4>
             <p class="text-sm text-fantasyBlue mb-1">{{ jugador.posicion }}</p>
-            <p class="text-sm text-green-400 mb-1">💰 {{ jugador.precioVenta | currency : "EUR" }}</p>
-            <p class="text-sm text-gray-400 mb-2">👤 {{ jugador.propietarioUsername || "Libre" }}</p>
+            <p class="text-sm text-green-400 mb-1">
+              💰 {{ jugador.precioVenta | currency : "EUR" }}
+            </p>
+            <p class="text-sm text-gray-400 mb-2">
+              👤 {{ jugador.propietarioUsername || "Libre" }}
+            </p>
 
             <!-- Botones -->
-            <div class="flex flex-wrap gap-2 justify-center md:justify-start mt-2 w-full">
-              <button *ngIf="!jugador.propietarioId" pButton label="Comprar" icon="pi pi-shopping-cart"
-                class="btn-comprar" (click)="comprarJugador(jugador)"></button>
+            <div
+              class="flex flex-wrap gap-2 justify-center md:justify-start mt-2 w-full"
+            >
+              <button
+                *ngIf="!jugador.propietarioId"
+                pButton
+                label="Comprar"
+                icon="pi pi-shopping-cart"
+                class="btn-comprar"
+                (click)="comprarJugador(jugador)"
+              ></button>
 
               <button
-                *ngIf="jugador.propietarioId && jugador.propietarioId !== usuarioId && !ofertasEnCurso[jugador.id]"
-                pButton label="Hacer Oferta" icon="pi pi-dollar" class="btn-oferta"
-                (click)="abrirDialogoOferta(jugador)"></button>
+                id="paso-oferta"
+                *ngIf="
+                  jugador.propietarioId &&
+                  jugador.propietarioId !== usuarioId &&
+                  !ofertasEnCurso[jugador.id]
+                "
+                pButton
+                label="Hacer Oferta"
+                icon="pi pi-dollar"
+                class="btn-oferta"
+                (click)="abrirDialogoOferta(jugador)"
+              ></button>
 
-              <button *ngIf="ofertasEnCurso[jugador.id]" pButton label="Cancelar Oferta" icon="pi pi-times"
-                class="btn-cancelar" (click)="cancelarOferta(jugador.id)"></button>
+              <button
+                *ngIf="ofertasEnCurso[jugador.id]"
+                pButton
+                label="Cancelar Oferta"
+                icon="pi pi-times"
+                class="btn-cancelar"
+                (click)="cancelarOferta(jugador.id)"
+              ></button>
             </div>
           </div>
         </div>
@@ -95,15 +141,21 @@
       <div class="scroll-col historial-scroll">
         <app-historial></app-historial>
       </div>
-
     </div>
 
-
     <!-- Dialogo -->
-    <app-oferta-dialogo *ngIf="mostrarDialogo" [mostrarDialogo]="mostrarDialogo"
-      [jugadorSeleccionado]="jugadorSeleccionado" [usuarioId]="usuarioId" [usuarioDinero]="usuarioDinero"
-      [modo]="'oferta'" [totalOfertasEnCurso]="totalOfertasEnCurso" (cerrar)="cerrarDialogoOferta()"
-      (enviarOferta)="enviarOferta($event)">
+    <app-oferta-dialogo
+      id="paso-dinero"
+      *ngIf="mostrarDialogo"
+      [mostrarDialogo]="mostrarDialogo"
+      [jugadorSeleccionado]="jugadorSeleccionado"
+      [usuarioId]="usuarioId"
+      [usuarioDinero]="usuarioDinero"
+      [modo]="'oferta'"
+      [totalOfertasEnCurso]="totalOfertasEnCurso"
+      (cerrar)="cerrarDialogoOferta()"
+      (enviarOferta)="enviarOferta($event)"
+    >
     </app-oferta-dialogo>
   </div>
 </div>

@@ -109,7 +109,7 @@ export class MercadoComponent implements OnInit {
         console.log('[ngOnInit] Datos iniciales cargados. Vista mostrada.');
         this.suscribirseAWebSocket();
 
-        // ⚠ Importante: solo en este punto están cargados los jugadores, así que calculamos posiciones aquí
+        // ⚠ Solo ahora están cargados los jugadores, calculamos posiciones
         this.posicionesDisponibles = [...new Set(this.jugadores.map((j: Jugador) => j.posicion))].filter((p): p is string => !!p);
       })
       .catch(err => {
@@ -127,32 +127,144 @@ export class MercadoComponent implements OnInit {
         localStorage.getItem('tutorial_global') === 'true' ||
         (usuario?.tutorialVisto === true);
 
+      // Lanzar tutorial solo si no se ha visto
+      if (!this.tutorialVisto && usuario) {
+        this.tutorialService.cancelarTutorial();
+
+        const pasosTutorial = [
+          {
+            id: 'filtros',
+            attachTo: { element: '#paso-filtros', on: 'bottom' },
+            title: 'Filtros de búsqueda',
+            text: 'Usa estos filtros para encontrar jugadores por nombre, posición o precio.',
+            buttons: [
+              { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          },
+          {
+            id: 'jugadores',
+            attachTo: { element: '#paso-jugadores', on: 'top' },
+            title: 'Lista de Jugadores',
+            text: 'Aquí puedes ver todos los jugadores disponibles en el mercado.',
+            buttons: [
+              { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          },
+          {
+            id: 'dinero',
+            attachTo: { element: '#paso-dinero', on: 'bottom' },
+            title: 'Tu dinero',
+            text: 'Este es el dinero disponible para comprar o hacer ofertas.',
+            buttons: [
+              { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          },
+          {
+            id: 'oferta',
+            attachTo: { element: '#paso-oferta', on: 'top' },
+            title: 'Hacer Oferta',
+            text: 'Haz clic aquí para enviar una oferta a otro jugador.',
+            buttons: [
+              { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          },
+          {
+            id: 'dialogo',
+            attachTo: { element: '#paso-dialogo', on: 'top' },
+            title: 'Dialogo de Oferta',
+            text: 'Completa los datos de tu oferta y envíala desde aquí.',
+            buttons: [
+              {
+                text: '✅ Terminar',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.manualNextStep();
+                  this.tutorialVisto = true;
+                }
+              },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          },
+          {
+            id: 'scouting',
+            attachTo: { element: '#paso-scouting', on: 'top' },
+            title: 'Compra el Scouting',
+            text: 'Aquí puedes comprar la función VIP de scouting que te ayuda a fichar nuevos jugadores.',
+            buttons: [
+              {
+                text: '✅ Terminar',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.manualNextStep();
+                  this.tutorialVisto = true;
+                }
+              },
+              { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
+              {
+                text: '🚫 Saltar tutorial',
+                action: () => {
+                  this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
+                  this.tutorialService.cancelarTutorial();
+                  this.tutorialVisto = true;
+                }
+              }
+            ]
+          }
+        ];
+
+        this.tutorialService.lanzarTutorial(usuario, 'tutorial_mercado', pasosTutorial, () => {
+          this.tutorialVisto = true;
+        });
+      }
 
       this.cdr.detectChanges();
-
-      if (!this.tutorialVisto && usuario) {
-        this.tutorialService.lanzarTutorialManual(usuario, 'tutorial_mercado', [
-          {
-            element: '.scouting-box',
-            intro: '💡 Aquí puedes acceder al Scouting automático con sugerencias de fichajes (solo para usuarios VIP).'
-          },
-          {
-            element: '.filtros-container',
-            intro: '🔍 Usa estos filtros para buscar jugadores por nombre, posición o precio.'
-          },
-          {
-            element: '.jugadores-scroll',
-            intro: '🛒 Esta es la lista de jugadores disponibles. Puedes comprar directamente o hacer ofertas.'
-          },
-          {
-            element: '.historial-scroll',
-            intro: '📜 Aquí puedes ver el historial de compras, ventas y ofertas de todos los usuarios.'
-          }
-        ]);
-      }
     });
-
   }
+
 
 
 

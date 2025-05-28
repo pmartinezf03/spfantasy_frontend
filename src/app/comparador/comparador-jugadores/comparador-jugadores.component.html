@@ -1,53 +1,28 @@
 <div class="comparador-container">
   <!-- Selector -->
-  <div
-    class="selector-jugadores"
-    id="paso-selector"
-    data-intro="Selecciona dos jugadores para compararlos"
-    data-step="1"
-  >
-    <select [(ngModel)]="jugador1">
+  <div class="selector-jugadores" id="paso-selector">
+    <select [(ngModel)]="jugador1" (change)="verificarPaso1()">
       <option [ngValue]="null" disabled selected>Jugador 1</option>
-      <option *ngFor="let j of jugadoresParaJugador1" [ngValue]="j">
-        {{ j.nombre }}
-      </option>
+      <option *ngFor="let j of jugadoresParaJugador1" [ngValue]="j">{{ j.nombre }}</option>
     </select>
 
-    <select [(ngModel)]="jugador2">
+    <select [(ngModel)]="jugador2" (change)="verificarPaso1()">
       <option [ngValue]="null" disabled selected>Jugador 2</option>
-      <option *ngFor="let j of jugadoresParaJugador2" [ngValue]="j">
-        {{ j.nombre }}
-      </option>
+      <option *ngFor="let j of jugadoresParaJugador2" [ngValue]="j">{{ j.nombre }}</option>
     </select>
 
-    <button
-      (click)="comparar()"
-      id="paso-boton"
-      data-intro="Haz clic para comparar a los jugadores seleccionados"
-      data-step="2"
-    >
-      Comparar
-    </button>
+    <button (click)="comparar()" id="paso-boton">Comparar</button>
   </div>
 
   <!-- Cromos -->
-  <div
-    *ngIf="mostrarComparacion && jugador1 && jugador2"
-    class="cromos-wrapper"
-    id="paso-cromos"
-    data-intro="Estas cartas muestran las estadísticas comparadas de cada jugador"
-    data-step="3"
-  >
+  <div *ngIf="mostrarComparacion && jugador1 && jugador2" class="cromos-wrapper" id="paso-cromos">
     <div class="cromo animate-fadeInLeft">
       <img [src]="jugador1.fotoUrl" alt="Jugador 1" />
       <h3>{{ jugador1.nombre }}</h3>
       <ul>
         <li><span>🎯 PTS:</span> {{ jugador1.pts }}</li>
         <li><span>⏱ Min:</span> {{ jugador1.min }}</li>
-        <li>
-          <span>🔥 Tiro:</span>
-          {{ (jugador1.t2 || 0) + (jugador1.t3 || 0) + (jugador1.tl || 0) }}
-        </li>
+        <li><span>🔥 Tiro:</span> {{ (jugador1.t2 || 0) + (jugador1.t3 || 0) + (jugador1.tl || 0) }}</li>
         <li><span>💰 Valor:</span> {{ jugador1.precioVenta | currency }}</li>
       </ul>
     </div>
@@ -60,28 +35,14 @@
       <ul>
         <li><span>🎯 PTS:</span> {{ jugador2.pts }}</li>
         <li><span>⏱ Min:</span> {{ jugador2.min }}</li>
-        <li>
-          <span>🔥 Tiro:</span>
-          {{ (jugador2.t2 || 0) + (jugador2.t3 || 0) + (jugador2.tl || 0) }}
-        </li>
+        <li><span>🔥 Tiro:</span> {{ (jugador2.t2 || 0) + (jugador2.t3 || 0) + (jugador2.tl || 0) }}</li>
         <li><span>💰 Valor:</span> {{ jugador2.precioVenta | currency }}</li>
       </ul>
     </div>
   </div>
 
   <!-- Gráfico -->
-  <div
-    *ngIf="chartData"
-    class="grafico-container"
-    id="paso-grafico"
-    data-intro="Gráfico comparativo entre ambos jugadores"
-    data-step="4"
-  >
-    <p-chart
-      type="radar"
-      [data]="chartData"
-      [options]="chartOptions"
-      styleClass="radar-style"
-    ></p-chart>
+  <div *ngIf="chartData" class="grafico-container" id="paso-grafico">
+    <p-chart type="radar" [data]="chartData" [options]="chartOptions" styleClass="radar-style"></p-chart>
   </div>
 </div>

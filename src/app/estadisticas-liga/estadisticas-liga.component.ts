@@ -6,6 +6,7 @@ import { Jugador } from '../../app/models/jugador.model';
 import { Oferta } from '../../app/models/oferta.model';
 import { AuthService } from '../services/auth.service';
 import { ChartData, ChartOptions, Chart } from 'chart.js';
+import { TutorialService } from '../services/tutorial.service';
 
 @Component({
   selector: 'app-estadisticas-liga',
@@ -73,7 +74,8 @@ export class EstadisticasLigaComponent implements OnInit {
     private ofertasService: OfertasService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private tutorialService: TutorialService
   ) { }
 
   ngOnInit(): void {
@@ -95,6 +97,34 @@ export class EstadisticasLigaComponent implements OnInit {
         this.cargarEstadisticas();
 
         this.cdr.detectChanges(); // fuerza actualización visual
+
+        this.authService.usuarioCompleto$.subscribe(user => {
+          if (user && user.id) {
+            this.tutorialService.lanzarTutorial(user, 'tutorial_estadisticas', [
+              {
+                id: 'grafico-estadisticas',
+                title: '📊 Radar de Jugadores Top',
+                text: 'Aquí puedes ver un radar comparativo con los 3 mejores jugadores de la liga.',
+                attachTo: { element: '#grafico-radar', on: 'top' }
+              },
+              {
+                id: 'tabla-jugadores',
+                title: '🧮 Estadísticas Detalladas',
+                text: 'Consulta todas las estadísticas por jugador para tomar decisiones inteligentes.',
+                attachTo: { element: '#tabla-estadisticas', on: 'top' }
+              },
+              {
+                id: 'boton-oferta',
+                title: '💸 Enviar Oferta',
+                text: 'Pulsa para enviar una oferta a un jugador directamente desde aquí.',
+                attachTo: { element: '.btn-oferta', on: 'bottom' }
+              }
+            ], () => {
+              this.tutorialService.finalizarTutorial(user.id, 'tutorial_estadisticas');
+            });
+          }
+        });
+
       }
     });
   }

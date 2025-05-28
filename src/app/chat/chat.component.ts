@@ -50,33 +50,6 @@ export class ChatComponent implements OnInit, OnChanges {
 
       this.currentUser = user;
 
-      // ✅ Mostrar tutorial si no está completado
-      this.tutorialVisto = localStorage.getItem('tutorial_chat') === 'true'
-        || localStorage.getItem('tutorial_global') === 'true'
-        || user.tutorialVisto === true;
-
-      if (!this.tutorialVisto) {
-        this.tutorialService.lanzarTutorialManual(user, 'tutorial_chat', [
-          {
-            element: '#paso-contactos',
-            intro: '📨 Aquí puedes ver tus conversaciones privadas. Pulsa en un usuario para abrir el chat.'
-          },
-          {
-            element: '#paso-grupos',
-            intro: '🧑‍🤝‍🧑 Aquí está el grupo de tu liga, donde podéis hablar todos.'
-          },
-          {
-            element: '#paso-volver',
-            intro: '📱 En móvil puedes usar este botón para volver a la lista de chats.'
-          },
-          {
-            element: '#paso-mensajes',
-            intro: '💬 Aquí verás los mensajes del chat seleccionado. ¡Escribe algo y participa!'
-          }
-        ]);
-      }
-
-
       const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
       // 1. Precargar mensajes históricos
@@ -155,7 +128,123 @@ export class ChatComponent implements OnInit, OnChanges {
       });
 
     });
+
+    if (!this.tutorialVisto && localStorage.getItem('tutorial_chat') !== 'true') {
+      this.tutorialService.cancelarTutorial();
+
+      const pasosTutorial = [
+        {
+          id: 'paso1-contactos',
+          attachTo: { element: '#paso-contactos', on: 'right' },
+          title: '👥 Contactos',
+          text: 'Aquí puedes ver todos los usuarios disponibles. Pulsa sobre uno para abrir una conversación privada.',
+          buttons: [
+            {
+              text: '⏭ Siguiente',
+              action: () => this.tutorialService.manualNextStep()
+            },
+            {
+              text: '❌ Cancelar',
+              action: () => this.tutorialService.cancelarTutorial()
+            },
+            {
+              text: '🚫 Saltar tutorial',
+              action: () => {
+                this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
+                this.tutorialService.cancelarTutorial();
+                this.tutorialVisto = true;
+              }
+            }
+          ],
+          canClickTarget: true
+        },
+        {
+          id: 'paso2-grupos',
+          attachTo: { element: '#paso-grupos', on: 'right' },
+          title: '💬 Chat de Grupo',
+          text: 'También puedes hablar con todos en tu grupo de liga. Pulsa para ver el chat grupal.',
+          buttons: [
+            {
+              text: '⏭ Siguiente',
+              action: () => this.tutorialService.manualNextStep()
+            },
+            {
+              text: '❌ Cancelar',
+              action: () => this.tutorialService.cancelarTutorial()
+            },
+            {
+              text: '🚫 Saltar tutorial',
+              action: () => {
+                this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
+                this.tutorialService.cancelarTutorial();
+                this.tutorialVisto = true;
+              }
+            }
+          ],
+          canClickTarget: true
+        },
+        {
+          id: 'paso3-volver',
+          attachTo: { element: '#paso-volver', on: 'bottom' },
+          title: '↩ Volver',
+          text: 'Si estás en móvil, puedes volver al panel de contactos con este botón.',
+          buttons: [
+            {
+              text: '⏭ Siguiente',
+              action: () => this.tutorialService.manualNextStep()
+            },
+            {
+              text: '❌ Cancelar',
+              action: () => this.tutorialService.cancelarTutorial()
+            },
+            {
+              text: '🚫 Saltar tutorial',
+              action: () => {
+                this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
+                this.tutorialService.cancelarTutorial();
+                this.tutorialVisto = true;
+              }
+            }
+          ]
+        },
+        {
+          id: 'paso4-mensajes',
+          attachTo: { element: '#paso-mensajes', on: 'top' },
+          title: '✉️ Chat',
+          text: 'Aquí verás los mensajes y podrás escribir. ¡Prueba a enviar uno!',
+          buttons: [
+            {
+              text: '✅ Terminar',
+              action: () => {
+                this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
+                this.tutorialService.manualNextStep();
+                this.tutorialVisto = true;
+              }
+            },
+            {
+              text: '❌ Cancelar',
+              action: () => this.tutorialService.cancelarTutorial()
+            },
+            {
+              text: '🚫 Saltar tutorial',
+              action: () => {
+                this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
+                this.tutorialService.cancelarTutorial();
+                this.tutorialVisto = true;
+              }
+            }
+          ]
+        }
+      ];
+
+      this.tutorialService.lanzarTutorial(
+        this.currentUser!,
+        'tutorial_chat',
+        pasosTutorial
+      );
+    }
   }
+
 
 
 
