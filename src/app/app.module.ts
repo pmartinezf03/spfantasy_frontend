@@ -77,6 +77,7 @@ import { ScoutingComponent } from './scouting/scouting.component';
 import { LogrosComponent } from './logros/logros.component';
 import { LogroDetalleModalComponent } from './shared/logro-detalle-modal/logro-detalle-modal.component';
 import { JugadorTarjetaComponent } from './mi-plantilla/jugador-tarjeta/jugador-tarjeta.component';
+import { CoachChatbotComponent } from './coach-chatbot/coach-chatbot.component';
 
 
 @NgModule({
@@ -116,6 +117,7 @@ import { JugadorTarjetaComponent } from './mi-plantilla/jugador-tarjeta/jugador-
     LogrosComponent,
     LogroDetalleModalComponent,
     JugadorTarjetaComponent,
+    CoachChatbotComponent,
 
 
 

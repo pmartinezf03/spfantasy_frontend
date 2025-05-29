@@ -148,14 +148,22 @@ export class UsuarioService {
   }
 
   aumentarExperiencia(usuarioId: number, puntos: number): Observable<any> {
-
-    return this.http.post(`${this.apiUrl}/${usuarioId}/experiencia`, { puntos });
+    return this.http.post<any>(`${this.apiUrl}/${usuarioId}/experiencia`, { puntos });
   }
+
 
   marcarTutorialVisto(id: number): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/tutorial/visto`, {});
   }
 
+
+  obtenerNivel(usuarioId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${usuarioId}/nivel`);
+  }
+
+  obtenerExperiencia(usuarioId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${usuarioId}/experiencia`);
+  }
 
 
 

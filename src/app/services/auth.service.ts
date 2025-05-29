@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap, of, catchError } from 'rxjs';
+import { Observable, BehaviorSubject, tap, of, catchError, switchMap, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LigasService } from './ligas.service';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from '../models/usuario.model';
 import { Liga } from '../models/liga.model';
-
 interface User {
   id: number;
   username: string;
@@ -26,7 +25,9 @@ interface User {
   diasActivo?: number;
   rachaLogin?: number;
   partidasJugadas?: number;
+  nivel?: number;
 }
+
 
 
 
@@ -147,7 +148,21 @@ export class AuthService {
       return of(null);
     }
 
-    return this.http.get<Usuario>(`${this.apiUrl}/${userId}`).pipe(
+    // Petición para obtener usuario completo (experiencia incluida)
+    const usuario$ = this.http.get<Usuario>(`${this.apiUrl}/${userId}`);
+    // Petición para obtener el nivel calculado desde backend
+    const nivel$ = this.http.get<number>(`${this.apiUrl}/${userId}/nivel`);
+
+    return usuario$.pipe(
+      switchMap(usuario =>
+        nivel$.pipe(
+          map(nivel => {
+            // Actualizamos el usuario con el nivel
+            usuario.nivel = nivel;
+            return usuario;
+          })
+        )
+      ),
       tap((usuario) => {
         console.log('📥 usuarioCompleto$ emitió (desde refresh):', usuario);
         this.usuarioCompleto = usuario;
@@ -170,16 +185,14 @@ export class AuthService {
             experiencia: usuario.experiencia ?? 0,
             diasActivo: usuario.diasActivo ?? 0,
             rachaLogin: usuario.rachaLogin ?? 0,
-            partidasJugadas: usuario.partidasJugadas ?? 0
+            partidasJugadas: usuario.partidasJugadas ?? 0,
+            nivel: usuario.nivel ?? 1,  // <-- añadir nivel aquí
           };
-
-
 
           this.userSubject.next(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          console.log('🆕 Usuario con VIP actualizado en localStorage:', updatedUser);
+          console.log('🆕 Usuario con VIP y nivel actualizado en localStorage:', updatedUser);
         }
-
       }),
       catchError((error) => {
         console.error('❌ Error al refrescar el usuario:', error);

@@ -5,7 +5,6 @@ import { LogroDTO } from '../models/logro.model';
 import { UsuarioService } from '../services/usuario.service';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ToastService } from '../services/toast.service';
 import { TutorialService } from '../services/tutorial.service';
 
 @Component({
@@ -26,47 +25,31 @@ export class PerfilComponent implements OnInit {
   avatarPreview: string | null = null;
   avatarSeleccionado: File | null = null;
   apiUrl = environment.apiUrl;
-  toastMessage: string | null = null;
   experienciaPorcentaje: number = 0;
+  nivelActual: number = 1;
   showLoginStreakModal: boolean = false;
   streakMessage: string = '';
-  chartData: any;
-  chartOptions: any;
+  private ultimoNivelMostrado: number = 0;
 
   constructor(
     public authService: AuthService,
     private logrosService: LogrosService,
     private usuarioService: UsuarioService,
     private http: HttpClient,
-    private tutorialService: TutorialService
-
-
+    private tutorialService: TutorialService,
   ) { }
 
   ngOnInit(): void {
     this.authService.refreshUsuarioCompleto().subscribe(usuario => {
       if (!usuario) return;
 
-      usuario.nivel = this.calcularNivel(usuario.experiencia ?? 0);
       this.usuarioLogueado = usuario;
-      this.rachaLogin = usuario.rachaLogin ?? 0;
-      this.usuarioDinero = usuario.dinero ?? 0;
-      this.dineroPendiente = usuario.dineroPendiente ?? 0;
+      this.actualizarEstadoUsuario(usuario);
 
-      // Calcular el porcentaje de experiencia
-      this.experienciaPorcentaje = this.calcularExperienciaPorcentaje(usuario.experiencia ?? 0, usuario.nivel ?? 1);
-
-      // Verifica si el nivel ha cambiado
-      const nivel = this.calcularNivel(usuario.experiencia ?? 0);
-      if (nivel > (usuario.nivel ?? 0)) {
-        this.mostrarMensajeSubidaNivel(nivel);
-      }
-
-      // Mostrar mensaje de racha de login
+      // Mostrar mensaje de racha login
       if (this.rachaLogin > 1) {
         const claveStorage = `racha-login-mostrada-${new Date().toISOString().split('T')[0]}`;
         const yaMostrado = localStorage.getItem(claveStorage);
-
         if (!yaMostrado) {
           this.streakMessage = `🎉 ¡Racha de logins consecutivos: ${this.rachaLogin} días!`;
           this.showLoginStreakModal = true;
@@ -82,16 +65,47 @@ export class PerfilComponent implements OnInit {
         });
       }
 
-      // ⬇️ Lanzar tutorial del perfil si no se ha visto
-      const yaVisto = localStorage.getItem('tutorial_perfil') === 'true';
-      if (!yaVisto) {
+      // Lanzar tutorial solo si NO se ha visto ni en localStorage ni en backend
+      const yaVistoLocal = localStorage.getItem('tutorial_perfil') === 'true';
+      const yaVistoBackend = usuario.tutorialVisto === true;
+
+      if (!yaVistoLocal && !yaVistoBackend) {
         this.lanzarTutorialPerfil(usuario);
       }
     });
   }
 
+  // Actualiza variables relacionadas con el usuario cuando hay datos nuevos
+  private actualizarEstadoUsuario(usuario: any) {
+    this.rachaLogin = usuario.rachaLogin ?? 0;
+    this.usuarioDinero = usuario.dinero ?? 0;
+    this.dineroPendiente = usuario.dineroPendiente ?? 0;
+    this.nivelActual = usuario.nivel ?? 1;
+    this.experienciaPorcentaje = this.calcularExperienciaPorcentaje(usuario.experiencia ?? 0, this.nivelActual);
+
+    if (this.nivelActual > this.ultimoNivelMostrado) {
+      this.mostrarMensajeSubidaNivel(this.nivelActual);
+      this.ultimoNivelMostrado = this.nivelActual;
+    }
+  }
+
+  // Método para aumentar experiencia y actualizar usuario local con respuesta del backend
+  aumentarExperienciaYPersistir(puntos: number) {
+    if (!this.usuarioLogueado?.id) return;
+
+    this.usuarioService.aumentarExperiencia(this.usuarioLogueado.id, puntos).subscribe({
+      next: (usuarioActualizado) => {
+        this.usuarioLogueado = usuarioActualizado;
+        this.actualizarEstadoUsuario(usuarioActualizado);
+        this.authService.usuarioCompletoSubject.next(usuarioActualizado); // Actualiza estado global
+      },
+      error: (err) => {
+        console.error('❌ Error al aumentar experiencia:', err);
+      }
+    });
+  }
+
   lanzarTutorialPerfil(usuario: any): void {
-    // 🧼 Limpia cualquier tutorial activo antes de iniciar este
     this.tutorialService.cancelarTutorial();
 
     const pasos = [
@@ -126,8 +140,6 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-
-
   calcularExperienciaPorcentaje(experiencia: number, nivel: number): number {
     let xpTotalAnterior = 0;
 
@@ -140,38 +152,8 @@ export class PerfilComponent implements OnInit {
     return Math.floor((xpDentroDelNivel / xpNivelActual) * 100);
   }
 
-
-
-
-
-
-  calcularNivel(experiencia: number): number {
-    let nivel = 1;
-    let xpAcumulada = 0;
-
-    while (experiencia >= xpAcumulada + nivel * 10) {
-      xpAcumulada += nivel * 10;
-      nivel++;
-    }
-
-    return nivel;
-  }
-
-
-  // Mostrar mensaje de subida de nivel
-  mostrarMensajeSubidaNivel(nivel: number): void {
-    this.streakMessage = `🎉 ¡Felicidades! Has alcanzado el nivel ${nivel}! Sigue acumulando experiencia.`;
-    this.showLoginStreakModal = true;  // Mostrar el modal
-  }
-
-  mostrarDetalle(logro: LogroDTO): void {
-    if (logro.desbloqueado) {
-      this.logroSeleccionado = logro;
-    }
-  }
-  // Método para calcular los puntos restantes para el siguiente nivel
   calcularProximoNivel(experiencia: number): number {
-    const nivel = this.calcularNivel(experiencia);
+    let nivel = this.nivelActual || 1;
     let xpAcumulada = 0;
 
     for (let i = 1; i < nivel; i++) {
@@ -179,10 +161,19 @@ export class PerfilComponent implements OnInit {
     }
 
     const xpParaSiguienteNivel = xpAcumulada + nivel * 10;
-    return xpParaSiguienteNivel - experiencia;
+    return Math.max(0, xpParaSiguienteNivel - experiencia);
   }
 
+  mostrarMensajeSubidaNivel(nivel: number): void {
+    this.streakMessage = `🎉 ¡Felicidades! Has alcanzado el nivel ${nivel}! Sigue acumulando experiencia.`;
+    this.showLoginStreakModal = true;
+  }
 
+  mostrarDetalle(logro: LogroDTO): void {
+    if (logro.desbloqueado) {
+      this.logroSeleccionado = logro;
+    }
+  }
 
   onAvatarSelected(event: any): void {
     const file = event.target.files[0];
@@ -199,9 +190,6 @@ export class PerfilComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-
-
-
 
   aplicarNuevoAvatar() {
     if (!this.avatarSeleccionado) return;

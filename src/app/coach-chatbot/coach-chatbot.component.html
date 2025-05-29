@@ -1,0 +1,11 @@
+<div class="coach-container" [class.abierto]="mostrando">
+  <div class="coach-icon" (click)="toggleChat()">🏀 Coach</div>
+
+  <div class="coach-chat" *ngIf="mostrando">
+    <h3>👨‍🏫 Consejos del Coach</h3>
+    <ul>
+      <li *ngFor="let msg of mensajes">{{ msg }}</li>
+    </ul>
+    <button (click)="toggleChat()">Cerrar</button>
+  </div>
+</div>

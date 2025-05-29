@@ -77,7 +77,7 @@
     </h3>
 
     <div class="flex flex-col items-center space-y-4 w-full">
-      <div class="text-lg font-semibold">Nivel {{ usuarioLogueado.nivel }}</div>
+      <div class="text-lg font-semibold">Nivel {{ usuarioLogueado.nivel ?? 1 }}</div>
 
       <div class="w-full bg-gray-700 h-6 rounded-full overflow-hidden shadow-inner">
         <div
@@ -89,8 +89,8 @@
       </div>
 
       <div class="text-sm text-gray-300 text-center">
-        <strong class="text-green-400">{{ usuarioLogueado.experiencia }} pts</strong> /
-        <strong class="text-yellow-400">{{ (usuarioLogueado.nivel || 1) * 10 }} pts</strong>
+        <strong class="text-green-400">{{ usuarioLogueado.experiencia ?? 0 }} pts</strong> /
+        <strong class="text-yellow-400">{{ (usuarioLogueado.nivel ?? 1) * 10 }} pts</strong>
         para el siguiente nivel
       </div>
 
