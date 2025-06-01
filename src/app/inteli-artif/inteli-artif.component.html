@@ -1,0 +1,30 @@
+<div class="chatbot-container" *ngIf="mostrando">
+  <div class="chat-header">
+    <div class="chat-title">Chatbot SPFantasy</div>
+    <button class="close-btn" (click)="cerrarChat()">×</button>
+  </div>
+
+  <div class="chat-body" #scrollContainer>
+    <div *ngFor="let mensaje of mensajes"
+         [ngClass]="{'mensaje': true, 'usuario': mensaje.desdeUsuario, 'ia': !mensaje.desdeUsuario}">
+      <div class="burbuja">
+        {{ mensaje.texto }}
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      type="text"
+      placeholder="Escribe tu mensaje..."
+      [(ngModel)]="entradaMensaje"
+      (keyup.enter)="enviarMensaje()"
+      autofocus
+    />
+    <button class="enviar-btn" (click)="enviarMensaje()">Enviar</button>
+  </div>
+</div>
+
+<button *ngIf="!mostrando" class="abrir-chat-btn" (click)="abrirChat()">
+  💬 Chat SPFantasy
+</button>

@@ -20,6 +20,7 @@ import { ComparadorJugadoresComponent } from './comparador/comparador-jugadores/
 import { ScoutingComponent } from './scouting/scouting.component'; // 👈 Asegúrate de que esto es correcto
 import { VipGuard } from './guards/vip.guard';
 import { VipComponent } from './VipComponent/vip/vip.component';
+import { CanjearCodigoComponent } from './canjear-codigo/canjear-codigo.component';
 
 const routes: Routes = [
   { path: 'mercado', component: MercadoComponent, canActivate: [LigasGuard, AuthGuard] },
@@ -33,6 +34,7 @@ const routes: Routes = [
   { path: 'comparador', component: ComparadorJugadoresComponent },
   { path: 'scouting', component: ScoutingComponent, canActivate: [AuthGuard, VipGuard] },
   { path: 'vip', component: VipComponent, canActivate: [AuthGuard] },
+  { path: 'canjear-codigo', component: CanjearCodigoComponent, canActivate: [AuthGuard] },
 
 
 

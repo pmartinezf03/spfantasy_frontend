@@ -78,6 +78,8 @@ import { LogrosComponent } from './logros/logros.component';
 import { LogroDetalleModalComponent } from './shared/logro-detalle-modal/logro-detalle-modal.component';
 import { JugadorTarjetaComponent } from './mi-plantilla/jugador-tarjeta/jugador-tarjeta.component';
 import { CoachChatbotComponent } from './coach-chatbot/coach-chatbot.component';
+import { InteliArtifComponent } from './inteli-artif/inteli-artif.component';
+import { CanjearCodigoComponent } from './canjear-codigo/canjear-codigo.component';
 
 
 @NgModule({
@@ -118,6 +120,8 @@ import { CoachChatbotComponent } from './coach-chatbot/coach-chatbot.component';
     LogroDetalleModalComponent,
     JugadorTarjetaComponent,
     CoachChatbotComponent,
+    InteliArtifComponent,
+    CanjearCodigoComponent,
 
 
 
