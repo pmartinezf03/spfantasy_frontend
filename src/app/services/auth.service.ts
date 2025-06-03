@@ -150,15 +150,17 @@ export class AuthService {
 
     // Petición para obtener usuario completo (experiencia incluida)
     const usuario$ = this.http.get<Usuario>(`${this.apiUrl}/${userId}`);
-    // Petición para obtener el nivel calculado desde backend
-    const nivel$ = this.http.get<number>(`${this.apiUrl}/${userId}/nivel`);
+    // Petición para obtener el DTO con experiencia + nivel + porcentaje
+    const nivelDetallado$ = this.usuarioService.obtenerNivelDetallado(userId);
 
     return usuario$.pipe(
       switchMap(usuario =>
-        nivel$.pipe(
-          map(nivel => {
-            // Actualizamos el usuario con el nivel
-            usuario.nivel = nivel;
+        nivelDetallado$.pipe(
+          map(dto => {
+            usuario.nivel = dto.nivel;
+            usuario.experiencia = dto.experienciaTotal;
+            // Si quieres guardar también porcentaje en memoria temporal
+            (usuario as any).porcentajeProgreso = dto.porcentajeProgreso;
             return usuario;
           })
         )
@@ -166,7 +168,6 @@ export class AuthService {
       tap((usuario) => {
         console.log('📥 usuarioCompleto$ emitió (desde refresh):', usuario);
         this.usuarioCompleto = usuario;
-
         this.usuarioCompletoSubject.next(usuario);
 
         const currentUser = this.getUser();
@@ -186,7 +187,7 @@ export class AuthService {
             diasActivo: usuario.diasActivo ?? 0,
             rachaLogin: usuario.rachaLogin ?? 0,
             partidasJugadas: usuario.partidasJugadas ?? 0,
-            nivel: usuario.nivel ?? 1,  // <-- añadir nivel aquí
+            nivel: usuario.nivel ?? 1
           };
 
           this.userSubject.next(updatedUser);
@@ -200,6 +201,7 @@ export class AuthService {
       })
     );
   }
+
 
 
   getUser(): User | null {

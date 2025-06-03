@@ -5,6 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Jugador } from '../models/jugador.model';
 import { environment } from '../../environments/environment';
 import { Usuario } from '../models/usuario.model';
+import { UsuarioNivelDTO } from '../models/usuario-nivel.model';
 
 @Injectable({
   providedIn: 'root'
@@ -165,6 +166,9 @@ export class UsuarioService {
     return this.http.get<number>(`${this.apiUrl}/${usuarioId}/experiencia`);
   }
 
+  obtenerNivelDetallado(id: number): Observable<UsuarioNivelDTO> {
+    return this.http.get<UsuarioNivelDTO>(`${this.apiUrl}/${id}/nivel-detallado`);
+  }
 
 
 
