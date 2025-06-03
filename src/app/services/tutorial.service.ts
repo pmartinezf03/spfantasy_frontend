@@ -48,11 +48,12 @@ export class TutorialService {
 
 
   lanzarTutorial(usuario: any, storageKey: string, pasos: any[], onFinish?: () => void) {
-    if (localStorage.getItem(storageKey) === 'true') return;
+    // ⚠️ Revisa la propiedad del usuario y el localStorage
+    if (usuario.tutorialVisto || localStorage.getItem(storageKey) === 'true') return;
 
-    // Limpieza de pasos previos
-    this.shepherd.cancel();     // Por si había uno activo
-    this.shepherd.steps = [];   // Vacía los pasos anteriores
+    // Limpieza previa
+    this.shepherd.cancel();
+    this.shepherd.steps = [];
 
     localStorage.setItem('usuario_id', usuario.id.toString());
     localStorage.setItem('tutorial_key', storageKey);
@@ -60,15 +61,12 @@ export class TutorialService {
     pasos.forEach(paso => this.shepherd.addStep(paso));
 
     this.shepherd.on('complete', () => {
-      if (onFinish) onFinish(); // Solo si tú decides marcar como visto
-    });
-
-    this.shepherd.on('cancel', () => {
-      // Nada
+      if (onFinish) onFinish();
     });
 
     this.shepherd.start();
   }
+
 
 
 

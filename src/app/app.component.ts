@@ -10,6 +10,7 @@ import { LigasService } from './services/ligas.service';
 })
 export class AppComponent implements OnInit {
   title = 'sp_fantasy';
+  mostrarInteliArtif = false; // 👈 NUEVO
 
   constructor(
     private authService: AuthService,
@@ -20,8 +21,12 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     console.log('🚀 [AppComponent] Cargando aplicación...');
 
-    // ✅ Inicializar sesión (espera un poco para asegurarse que refreshUsuarioCompleto terminó)
     this.authService.initSesionDesdeStorage();
+
+    // 🔍 Observamos si hay sesión activa para mostrar <app-inteli-artif>
+    this.authService.isAuthenticated$.subscribe((autenticado) => {
+      this.mostrarInteliArtif = autenticado;
+    });
 
     setTimeout(() => {
       const user = this.authService.getUser();

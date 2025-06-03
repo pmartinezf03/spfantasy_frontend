@@ -1,20 +1,24 @@
-<div class="container mt-4">
+<div class="canjear-wrapper">
   <h2>Canjea tu Código</h2>
 
-  <div class="mb-3">
-    <label for="codigoInput" class="form-label">Introduce tu código:</label>
-    <input [(ngModel)]="codigo" id="codigoInput" type="text" class="form-control" />
+  <input [(ngModel)]="codigo" type="text" placeholder="Introduce tu código" />
+
+  <button (click)="canjear()">Verificar Código</button>
+
+  <div class="mensaje"
+       [ngClass]="{
+         'success': mensaje.startsWith('✅'),
+         'error': mensaje.startsWith('❌'),
+         'warning': mensaje.startsWith('⚠️')
+       }">
+    {{ mensaje }}
   </div>
 
-  <button class="btn btn-primary" (click)="canjear()">Verificar Código</button>
-
-  <div class="mt-3" *ngIf="mensaje">
-    <div class="alert alert-info">{{ mensaje }}</div>
-  </div>
-
-  <div class="mt-3" *ngIf="resultado">
+  <div *ngIf="resultado" class="resultado">
     <p><strong>Código:</strong> {{ resultado.codigo }}</p>
-    <p><strong>Pedido ID:</strong> {{ resultado.pedido_id }}</p>
     <p><strong>Producto ID:</strong> {{ resultado.producto_id }}</p>
+    <p><strong>Pedido ID:</strong> {{ resultado.pedido_id }}</p>
+    <!-- Añade más info si quieres -->
   </div>
 </div>
+  

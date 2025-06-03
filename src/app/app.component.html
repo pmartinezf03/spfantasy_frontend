@@ -1,8 +1,10 @@
 <app-navigation></app-navigation>
-<!-- Menú de navegación -->
+
 <div class="content">
   <app-loader></app-loader>
-<app-inteli-artif></app-inteli-artif>
+
+  <!-- Mostrar solo si hay usuario logeado -->
+  <app-inteli-artif *ngIf="mostrarInteliArtif"></app-inteli-artif>
+
   <router-outlet></router-outlet>
-  <!-- Aquí se renderizarán las rutas -->
 </div>

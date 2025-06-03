@@ -4,7 +4,8 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-canjear-codigo',
-  templateUrl: './canjear-codigo.component.html'
+  templateUrl: './canjear-codigo.component.html',
+  styleUrls: ['./canjear-codigo.component.css']
 })
 export class CanjearCodigoComponent {
   codigo = '';

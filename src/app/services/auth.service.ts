@@ -397,6 +397,10 @@ export class AuthService {
     }
   }
 
+  public isAuthenticated$: Observable<boolean> = this.userSubject.asObservable().pipe(
+    map(user => !!user)
+  );
+
 
 
 
