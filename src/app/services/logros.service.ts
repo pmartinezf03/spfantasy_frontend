@@ -16,7 +16,6 @@ private apiUrl = `${environment.apiUrl}/api/logros`;
 
 getTodosConEstado(usuarioId: number): Observable<LogroDTO[]> {
   const token = localStorage.getItem('token');
-  console.log('📦 Token usado en logros:', token);
 
   const headers = new HttpHeaders({
     Authorization: `Bearer ${token}`

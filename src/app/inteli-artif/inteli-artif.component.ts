@@ -19,8 +19,10 @@ export class InteliArtifComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Carga inicial si necesitas
+    throw new Error('Method not implemented.');
   }
+
+
 
   abrirChat() {
     this.mostrando = true;

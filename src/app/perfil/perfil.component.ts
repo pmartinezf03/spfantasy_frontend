@@ -28,12 +28,8 @@ export class PerfilComponent implements OnInit {
   apiUrl = environment.apiUrl;
   experienciaPorcentaje: number = 0;
   nivelActual: number = 1;
-  showLoginStreakModal: boolean = false;
-  streakMessage: string = '';
 
   nivelDTO: UsuarioNivelDTO | null = null;
-
-  private ultimoNivelMostrado: number = 0;
 
   constructor(
     public authService: AuthService,
@@ -52,56 +48,30 @@ export class PerfilComponent implements OnInit {
       this.usuarioDinero = usuario.dinero ?? 0;
       this.dineroPendiente = usuario.dineroPendiente ?? 0;
 
-      // Obtener datos del nivel enriquecido (DTO)
       if (usuario.id) {
         this.usuarioService.obtenerNivelDetallado(usuario.id).subscribe({
           next: (nivelData) => {
             this.nivelDTO = nivelData;
             this.nivelActual = nivelData.nivel;
             this.experienciaPorcentaje = nivelData.porcentajeProgreso;
-
-            // Mostrar mensaje una vez por cada nuevo nivel
-            const claveNivel = `nivel-mostrado-${nivelData.nivel}`;
-            const yaMostrado = localStorage.getItem(claveNivel);
-            if (!yaMostrado) {
-              this.mostrarMensajeSubidaNivel(nivelData.nivel);
-              localStorage.setItem(claveNivel, 'true');
-            }
           },
-          error: (err) => {
-            console.error('❌ Error al obtener nivel detallado:', err);
-          }
+          error: (err) => console.error('❌ Error al obtener nivel detallado:', err)
         });
 
-        // Mostrar mensaje de racha login si aplica
-        if (this.rachaLogin > 1) {
-          const claveStorage = `racha-login-mostrada-${new Date().toISOString().split('T')[0]}`;
-          const yaMostrado = localStorage.getItem(claveStorage);
-          if (!yaMostrado) {
-            this.streakMessage = `🎉 ¡Racha de logins consecutivos: ${this.rachaLogin} días!`;
-            this.showLoginStreakModal = true;
-            localStorage.setItem(claveStorage, 'true');
-          }
-        }
-
-        // Cargar logros
         this.logrosService.getTodosConEstado(usuario.id).subscribe({
           next: logros => this.logros = logros,
           error: err => console.error('❌ Error cargando logros en perfil:', err)
         });
       }
 
-      // Lanzar tutorial si no se ha visto
       const yaVistoLocal = localStorage.getItem('tutorial_perfil') === 'true';
       const yaVistoBackend = usuario.tutorialVisto === true;
-
       if (!yaVistoLocal && !yaVistoBackend) {
         this.lanzarTutorialPerfil(usuario);
       }
     });
   }
 
-  // Método para aumentar experiencia y actualizar usuario local con respuesta del backend
   aumentarExperienciaYPersistir(puntos: number) {
     if (!this.usuarioLogueado?.id) return;
 
@@ -117,14 +87,8 @@ export class PerfilComponent implements OnInit {
               this.nivelDTO = nivelData;
               this.nivelActual = nivelData.nivel;
               this.experienciaPorcentaje = nivelData.porcentajeProgreso;
-
-              const claveNivel = `nivel-mostrado-${nivelData.nivel}`;
-              const yaMostrado = localStorage.getItem(claveNivel);
-              if (!yaMostrado) {
-                this.mostrarMensajeSubidaNivel(nivelData.nivel);
-                localStorage.setItem(claveNivel, 'true');
-              }
-            }
+            },
+            error: err => console.error('❌ Error al obtener nivel detallado tras aumentar experiencia:', err)
           });
         });
       },
@@ -133,7 +97,6 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-
 
   lanzarTutorialPerfil(usuario: any): void {
     this.tutorialService.cancelarTutorial();
@@ -168,12 +131,6 @@ export class PerfilComponent implements OnInit {
     this.tutorialService.lanzarTutorial(usuario, 'tutorial_perfil', pasos, () => {
       console.log('✅ Tutorial del perfil completado');
     });
-  }
-
-
-  mostrarMensajeSubidaNivel(nivel: number): void {
-    this.streakMessage = `🎉 ¡Felicidades! Has alcanzado el nivel ${nivel}! Sigue acumulando experiencia.`;
-    this.showLoginStreakModal = true;
   }
 
   mostrarDetalle(logro: LogroDTO): void {

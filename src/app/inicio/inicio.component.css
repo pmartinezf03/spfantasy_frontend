@@ -35,3 +35,55 @@
 .btn-saltar-tutorial:hover {
   background-color: #475569;
 }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: #1e293b;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  color: #f1f5f9;
+  font-family: sans-serif;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #facc15;
+  margin-bottom: 12px;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.modal-button {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #10b981;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-button:hover {
+  background-color: #34d399;
+  box-shadow: 0 0 10px #34d399;
+}

@@ -28,4 +28,7 @@ export interface Usuario {
   rachasFelicitadas?: number[];
   tutorialVisto: boolean;
   ultimoLogin?: string;
+
+    nivelFelicitado?: number;
+  fechaFelicitacionRacha?: string;
 }

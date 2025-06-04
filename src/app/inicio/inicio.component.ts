@@ -8,6 +8,7 @@ import { Noticia } from '../models/noticia.model';
 import { Usuario } from '../models/usuario.model';
 import { HttpClient } from '@angular/common/http';
 import { TutorialService } from '../services/tutorial.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-inicio',
@@ -30,9 +31,10 @@ export class InicioComponent implements OnInit {
   topMinutos: Jugador[] = [];
   topTl: Jugador[] = [];
   chartT3: ChartData<'bar'> = { labels: [], datasets: [] };
-  showCongratsModal: boolean = false; // Estado para el modal
-  congratsMessage: string = ''; // Mensaje de felicitación
+  showCongratsModal: boolean = false;
+  congratsMessage: string = '';
   comparativa: { usuarioPuntos: number, mediaLiga: number } = { usuarioPuntos: 0, mediaLiga: 0 };
+  apiUrl = environment.apiUrl;
 
   chartData: ChartData<'bar'> = { labels: [], datasets: [] };
   chartOptions: ChartOptions = {
@@ -133,7 +135,7 @@ export class InicioComponent implements OnInit {
           this.showCongratsModal = true;
 
           // Llamada al backend para registrar la racha como felicitada
-          this.http.post(`/api/usuarios/${usuario.id}/racha-felicitada?racha=${rachaActual}`, {}).subscribe({
+          this.http.put(`${this.apiUrl}/api/usuarios/${usuario.id}/racha-felicitada?racha=${rachaActual}`, {}).subscribe({
             next: () => {
               console.log('✅ Racha registrada correctamente en backend');
               usuario.rachasFelicitadas = [...(usuario.rachasFelicitadas ?? []), rachaActual];

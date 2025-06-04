@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(): boolean {
-    const usuario = this.auth.getUsuario(); // ✅ usamos el método que verifica localStorage
+    const usuario = this.auth.getUsuario();
 
     if (usuario) {
       return true;

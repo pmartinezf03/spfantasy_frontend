@@ -170,6 +170,21 @@ export class UsuarioService {
     return this.http.get<UsuarioNivelDTO>(`${this.apiUrl}/${id}/nivel-detallado`);
   }
 
+  registrarNivelFelicitado(usuarioId: number, nivel: number): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/${usuarioId}/felicitacion-nivel?nivel=${nivel}`, {}
+    );
+  }
+
+  felicitarNivel(usuarioId: number, nivel: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${usuarioId}/felicitacion-nivel?nivel=${nivel}`, {});
+  }
+
+  registrarRachaFelicitada(usuarioId: number): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/${usuarioId}/racha-felicitada`, {}
+    );
+  }
 
 
 

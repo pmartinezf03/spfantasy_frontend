@@ -29,21 +29,12 @@
 </div>
 
 <!-- Modal de felicitación -->
-<div
-  *ngIf="showCongratsModal"
-  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
->
-  <div
-    class="bg-[#1e2937] p-4 sm:p-6 rounded-xl w-[95%] sm:w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto relative flex flex-col"
-  >
-    <h4 class="text-xl font-bold text-white mb-4">
-      🎉 Felicidades {{ usuario?.username }}!
-    </h4>
-    <p class="text-white mb-4">{{ congratsMessage }}</p>
-    <button
-      (click)="showCongratsModal = false"
-      class="p-button p-button-rounded p-button-success text-xl font-bold py-6 px-14 hover:bg-green-500 focus:ring-4 focus:ring-green-500 transition-all !text-white !bg-green-600 !rounded-full !shadow-lg mt-6 mx-auto"
-    >
+<div *ngIf="showCongratsModal" class="modal-overlay">
+  <div class="modal-content">
+    <h4 class="modal-title">🎉 ¡Felicidades {{ usuario?.username }}!</h4>
+    <p class="modal-message">🎉 {{ congratsMessage }}</p>
+
+    <button (click)="showCongratsModal = false" class="modal-button">
       Cerrar
     </button>
   </div>
@@ -59,7 +50,7 @@
       class="bg-[#1e40af] rounded-xl p-4 sm:p-6 shadow-2xl cursor-pointer"
       (click)="openModal(chartData, 'doughnut', chartOptions)"
     >
-      <h3 class="text-xl font-bold text-white">📊 Comparativa: Tú vs Liga</h3>
+      <h3 class="text-xl font-bold text-white">📊 Tu comparativa vs La Liga</h3>
       <p-chart
         type="doughnut"
         [data]="chartData"
@@ -169,8 +160,6 @@
     </p-carousel>
   </div>
 
-
-
   <!-- Noticias -->
   <div class="section mb-6">
     <h3 class="text-2xl font-bold text-fantasyGold mb-4">
@@ -189,5 +178,4 @@
       </div>
     </div>
   </div>
-
 </div>

@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private loaderService: LoaderService,
-    private toastService: ToastService  // Inyecta el servicio aquí
+    private toastService: ToastService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],

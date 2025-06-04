@@ -1,30 +1,42 @@
-<div class="chatbot-container" *ngIf="mostrando">
-  <div class="chat-header">
-    <div class="chat-title">Chatbot SPFantasy</div>
-    <button class="close-btn" (click)="cerrarChat()">×</button>
-  </div>
+<!-- Modal de felicitación -->
+<div *ngIf="mostrando" class="chatbot-overlay">
+  <div class="chatbot-container">
+    <!-- AVATAR IA flotante -->
+    <img src="/assets/img/ia-avatar.gif" alt="IA" class="ia-avatar" />
 
-  <div class="chat-body" #scrollContainer>
-    <div *ngFor="let mensaje of mensajes"
-         [ngClass]="{'mensaje': true, 'usuario': mensaje.desdeUsuario, 'ia': !mensaje.desdeUsuario}">
-      <div class="burbuja">
-        {{ mensaje.texto }}
+    <div class="chat-header">
+      <div class="chat-title">🤖 Chatbot SPFantasy VIP</div>
+      <button class="close-btn" (click)="cerrarChat()">×</button>
+    </div>
+
+    <div class="chat-body" #scrollContainer>
+      <div
+        *ngFor="let mensaje of mensajes"
+        [ngClass]="{
+          mensaje: true,
+          usuario: mensaje.desdeUsuario,
+          ia: !mensaje.desdeUsuario
+        }"
+      >
+        <div class="burbuja">
+          {{ mensaje.texto }}
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="chat-input">
-    <input
-      type="text"
-      placeholder="Escribe tu mensaje..."
-      [(ngModel)]="entradaMensaje"
-      (keyup.enter)="enviarMensaje()"
-      autofocus
-    />
-    <button class="enviar-btn" (click)="enviarMensaje()">Enviar</button>
+    <div class="chat-input">
+      <input
+        type="text"
+        placeholder="Escribe tu mensaje..."
+        [(ngModel)]="entradaMensaje"
+        (keyup.enter)="enviarMensaje()"
+      />
+      <button class="enviar-btn" (click)="enviarMensaje()">Enviar</button>
+    </div>
   </div>
 </div>
 
+<!-- Botón flotante para abrir el chat -->
 <button *ngIf="!mostrando" class="abrir-chat-btn" (click)="abrirChat()">
-  💬 Chat SPFantasy
+  💬 Fantasy Chatbot
 </button>

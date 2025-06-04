@@ -1,17 +1,11 @@
 <div class="perfil-container" *ngIf="usuarioLogueado">
-  <h2
-    class="perfil-titulo text-3xl font-bold text-fantasyGold mb-6 text-center"
-  >
+  <h2 class="perfil-titulo text-3xl font-bold text-fantasyGold mb-6 text-center">
     🧾 Mi Perfil
   </h2>
 
-  <!-- Layout responsivo con cambio de orden en móvil -->
   <div class="perfil-grid flex flex-col lg:grid lg:grid-cols-2 gap-6">
     <!-- 🎭 Avatar + Info -->
-    <div
-      id="perfil-avatar-card"
-      class="perfil-card bg-[#1e293b] p-6 rounded-xl shadow-xl w-full"
-    >
+    <div id="perfil-avatar-card" class="perfil-card bg-[#1e293b] p-6 rounded-xl shadow-xl w-full">
       <div
         id="perfil-avatar-preview"
         class="perfil-avatar-preview mx-auto mb-4"
@@ -46,9 +40,7 @@
       >
         <p><strong>👤 Usuario:</strong> {{ usuarioLogueado.username }}</p>
         <p><strong>📧 Email:</strong> {{ usuarioLogueado.email || "-" }}</p>
-        <p>
-          <strong>💰 Dinero:</strong> {{ usuarioDinero | currency : "EUR" }}
-        </p>
+        <p><strong>💰 Dinero:</strong> {{ usuarioDinero | currency : "EUR" }}</p>
         <p class="text-red-400">
           <strong>🔴 Pendiente:</strong>
           {{ dineroPendiente | currency : "EUR" }}
@@ -61,15 +53,11 @@
       id="perfil-logros-card"
       class="perfil-card bg-[#0f172a] p-6 rounded-xl shadow-xl w-full"
     >
-      <h3
-        class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse"
-      >
+      <h3 class="text-xl font-bold text-fantasyBlue text-center mb-4 animate__animated animate__pulse">
         🏆 Logros Desbloqueados
       </h3>
 
-      <div
-        class="grid-logros grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
-      >
+      <div class="grid-logros grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         <div
           *ngFor="let logro of logros"
           class="card-logro cursor-pointer"
@@ -103,9 +91,7 @@
     <div class="flex flex-col items-center space-y-4 w-full">
       <div class="text-lg font-semibold">Nivel {{ nivelDTO?.nivel ?? 1 }}</div>
 
-      <div
-        class="w-full bg-gray-700 h-6 rounded-full overflow-hidden shadow-inner"
-      >
+      <div class="w-full bg-gray-700 h-6 rounded-full overflow-hidden shadow-inner">
         <div
           class="h-full bg-gradient-to-r from-green-400 to-blue-500 text-xs text-center font-bold text-black transition-all duration-500"
           [ngStyle]="{ width: (nivelDTO?.porcentajeProgreso ?? 0) + '%' }"
@@ -115,14 +101,13 @@
       </div>
 
       <div class="text-sm text-gray-300 text-center">
-        <strong class="text-green-400"
-          >{{ nivelDTO?.experienciaActualNivel ?? 0 }} pts</strong
-        >
+        <strong class="text-green-400">
+          {{ nivelDTO?.experienciaActualNivel ?? 0 }} pts
+        </strong>
         /
-        <strong class="text-yellow-400"
-          >{{ nivelDTO?.experienciaParaSubir ?? 0 }} pts</strong
-        >
-
+        <strong class="text-yellow-400">
+          {{ nivelDTO?.experienciaParaSubir ?? 0 }} pts
+        </strong>
         para el siguiente nivel
       </div>
 
@@ -134,28 +119,14 @@
               (nivelDTO?.experienciaActualNivel ?? 0)
           }}
         </span>
-
         puntos para subir de nivel
       </p>
     </div>
   </div>
 
-  <!-- Modales -->
+  <!-- Modal de logros -->
   <app-logro-detalle-modal
     [logro]="logroSeleccionado"
     (cerrar)="logroSeleccionado = null"
   ></app-logro-detalle-modal>
-
-  <div *ngIf="showLoginStreakModal" class="modal-overlay">
-    <div class="modal-content bg-[#1e293b] p-6 rounded-xl text-center">
-      <h3 class="text-xl text-fantasyGold mb-4">¡Racha de Login!</h3>
-      <p class="text-white">{{ streakMessage }}</p>
-      <button
-        (click)="showLoginStreakModal = false"
-        class="btn-close mt-4 bg-red-600 text-white px-4 py-2 rounded-md"
-      >
-        Cerrar
-      </button>
-    </div>
-  </div>
 </div>
