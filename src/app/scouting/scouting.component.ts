@@ -43,7 +43,7 @@ export class ScoutingComponent implements OnInit {
         }
       });
     } else {
-      console.warn('⚠️ No se encontró una liga activa.');
+      console.warn('️ No se encontró una liga activa.');
       this.cargando = false;
     }
   }
@@ -59,7 +59,7 @@ export class ScoutingComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error al cargar medias por posición', err);
-        this.comparacionMedia = '⚠️ No se pudo cargar la comparativa.';
+        this.comparacionMedia = '️ No se pudo cargar la comparativa.';
         this.modalVisible = true;
       }
     });
@@ -69,7 +69,7 @@ export class ScoutingComponent implements OnInit {
     const diferencias = [
       jugador.fp > media.fp ? '✔️ FP superior a la media' : '❌ FP por debajo',
       jugador.min > media.min ? '✔️ Juega más minutos' : '⏱️ Pocos minutos',
-      jugador.t2 > media.t2 ? '✔️ Buen porcentaje en T2' : '⚠️ T2 bajo',
+      jugador.t2 > media.t2 ? '✔️ Buen porcentaje en T2' : '️ T2 bajo',
       jugador.t3 > media.t3 ? '✔️ Triplista eficaz' : '❌ Triples mejorables'
     ];
 
@@ -94,14 +94,14 @@ export class ScoutingComponent implements OnInit {
   generarRecomendacion(jugador: Jugador): string {
     const etiquetas: string[] = [];
 
-    if (jugador.fp && jugador.fp > 15) etiquetas.push('📈 Valor alto');
-    if (jugador.t2 && jugador.t2 > 60) etiquetas.push('🎯 Eficiencia en T2');
-    if (jugador.rendimiento && jugador.rendimiento > 8) etiquetas.push('🔥 En racha');
-    if (jugador.precioVenta < 2000000) etiquetas.push('💸 Precio bajo para su nivel');
+    if (jugador.fp && jugador.fp > 15) etiquetas.push(' Valor alto');
+    if (jugador.t2 && jugador.t2 > 60) etiquetas.push(' Eficiencia en T2');
+    if (jugador.rendimiento && jugador.rendimiento > 8) etiquetas.push(' En racha');
+    if (jugador.precioVenta < 2000000) etiquetas.push(' Precio bajo para su nivel');
 
     return etiquetas.length
       ? `✅ Motivos para ficharlo: ${etiquetas.join(', ')}.`
-      : '⚠️ Jugador con rendimiento estable. Aún sin señales destacadas.';
+      : '️ Jugador con rendimiento estable. Aún sin señales destacadas.';
   }
 
   obtenerComparativaReal(jugador: Jugador): void {
@@ -110,7 +110,7 @@ export class ScoutingComponent implements OnInit {
         const diferencias = [
           jugador.fp > media.fp ? '✔️ FP superior a la media' : '❌ FP por debajo de la media',
           jugador.min > media.min ? '✔️ Juega muchos minutos' : '⏱️ Rotación limitada',
-          jugador.t2 > media.t2 ? '✔️ T2 efectivo' : '⚠️ Mal en tiros de 2',
+          jugador.t2 > media.t2 ? '✔️ T2 efectivo' : '️ Mal en tiros de 2',
           jugador.t3 > media.t3 ? '✔️ Buen triplista' : '❌ Baja efectividad en T3'
         ];
 

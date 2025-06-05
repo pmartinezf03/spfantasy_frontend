@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Jugador } from '../models/jugador.model';
 import { UsuarioService } from '../services/usuario.service';
 import { AuthService } from '../services/auth.service';
-import { JugadorService } from '../services/jugador.service'; // Asegúrate de importar el servicio de jugadores
-import { ChangeDetectorRef } from '@angular/core';
+import { JugadorService } from '../services/jugador.service'; import { ChangeDetectorRef } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LoaderService } from '../shared/loader.service';
@@ -46,9 +45,9 @@ export class MiPlantillaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 🧩 loader start
+    //  loader start
     this.loaderService.showBarraCarga();
-    // 🧩 loader end
+    //  loader end
 
     this.fechaActual = new Date().toLocaleString('es-ES', {
       weekday: 'short',
@@ -60,8 +59,8 @@ export class MiPlantillaComponent implements OnInit {
 
     const user = this.authService.getUser();
     if (!user || !user.username) {
-      console.error('⚠ No hay usuario logueado o falta el username.');
-      this.loaderService.hideBarraCarga(); // 🧩 importante ocultar en error también
+      console.error(' No hay usuario logueado o falta el username.');
+      this.loaderService.hideBarraCarga(); //  importante ocultar en error también
       return;
     }
 
@@ -73,7 +72,7 @@ export class MiPlantillaComponent implements OnInit {
         this.cargarDinero();
         this.cdr.detectChanges();
       } else {
-        this.loaderService.hideBarraCarga(); // 🧩 evitar spinner infinito
+        this.loaderService.hideBarraCarga(); //  evitar spinner infinito
       }
     });
   }
@@ -118,14 +117,14 @@ export class MiPlantillaComponent implements OnInit {
           if (this.jugadoresPorPosicion[key]) {
             this.jugadoresPorPosicion[key].push(j);
           } else {
-            console.warn(`⚠ Posición no mapeada: "${j.posicion}" → "${key}"`);
+            console.warn(` Posición no mapeada: "${j.posicion}" → "${key}"`);
           }
 
         });
 
 
 
-        console.log("✅ Plantilla recuperada correctamente:");
+        
         this.generarGraficosTitulares();
         this.loaderService.hideBarraCarga();
       } else {
@@ -136,7 +135,7 @@ export class MiPlantillaComponent implements OnInit {
     this.usuarioService.obtenerPuntosSemanales(this.username, token).subscribe({
       next: puntos => {
         this.puntosSemanales = puntos;
-        console.log("📊 Puntos semanales por jugador:", puntos);
+        
       },
       error: err => {
         console.error("❌ Error al obtener puntos semanales:", err);
@@ -162,13 +161,13 @@ export class MiPlantillaComponent implements OnInit {
     const usuarioId = this.authService.getUserId();
 
     if (!ligaId || !usuarioId) {
-      console.warn("⚠ No hay ligaId o usuarioId disponibles.");
+      console.warn(" No hay ligaId o usuarioId disponibles.");
       return;
     }
 
     this.jugadorService.obtenerJugadoresDeUsuarioEnLiga(ligaId, usuarioId).subscribe({
       next: jugadores => {
-        console.log("✅ Jugadores recibidos para mostrar en vista LISTA:");
+        
         console.table(jugadores);
         this.todosLosJugadores = jugadores;
 
@@ -179,7 +178,7 @@ export class MiPlantillaComponent implements OnInit {
         this.generarGraficosTitulares();
 
 
-        console.log("✅ Jugadores de la liga cargados:", jugadores);
+        
       },
       error: err => {
         console.error("❌ Error al cargar jugadores de la liga:", err);
@@ -202,9 +201,9 @@ export class MiPlantillaComponent implements OnInit {
         }));
 
 
-        console.log("🔄 Estadísticas actualizadas:");
-        console.log("Titulares:", this.jugadoresTitulares);
-        console.log("Suplentes:", this.jugadoresBanquillo);
+        
+        
+        
       }
     }, error => {
       console.error("❌ Error obteniendo estadísticas del usuario:", error);
@@ -229,7 +228,7 @@ export class MiPlantillaComponent implements OnInit {
   moverJugador(evento: { jugador: Jugador; tipo: string }) {
     evento.jugador.esTitular = evento.tipo === 'titular';
 
-    // 🔁 Siempre actualiza el array de titulares a partir del mapa por posición
+    //  Siempre actualiza el array de titulares a partir del mapa por posición
     this.jugadoresTitulares = Object.values(this.jugadoresPorPosicion).flat();
     this.generarGraficosTitulares();
 
@@ -255,19 +254,19 @@ export class MiPlantillaComponent implements OnInit {
           return;
         }
 
-        this.loaderService.showSpinner(); // 🧩 mostrar spinner
+        this.loaderService.showSpinner(); //  mostrar spinner
 
         this.usuarioService.venderJugadorDeLiga(this.username, jugador.idLiga, token)
           .subscribe({
             next: (response) => {
-              console.log("✅ [FRONT] Respuesta correcta del backend:", response);
+              
 
               this.jugadoresTitulares = this.jugadoresTitulares.filter(j => j.id !== jugador.id);
               this.jugadoresBanquillo = this.jugadoresBanquillo.filter(j => j.id !== jugador.id);
               this.authService.refreshUsuarioCompleto();
               this.cargarJugadores();
 
-              this.loaderService.hideSpinner(); // 🧩 ocultar spinner
+              this.loaderService.hideSpinner(); //  ocultar spinner
 
               // ✅ Notificación de éxito
               this.messageService.add({
@@ -317,7 +316,7 @@ export class MiPlantillaComponent implements OnInit {
         const ligaId = this.authService.getLigaId();
 
         if (!token || !this.username || !ligaId) {
-          console.error("⚠ Faltan datos para comprar jugador.");
+          console.error(" Faltan datos para comprar jugador.");
           return;
         }
 
@@ -326,16 +325,16 @@ export class MiPlantillaComponent implements OnInit {
           return;
         }
 
-        // 🧩 Spinner superpuesto
+        //  Spinner superpuesto
         this.loaderService.showSpinner();
 
         this.usuarioService.comprarJugadorDeLiga(this.username, jugador.id, ligaId, token).subscribe({
           next: () => {
-            console.log('✅ Jugador comprado correctamente');
+            
             this.authService.refreshUsuarioCompleto();
             this.cargarJugadores();
 
-            this.loaderService.hideSpinner(); // 🧩 ocultar spinner
+            this.loaderService.hideSpinner(); //  ocultar spinner
 
             // ✅ Mensaje de éxito
             alert(`✅ Has comprado a ${jugador.nombre}. Ya está disponible en tu plantilla.`);
@@ -343,7 +342,7 @@ export class MiPlantillaComponent implements OnInit {
           error: (error) => {
             console.error("❌ Error al comprar jugador:", error);
             alert("❌ No se pudo comprar el jugador.");
-            this.loaderService.hideSpinner(); // 🧩 ocultar en error también
+            this.loaderService.hideSpinner(); //  ocultar en error también
           }
         });
       }
@@ -357,11 +356,11 @@ export class MiPlantillaComponent implements OnInit {
   guardarPlantilla(): void {
     const token = this.authService.getToken();
     if (!token) {
-      console.error("⚠ No hay token disponible.");
+      console.error(" No hay token disponible.");
       return;
     }
 
-    // 🔄 1. Obtener titulares desde las posiciones
+    //  1. Obtener titulares desde las posiciones
     const titulares: Jugador[] = Object.values(this.jugadoresPorPosicion).flat();
 
     // ❗ Validar exactamente 5 titulares
@@ -371,7 +370,7 @@ export class MiPlantillaComponent implements OnInit {
       return;
     }
 
-    // 🔄 2. Calcular suplentes automáticamente
+    //  2. Calcular suplentes automáticamente
     const idsTitularesSet = new Set(titulares.map(j => j.id));
     const todosJugadores = [...titulares, ...this.jugadoresBanquillo];
 
@@ -383,7 +382,7 @@ export class MiPlantillaComponent implements OnInit {
       suplentes: suplentes.map(j => j.idLiga ?? j.id)
     };
 
-    console.log("📤 Enviando plantilla a guardar:", plantillaData);
+    
 
     this.usuarioService.guardarPlantilla(this.username, plantillaData, token).subscribe({
       next: (res) => {
@@ -407,7 +406,7 @@ export class MiPlantillaComponent implements OnInit {
 
 
   mostrarInformacion(jugador: Jugador): void {
-    console.log("📌 Mostrando información del jugador:", jugador);
+    
     this.jugadorSeleccionado = jugador;
     this.mostrarModalInformacion = true;
   }
@@ -460,7 +459,7 @@ export class MiPlantillaComponent implements OnInit {
     const promMin = totalMin / cantidad;
     const promFp = totalFp / cantidad;
 
-    // 📡 Radar
+    //  Radar
     this.radarStatsData = {
       labels: ['T2', 'T3', 'TL', 'Min', 'FP'],
       datasets: [
@@ -498,12 +497,12 @@ export class MiPlantillaComponent implements OnInit {
       }
     };
 
-    // 🧾 Tarjetas de resumen
+    //  Tarjetas de resumen
     const totalPrecio = jugadores.reduce((s, j) => s + (j.precioVenta ?? 0), 0);
 
     this.resumenStats = [
       {
-        icono: '💰',
+        icono: '',
         titulo: 'Valor total',
         valor: totalPrecio.toLocaleString('es-ES') + ' €'
       },
@@ -513,12 +512,12 @@ export class MiPlantillaComponent implements OnInit {
         valor: promFp.toFixed(1)
       },
       {
-        icono: '🕒',
+        icono: '',
         titulo: 'Min. prom.',
         valor: promMin.toFixed(1)
       },
       {
-        icono: '📊',
+        icono: '',
         titulo: 'Titulares / Banquillo',
         valor: `${this.jugadoresTitulares.length} / ${this.jugadoresBanquillo.length}`
       }

@@ -67,11 +67,11 @@ export class AuthService {
 
       if (user && token) {
         this.userSubject.next(user);
-        console.log('📥 usuarioCompleto$ emitió:', user);
-        console.log("🧪 VIP hasta (inicio):", user.vipHasta); // 👈 AÑADE AQUÍ
+        
+        //  AÑADE AQUÍ
 
 
-        this.refreshUsuarioCompleto(); // 🔄 Refresca datos extendidos (dinero, etc.)
+        this.refreshUsuarioCompleto(); //  Refresca datos extendidos (dinero, etc.)
         this.registrarSesion(user.id); // sesion diaria
         this.registrarLogin(user.id);  // login real
 
@@ -99,7 +99,7 @@ export class AuthService {
           this.registrarLogin(userId);     // Suma login y actualiza racha
           this.registrarSesion(userId);    // Suma sesiones
 
-          // 🔄 Refrescar datos completos del usuario
+          //  Refrescar datos completos del usuario
           this.refreshUsuarioCompleto().subscribe();
         }
       })
@@ -120,12 +120,12 @@ export class AuthService {
 
   logout(): void {
 
-    // 🧹 Limpieza de localStorage
+    //  Limpieza de localStorage
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('ligaId');
 
-    // 🧹 Limpieza de estado interno
+    //  Limpieza de estado interno
     this.userSubject.next(null);
     this.usuarioCompletoSubject.next(null);
     this.setLiga(null);
@@ -144,7 +144,7 @@ export class AuthService {
   refreshUsuarioCompleto(): Observable<Usuario | null> {
     const userId = this.getUserId();
     if (!userId) {
-      console.warn('⚠️ No se pudo obtener el ID del usuario para refrescar.');
+      console.warn('️ No se pudo obtener el ID del usuario para refrescar.');
       return of(null);
     }
 
@@ -166,7 +166,7 @@ export class AuthService {
         )
       ),
       tap((usuario) => {
-        console.log('📥 usuarioCompleto$ emitió (desde refresh):', usuario);
+        
         this.usuarioCompleto = usuario;
         this.usuarioCompletoSubject.next(usuario);
 
@@ -192,7 +192,7 @@ export class AuthService {
 
           this.userSubject.next(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          console.log('🆕 Usuario con VIP y nivel actualizado en localStorage:', updatedUser);
+          
         }
       }),
       catchError((error) => {
@@ -211,7 +211,7 @@ export class AuthService {
       const stored = localStorage.getItem('user');
       if (stored) {
         user = JSON.parse(stored);
-        this.userSubject.next(user); // 🔁 Lo restauramos
+        this.userSubject.next(user); //  Lo restauramos
       }
     }
 
@@ -275,7 +275,7 @@ export class AuthService {
 
   esVip(): boolean {
     const vipHasta = this.getUser()?.vipHasta;
-    console.log('🧪 [esVip] vipHasta:', vipHasta);
+    
 
     if (!vipHasta) return false;
 
@@ -283,7 +283,7 @@ export class AuthService {
     const expiracion = new Date(vipHasta);
     const esVip = expiracion > ahora;
 
-    console.log(`🔎 VIP válido? ${esVip} (ahora: ${ahora.toISOString()}, expira: ${expiracion.toISOString()})`);
+    
 
     return esVip;
   }
@@ -317,7 +317,7 @@ export class AuthService {
     }
   }
 
-  // 🔥 Estadísticas de usuario
+  //  Estadísticas de usuario
   registrarLogin(userId: number): void {
     this.http.put(`${this.apiUrl}/estadisticas/${userId}/login`, null, {
       headers: this.getAuthHeaders()

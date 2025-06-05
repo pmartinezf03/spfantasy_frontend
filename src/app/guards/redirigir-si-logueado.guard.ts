@@ -10,7 +10,7 @@ export class RedirigirSiLogueadoGuard implements CanActivate {
 
   canActivate(): boolean {
     if (this.authService.isLoggedIn()) {
-      console.log('🔁 Usuario ya logueado. Redirigiendo a /inicio');
+      
       this.router.navigate(['/inicio']);
       return false;
     }

@@ -21,7 +21,6 @@ export class OfertaDialogoComponent {
   mensajeError: string = '';
 
   cerrarDialogo() {
-    console.log("❎ [Dialogo] Cerrar diálogo");
     this.cerrar.emit();
   }
 
@@ -31,8 +30,6 @@ export class OfertaDialogoComponent {
       return;
     }
   
-    console.log("📤 BOTÓN CONFIRMAR pulsado. Modo:", this.modo);
-    console.log("💸 Monto introducido:", this.montoOferta);
   
     if (this.modo === 'oferta') {
       const totalPropuesto = this.totalOfertasEnCurso + this.montoOferta;
@@ -41,11 +38,11 @@ export class OfertaDialogoComponent {
         return;
       }
   
-      console.log("✅ Emitiendo evento enviarOferta...");
+      
       this.enviarOferta.emit({ monto: this.montoOferta });
   
     } else {
-      console.log("✅ Emitiendo evento enviarContraoferta...");
+      
       this.enviarContraoferta.emit({ monto: this.montoOferta });
     }
   

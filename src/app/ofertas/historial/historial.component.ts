@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { TransaccionService } from '../../services/transaccion.service';
 import { AuthService } from '../../services/auth.service';
-import { Transaccion } from '../../models/transaccion.model'; // ⬅️ CAMBIA AQUI
-
+import { Transaccion } from '../../models/transaccion.model'; 
 @Component({
   selector: 'app-historial',
   templateUrl: './historial.component.html',
   styleUrls: ['./historial.component.css']
 })
 export class HistorialComponent implements OnInit {
-  historial: Transaccion[] = []; // ⬅️ CAMBIA AQUI
-  historialFiltrado: Transaccion[] = []; // ⬅️ CAMBIA AQUI
-  filtroNombre: string = '';
+  historial: Transaccion[] = [];   historialFiltrado: Transaccion[] = [];   filtroNombre: string = '';
 
   constructor(
     private transaccionService: TransaccionService,

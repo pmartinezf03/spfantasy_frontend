@@ -91,7 +91,7 @@ export class EstadisticasLigaComponent implements OnInit {
     this.obtenerDineroUsuario();
     this.cargarOfertasUsuario();
 
-    // 🔄 Suscribirse a cambios de ligaId para actualizar estadísticas dinámicamente
+    //  Suscribirse a cambios de ligaId para actualizar estadísticas dinámicamente
     this.authService.getLigaObservable().subscribe(ligaId => {
       if (ligaId) {
         this.cargarEstadisticas();
@@ -103,19 +103,19 @@ export class EstadisticasLigaComponent implements OnInit {
             this.tutorialService.lanzarTutorial(user, 'tutorial_estadisticas', [
               {
                 id: 'grafico-estadisticas',
-                title: '📊 Radar de Jugadores Top',
+                title: ' Radar de Jugadores Top',
                 text: 'Aquí puedes ver un radar comparativo con los 3 mejores jugadores de la liga.',
                 attachTo: { element: '#grafico-radar', on: 'top' }
               },
               {
                 id: 'tabla-jugadores',
-                title: '🧮 Estadísticas Detalladas',
+                title: ' Estadísticas Detalladas',
                 text: 'Consulta todas las estadísticas por jugador para tomar decisiones inteligentes.',
                 attachTo: { element: '#tabla-estadisticas', on: 'top' }
               },
               {
                 id: 'boton-oferta',
-                title: '💸 Enviar Oferta',
+                title: ' Enviar Oferta',
                 text: 'Pulsa para enviar una oferta a un jugador directamente desde aquí.',
                 attachTo: { element: '.btn-oferta', on: 'bottom' }
               }
@@ -133,7 +133,7 @@ export class EstadisticasLigaComponent implements OnInit {
     const ligaId = this.authService.getLigaId();
 
     if (!ligaId) {
-      console.warn("⚠ No se pudo cargar estadísticas: no hay ligaId.");
+      console.warn(" No se pudo cargar estadísticas: no hay ligaId.");
       return;
     }
 
@@ -145,7 +145,6 @@ export class EstadisticasLigaComponent implements OnInit {
           propietarioUsername: jugador.propietarioUsername ?? 'Libre'
         }));
 
-        console.log("📊 Jugadores con estadísticas cargados:", this.jugadores);
 
         this.construirRadarJugadoresTop();
 
@@ -170,7 +169,7 @@ export class EstadisticasLigaComponent implements OnInit {
   cargarOfertasUsuario(): void {
     const ligaId = this.authService.getLigaId();
     if (!ligaId) {
-      console.warn("⚠ No se pudo cargar ofertas: no hay liga activa.");
+      console.warn(" No se pudo cargar ofertas: no hay liga activa.");
       return;
     }
 

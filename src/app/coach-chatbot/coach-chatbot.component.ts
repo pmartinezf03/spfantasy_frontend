@@ -27,16 +27,14 @@ export class CoachChatbotComponent implements OnInit {
       });
 
       const url = `${environment.apiUrl}/api/usuarios/${usuario.username}/consejos`;
-      console.log("🌐 Llamando a:", url); // 👈 Confirmación
 
       this.http.get<string[]>(url, { headers }).subscribe({
         next: (res) => {
           this.mensajes = res;
-          console.log("✅ Consejos del Coach:", res);
         },
         error: (err) => {
           console.error("❌ Error al obtener consejos del Coach:", err);
-          this.mensajes = ["⚠️ No se pudieron cargar los consejos del coach."];
+          this.mensajes = ["️ No se pudieron cargar los consejos del coach."];
         }
       });
     }

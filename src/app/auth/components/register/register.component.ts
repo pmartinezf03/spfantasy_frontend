@@ -36,7 +36,7 @@ export class RegisterComponent implements OnInit {
           Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$')
         ]
       ],
-      terminos: [false, Validators.requiredTrue] // 👈 AÑADIDO
+      terminos: [false, Validators.requiredTrue] //  AÑADIDO
     });
 
   }
@@ -77,7 +77,7 @@ export class RegisterComponent implements OnInit {
       next: response => {
         this.loading = false;
         this.showModal = false;
-        this.mensaje = '🎉 Registro exitoso. Ahora puedes iniciar sesión.';
+        this.mensaje = ' Registro exitoso. Ahora puedes iniciar sesión.';
         this.authService.logout();
         this.registerForm.reset();
         this.captchaToken = null;
@@ -89,7 +89,7 @@ export class RegisterComponent implements OnInit {
       error: error => {
         this.loading = false;
         this.showModal = false;
-        this.mensaje = '⚠ Error en el registro. Inténtalo nuevamente.';
+        this.mensaje = ' Error en el registro. Inténtalo nuevamente.';
       }
     });
   }

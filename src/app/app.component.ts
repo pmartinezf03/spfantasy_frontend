@@ -10,7 +10,7 @@ import { LigasService } from './services/ligas.service';
 })
 export class AppComponent implements OnInit {
   title = 'sp_fantasy';
-  mostrarInteliArtif = false; // 👈 NUEVO
+  mostrarInteliArtif = false; //  NUEVO
 
   constructor(
     private authService: AuthService,
@@ -19,11 +19,10 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('🚀 [AppComponent] Cargando aplicación...');
 
     this.authService.initSesionDesdeStorage();
 
-    // 🔍 Observamos si hay sesión activa para mostrar <app-inteli-artif>
+    //  Observamos si hay sesión activa para mostrar <app-inteli-artif>
     this.authService.isAuthenticated$.subscribe((autenticado) => {
       this.mostrarInteliArtif = autenticado;
     });
@@ -34,11 +33,9 @@ export class AppComponent implements OnInit {
         const ligaId = this.authService.getLigaId();
 
         if (ligaId) {
-          console.log('✅ Liga encontrada en AuthService:', ligaId);
           return;
         }
 
-        console.log('ℹ️ No hay liga en memoria, buscando desde el backend...');
         this.ligasService.obtenerLigaDelUsuario(user.id).subscribe({
           next: (liga) => {
             if (liga) {
@@ -50,7 +47,6 @@ export class AppComponent implements OnInit {
             }
           },
           error: () => {
-            console.log('❌ Error verificando liga');
             this.router.navigate(['/ligas']);
           }
         });

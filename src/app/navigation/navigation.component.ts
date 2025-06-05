@@ -45,7 +45,7 @@ export class NavigationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // 🔁 Suscribirse al usuario completo
+    //  Suscribirse al usuario completo
     this.authService.usuarioCompleto$.subscribe(usuario => {
 
 
@@ -69,7 +69,7 @@ export class NavigationComponent implements OnInit {
               );
               this.avatarBase64 = `data:image/png;base64,${base64}`;
             }, error => {
-              console.warn('⚠️ Avatar no disponible. Usando imagen por defecto.');
+              console.warn('️ Avatar no disponible. Usando imagen por defecto.');
               this.avatarBase64 = null;
             });
         } else {
@@ -89,25 +89,25 @@ export class NavigationComponent implements OnInit {
       });
     });
 
-    // 🔔 Verificar si hay ofertas nuevas
+    //  Verificar si hay ofertas nuevas
     const userId = this.authService.getUserId();
     if (userId) {
       this.ofertasService.tieneOfertasNuevas(userId).subscribe(resp => {
         this.tieneOfertasNuevas = resp.tieneOfertasNuevas;
-        console.log('📨 Ofertas nuevas detectadas:', this.tieneOfertasNuevas);
+        
         this.construirMenu();
       });
 
       this.ofertasService.ofertasLeidas$.subscribe(leidas => {
         if (leidas) {
           this.tieneOfertasNuevas = false;
-          console.log('🧹 Ofertas marcadas como leídas');
+          
           this.construirMenu();
         }
       });
     }
 
-    // 🔁 Refrescar usuario completo al iniciar, si no lo estaba
+    //  Refrescar usuario completo al iniciar, si no lo estaba
     const user = this.authService.getUser();
 
     if (user?.id) {
@@ -143,22 +143,22 @@ export class NavigationComponent implements OnInit {
 
   construirMenu(): void {
     this.items = [
-      { label: '🏠 Inicio', routerLink: '/' },
-      { label: '📊 Estadísticas', routerLink: '/estadisticas-liga' },
-      { label: '📰 Noticias', routerLink: '/noticias' },
+      { label: ' Inicio', routerLink: '/' },
+      { label: ' Estadísticas', routerLink: '/estadisticas-liga' },
+      { label: ' Noticias', routerLink: '/noticias' },
       ...(this.isUserLoggedIn
         ? [
-          { label: '🛒 Mercado', routerLink: '/mercado' },
-          { label: '🏀 Mi Plantilla', routerLink: '/plantilla' },
-          { label: '🏆 Ligas', routerLink: '/ligas' },
-          { label: '💬 Chat', routerLink: '/chat' },
-          { label: this.tieneOfertasNuevas ? '💰 Ofertas 🔴' : '💰 Ofertas', routerLink: '/ofertas' },
-          { label: '📈 Comparador', routerLink: '/comparador' }
+          { label: ' Mercado', routerLink: '/mercado' },
+          { label: ' Mi Plantilla', routerLink: '/plantilla' },
+          { label: ' Ligas', routerLink: '/ligas' },
+          { label: ' Chat', routerLink: '/chat' },
+          { label: this.tieneOfertasNuevas ? ' Ofertas ' : ' Ofertas', routerLink: '/ofertas' },
+          { label: ' Comparador', routerLink: '/comparador' }
         ]
         : [])
       ,
       {
-        label: this.isUserLoggedIn ? '🚪 Cerrar Sesión' : '🔑 Iniciar sesión',
+        label: this.isUserLoggedIn ? ' Cerrar Sesión' : ' Iniciar sesión',
         command: () => {
           this.isUserLoggedIn ? this.logout() : this.router.navigate(['/auth']);
         }
@@ -171,9 +171,8 @@ export class NavigationComponent implements OnInit {
     const usuario = this.authService.getUser();
     if (!usuario || localStorage.getItem('tutorial_navbar') === 'true') return;
 
-    // Evita conflictos si otro tutorial ya está en marcha
-    if ((window as any).Shepherd?.activeTour) {
-      console.warn('⛔ Otro tutorial ya está activo. Se cancela el del navbar.');
+        if ((window as any).Shepherd?.activeTour) {
+      console.warn(' Otro tutorial ya está activo. Se cancela el del navbar.');
       return;
     }
 
@@ -181,43 +180,43 @@ export class NavigationComponent implements OnInit {
       {
         id: 'logo',
         attachTo: { element: '.logo-navbar', on: 'bottom' },
-        title: '🏀 Bienvenido a SP Fantasy',
+        title: ' Bienvenido a SP Fantasy',
         text: 'Este es el logo oficial de la aplicación.',
       },
       {
         id: 'inicio',
         attachTo: { element: '.menu-item-inicio', on: 'bottom' },
-        title: '🏠 Inicio',
+        title: ' Inicio',
         text: 'Desde aquí puedes volver a la página principal.',
       },
       {
         id: 'plantilla',
         attachTo: { element: '.menu-item-plantilla', on: 'bottom' },
-        title: '🏀 Mi Plantilla',
+        title: ' Mi Plantilla',
         text: 'Aquí puedes ver y editar tu plantilla.',
       },
       {
         id: 'ofertas',
         attachTo: { element: '.menu-item-ofertas', on: 'bottom' },
-        title: '📩 Ofertas',
+        title: ' Ofertas',
         text: 'Accede a tus ofertas desde aquí.',
       },
       {
         id: 'perfil',
         attachTo: { element: '#nav-avatar', on: 'left' },
-        title: '👤 Perfil',
+        title: ' Perfil',
         text: 'Tu avatar y opciones de usuario están aquí.',
       }
     ];
 
     this.tutorialService.lanzarTutorial(usuario, 'tutorial_navbar', pasos, () => {
-      console.log('✅ Tutorial navbar completado');
+      
     });
   }
 
 
   logout(): void {
-    console.log('🔐 Cerrando sesión...');
+    
     this.authService.logout();
 
     this.reiniciarSesion();
@@ -230,7 +229,7 @@ export class NavigationComponent implements OnInit {
   }
 
   reiniciarSesion(): void {
-    console.log('🧹 Reiniciando sesión: limpiando localStorage y forzando recarga');
+    
     localStorage.clear();
 
     this.router.navigateByUrl('/auth').then(() => {

@@ -67,7 +67,7 @@ export class OfertasService {
 
 
 
-  // 🔴 Subject para notificar al NavigationComponent
+  //  Subject para notificar al NavigationComponent
   private ofertasLeidasSubject = new BehaviorSubject<boolean>(false);
   ofertasLeidas$ = this.ofertasLeidasSubject.asObservable();
 

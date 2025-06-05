@@ -32,7 +32,7 @@
   text-align: center;
 }
 
-/* 📱 Móviles */
+/*  Móviles */
 @media screen and (max-width: 768px) {
   .sidebar-container {
     padding: 0 1rem;

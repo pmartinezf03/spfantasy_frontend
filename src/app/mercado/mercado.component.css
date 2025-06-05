@@ -9,7 +9,7 @@
   z-index: 2;
 }
 
-/* 🔍 Filtros */
+/*  Filtros */
 .filtros-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -40,7 +40,7 @@
   box-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
 }
 
-/* 🟨 Scrollable 2 columnas */
+/*  Scrollable 2 columnas */
 .contenedor-scroll {
   display: grid;
   grid-template-columns: 0.4fr 0.6fr;

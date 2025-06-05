@@ -131,17 +131,17 @@ export class InicioComponent implements OnInit {
         const rachaActual = usuario.rachaLogin ?? 0;
 
         if (rachaActual >= 2 && !usuario.rachasFelicitadas?.includes(rachaActual)) {
-          this.congratsMessage = `🎉 ¡Felicidades ${usuario.username}! Has iniciado sesión durante ${rachaActual} día/s consecutivos. ¡Sigue así!`;
+          this.congratsMessage = ` ¡Felicidades ${usuario.username}! Has iniciado sesión durante ${rachaActual} día/s consecutivos. ¡Sigue así!`;
           this.showCongratsModal = true;
 
           // Llamada al backend para registrar la racha como felicitada
           this.http.put(`${this.apiUrl}/api/usuarios/${usuario.id}/racha-felicitada?racha=${rachaActual}`, {}).subscribe({
             next: () => {
-              console.log('✅ Racha registrada correctamente en backend');
+              
               usuario.rachasFelicitadas = [...(usuario.rachasFelicitadas ?? []), rachaActual];
             },
             error: err => {
-              console.warn('⚠️ No se pudo registrar la racha (puede que ya esté registrada):', err);
+              console.warn('️ No se pudo registrar la racha (puede que ya esté registrada):', err);
             }
           });
         }
@@ -268,11 +268,11 @@ export class InicioComponent implements OnInit {
     // Carrusel
     setTimeout(() => {
       this.carruselTop = [
-        { titulo: '🔥 Triplistas Letales', jugadores: this.topT3, formato: (j: Jugador) => `${j.t3} triples` },
-        { titulo: '💪 Rendimiento Total', jugadores: this.topRendimiento, formato: (j: Jugador) => `${j.fp} fp / ${j.min} min` },
-        { titulo: '💰 Valor de Mercado', jugadores: this.topPrecio, formato: (j: Jugador) => `${j.precioVenta.toLocaleString()} €` },
+        { titulo: ' Triplistas Letales', jugadores: this.topT3, formato: (j: Jugador) => `${j.t3} triples` },
+        { titulo: ' Rendimiento Total', jugadores: this.topRendimiento, formato: (j: Jugador) => `${j.fp} fp / ${j.min} min` },
+        { titulo: ' Valor de Mercado', jugadores: this.topPrecio, formato: (j: Jugador) => `${j.precioVenta.toLocaleString()} €` },
         { titulo: '⏱️ Jugadores más utilizados', jugadores: this.topMinutos, formato: (j: Jugador) => `${j.min} minutos` },
-        { titulo: '🏀 Tiros libres dominados', jugadores: this.topTl, formato: (j: Jugador) => `${j.tl} TL` }
+        { titulo: ' Tiros libres dominados', jugadores: this.topTl, formato: (j: Jugador) => `${j.tl} TL` }
       ].filter(grupo => grupo.jugadores.length > 0);
     }, 500);
 
@@ -304,11 +304,11 @@ export class InicioComponent implements OnInit {
       };
 
       this.chartsResumen = [
-        { titulo: '🔥 Triplistas', data: this.chartT3, label: 'Triples Anotados', tipo: 'bar', options: this.chartOptions },
+        { titulo: ' Triplistas', data: this.chartT3, label: 'Triples Anotados', tipo: 'bar', options: this.chartOptions },
         { titulo: '⏱️ Minutos Jugados', data: this.chartMinutos, label: 'Minutos', tipo: 'bar', options: this.chartOptions },
-        { titulo: '⚡ Rendimiento FP/min', data: this.chartRendimiento, label: 'FP / Min', tipo: 'line', options: this.chartOptions },
-        { titulo: '💰 Valor de Mercado', data: this.chartPrecio, label: 'Valor €', tipo: 'bar', options: this.chartOptions },
-        { titulo: '🎯 Puntos Fantasy', data: this.chartPuntos, label: 'Puntos FP', tipo: 'bar', options: this.chartOptions }
+        { titulo: ' Rendimiento FP/min', data: this.chartRendimiento, label: 'FP / Min', tipo: 'line', options: this.chartOptions },
+        { titulo: ' Valor de Mercado', data: this.chartPrecio, label: 'Valor €', tipo: 'bar', options: this.chartOptions },
+        { titulo: ' Puntos Fantasy', data: this.chartPuntos, label: 'Puntos FP', tipo: 'bar', options: this.chartOptions }
       ];
       setTimeout(() => {
         this.actualizarGraficosSecundarios();

@@ -21,16 +21,16 @@ export class VipComponent {
         return;
       }
 
-      console.log('🔁 Haciendo VIP al usuario con ID:', userId);
+      
 
       this.authService.marcarComoVip(userId).subscribe({
         next: (res) => {
-          console.log('✅ Usuario marcado como VIP:', res);
-          alert('🎉 ¡Ya eres VIP!');
+          
+          alert(' ¡Ya eres VIP!');
 
           this.authService.refreshUsuarioCompleto().subscribe((usuarioActualizado) => {
             if (usuarioActualizado) {
-              console.log("🧪 VIP hasta:", this.authService.getUser()?.vipHasta); // 👈 AÑADE AQUÍ
+              //  AÑADE AQUÍ
 
               this.router.navigate(['/scouting']);
             } else {

@@ -12,7 +12,7 @@ export class CanjearCodigoComponent {
   mensaje = '';
   resultado: any = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   canjear() {
     this.mensaje = '';
@@ -34,17 +34,35 @@ export class CanjearCodigoComponent {
           if (!res) {
             this.mensaje = '❌ Código no válido.';
           } else if (res.usado) {
-            this.mensaje = '⚠️ Este código ya fue usado.';
+            this.mensaje = '️ Este código ya fue usado.';
           } else {
             this.resultado = res;
             this.mensaje = '✅ Código válido. ¡Recompensa disponible!';
-            // Aquí podrías hacer la llamada a canjear si quieres
           }
         },
         error: (err) => {
           console.error("❌ Error:", err);
-          this.mensaje = err?.error?.error || '❌ Error al verificar el código.';
+
+          const esHtml = typeof err.error === 'string' && err.error.includes('<!DOCTYPE html>');
+          const esErrorServidor = err.status >= 500;
+
+          if (!err.status) {
+            this.mensaje = '❌ No se pudo conectar con el servidor.';
+          } else if (esHtml || err.status === 404) {
+            this.mensaje = '❌ Código no válido.';
+          } else if (esErrorServidor) {
+            this.mensaje = '❌ Error del servidor. Intenta más tarde.';
+          } else if (err?.error?.error) {
+            this.mensaje = '❌ ' + err.error.error;
+          } else {
+            this.mensaje = '❌ Error inesperado al verificar el código.';
+          }
         }
+
+
+
+
+
       });
   }
 }

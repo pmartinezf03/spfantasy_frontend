@@ -70,7 +70,7 @@ export class ContactListComponent implements OnInit, OnChanges {
     );
 
     if (yaExiste) {
-      this.mensaje = '⚠️ Este contacto ya está en tu lista.';
+      this.mensaje = '️ Este contacto ya está en tu lista.';
       return;
     }
 

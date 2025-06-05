@@ -119,9 +119,7 @@ export class ComparadorJugadoresComponent implements OnInit {
 
 
   verificarPaso1(): void {
-    // Puedes personalizar esto según lo que necesites verificar.
-    console.log('Cambio detectado en selección de jugador');
-  }
+      }
 
 
   updateChart(): void {

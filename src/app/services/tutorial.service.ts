@@ -30,7 +30,7 @@ export class TutorialService {
             action: () => this.shepherd.cancel()
           },
           {
-            text: '🚫 Saltar tutorial',
+            text: ' Saltar tutorial',
             action: () => {
               const usuarioId = localStorage.getItem('usuario_id');
               const storageKey = localStorage.getItem('tutorial_key');
@@ -48,7 +48,7 @@ export class TutorialService {
 
 
   lanzarTutorial(usuario: any, storageKey: string, pasos: any[], onFinish?: () => void) {
-    // ⚠️ Revisa la propiedad del usuario y el localStorage
+    // ️ Revisa la propiedad del usuario y el localStorage
     if (usuario.tutorialVisto || localStorage.getItem(storageKey) === 'true') return;
 
     // Limpieza previa
@@ -89,7 +89,7 @@ export class TutorialService {
     try {
       this.shepherd.next();
     } catch (e) {
-      console.warn('⚠️ No se pudo avanzar al siguiente paso del tutorial:', e);
+      console.warn('️ No se pudo avanzar al siguiente paso del tutorial:', e);
     }
   }
 
@@ -97,7 +97,7 @@ export class TutorialService {
     try {
       this.shepherd.back();
     } catch (e) {
-      console.warn('⚠️ No se pudo retroceder al paso anterior del tutorial:', e);
+      console.warn('️ No se pudo retroceder al paso anterior del tutorial:', e);
     }
   }
 
@@ -105,7 +105,7 @@ export class TutorialService {
     try {
       this.shepherd.cancel();
     } catch (e) {
-      console.warn('⚠️ No se pudo cancelar el tutorial:', e);
+      console.warn('️ No se pudo cancelar el tutorial:', e);
     }
   }
 

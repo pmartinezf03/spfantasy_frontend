@@ -42,7 +42,7 @@ export class ChatWindowComponent implements OnChanges, AfterViewInit {
   }
 
   enviar(): void {
-    // ⚠️ VERIFICAR DESTINO
+    // ️ VERIFICAR DESTINO
     if (!this.usuarioActual || !this.usuarioActual.id || !this.enviarMensaje.observers.length) return;
 
     if (this.nuevoMensaje.trim()) {
@@ -58,12 +58,12 @@ export class ChatWindowComponent implements OnChanges, AfterViewInit {
       const container = this.scrollContainer.nativeElement;
       container.scrollTop = container.scrollHeight;
     } catch (err) {
-      console.warn("⚠️ Error en scroll:", err);
+      console.warn("️ Error en scroll:", err);
     }
   }
 
 
-  // 🎨 Diccionario de colores por usuario
+  //  Diccionario de colores por usuario
   private coloresUsuarios: { [id: number]: string } = {};
 
   private generarColorHex(): string {

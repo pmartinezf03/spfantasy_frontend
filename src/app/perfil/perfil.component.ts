@@ -105,31 +105,31 @@ export class PerfilComponent implements OnInit {
       {
         id: 'avatar',
         attachTo: { element: '#perfil-avatar-preview', on: 'bottom' },
-        title: '🧑 Personaliza tu Avatar',
+        title: ' Personaliza tu Avatar',
         text: 'Puedes subir una imagen personalizada para destacar tu perfil.',
       },
       {
         id: 'info',
         attachTo: { element: '#perfil-info-basica', on: 'bottom' },
-        title: '📄 Información de Usuario',
+        title: ' Información de Usuario',
         text: 'Aquí puedes ver tu nombre, email y saldo actual.',
       },
       {
         id: 'logros',
         attachTo: { element: '#perfil-logros-card', on: 'top' },
-        title: '🏆 Logros',
+        title: ' Logros',
         text: 'Consulta los logros que has desbloqueado en tu aventura.',
       },
       {
         id: 'progreso',
         attachTo: { element: '#perfil-progreso-card', on: 'top' },
-        title: '📈 Nivel y Experiencia',
+        title: ' Nivel y Experiencia',
         text: 'Observa tu progreso hacia el siguiente nivel aquí.',
       }
     ];
 
     this.tutorialService.lanzarTutorial(usuario, 'tutorial_perfil', pasos, () => {
-      console.log('✅ Tutorial del perfil completado');
+      
     });
   }
 
@@ -172,7 +172,7 @@ export class PerfilComponent implements OnInit {
       responseType: 'text'
     }).subscribe({
       next: res => {
-        console.log('✅ Avatar actualizado correctamente:', res);
+        
 
         const reader = new FileReader();
         reader.onload = () => {

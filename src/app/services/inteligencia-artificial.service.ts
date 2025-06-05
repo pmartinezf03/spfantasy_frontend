@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 interface ChatResponse {
   // Aquí debe coincidir con lo que devuelve tu backend,
   // si el backend devuelve solo un string, pon string directamente
-  // o si devuelve { respuesta: string }, usa eso.
-  respuesta: string;
+    respuesta: string;
 }
 
 @Injectable({

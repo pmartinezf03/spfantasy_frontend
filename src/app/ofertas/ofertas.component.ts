@@ -42,7 +42,7 @@ export class OfertasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("📥 Entrando a la pestaña de ofertas...");
+    
 
     const usuario = this.authService.getUsuario();
     if (!usuario?.id) return;
@@ -70,7 +70,7 @@ export class OfertasComponent implements OnInit {
           this.dineroActual = usuario.dinero ?? 0;
           this.dineroPendiente = usuario.dineroPendiente ?? 0;
 
-          console.log("💰 Dinero actualizado vía observable:", {
+          console.log(" Dinero actualizado vía observable:", {
             dinero: this.dineroActual,
             pendiente: this.dineroPendiente
           });
@@ -83,7 +83,7 @@ export class OfertasComponent implements OnInit {
       this.cargarOfertas();
 
       this.ofertasService.marcarOfertasComoLeidas(this.usuarioId).subscribe(() => {
-        console.log("✅ Ofertas marcadas como leídas al abrir la pestaña.");
+        
         this.ofertasService.notificarLeido();
       });
     });
@@ -108,19 +108,19 @@ export class OfertasComponent implements OnInit {
       {
         id: 'paso-1',
         attachTo: { element: '#titulo-ofertas-recibidas', on: 'bottom' },
-        title: '📥 Ofertas Recibidas',
+        title: ' Ofertas Recibidas',
         text: 'Aquí verás las ofertas que otros managers te han hecho.',
       },
       {
         id: 'paso-2',
         attachTo: { element: '#titulo-ofertas-enviadas', on: 'bottom' },
-        title: '📤 Ofertas Enviadas',
+        title: ' Ofertas Enviadas',
         text: 'Aquí se listan las ofertas que tú has enviado.',
       },
       {
         id: 'paso-3',
         attachTo: { element: '#titulo-contraofertas', on: 'bottom' },
-        title: '🔁 Contraofertas',
+        title: ' Contraofertas',
         text: 'Si alguien te hace una contraoferta, la verás aquí. Puedes aceptarla o rechazarla.',
       }
     ];
@@ -143,13 +143,13 @@ export class OfertasComponent implements OnInit {
   cargarOfertas(): void {
     const ligaId = this.authService.getLigaId();
     if (!ligaId) {
-      console.warn("⚠ No hay liga activa para filtrar ofertas.");
+      console.warn(" No hay liga activa para filtrar ofertas.");
       return;
     }
 
     this.ofertasService.obtenerOfertasPorVendedor(this.usuarioId, ligaId).subscribe(
       (data) => {
-        console.log("📦 Ofertas recibidas desde backend (como vendedor):", data);
+        
         this.ofertasRecibidas = data.filter(oferta => oferta.estado === 'PENDIENTE');
         this.contraofertasRecibidas = data.filter(oferta => oferta.estado === 'CONTRAOFERTA');
       }
@@ -169,7 +169,7 @@ export class OfertasComponent implements OnInit {
 
   retirarOferta(oferta: Oferta): void {
     this.ofertasService.retirarOferta(oferta.id!).subscribe(() => {
-      console.log("✅ Oferta retirada correctamente.");
+      
 
       // ✅ Eliminar directamente del array para evitar mostrarla
       this.ofertasEnviadas = this.ofertasEnviadas.filter(o => o.id !== oferta.id);
@@ -191,14 +191,14 @@ export class OfertasComponent implements OnInit {
 
     this.ofertasService.aceptarOferta(oferta.id!).subscribe({
       next: () => {
-        console.log("✅ Oferta aceptada.");
+        
 
         this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
         this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
 
         this.authService.refreshUsuarioCompleto();
 
-        // 👇 Añadimos esto para actualizar inmediatamente el historial
+        //  Añadimos esto para actualizar inmediatamente el historial
         const historialComponent = document.querySelector('app-historial') as any;
         if (historialComponent?.ngOnInit) historialComponent.ngOnInit();
 
@@ -214,11 +214,11 @@ export class OfertasComponent implements OnInit {
 
 
   aceptarContraoferta(oferta: Oferta): void {
-    console.log("🔎 Aceptando contraoferta:", oferta);
+    
 
     this.authService.usuarioCompleto$.pipe(take(1)).subscribe(usuario => {
       const dineroDisponible = usuario?.dinero ?? 0;
-      console.log("🔎 Dinero actual del usuario:", dineroDisponible);
+      
 
       if (oferta.montoOferta > dineroDisponible) {
         this.mensajeError = `❌ No puedes aceptar la contraoferta por falta de fondos.
@@ -230,15 +230,15 @@ export class OfertasComponent implements OnInit {
 
       this.ofertasService.aceptarOferta(oferta.id!).subscribe({
         next: () => {
-          console.log("✅ Contraoferta aceptada correctamente, ID:", oferta.id);
+          
 
-          // 🧼 Eliminar oferta del listado
+          //  Eliminar oferta del listado
           this.contraofertasRecibidas = this.contraofertasRecibidas.filter(o => o.id !== oferta.id);
 
-          // 🔁 Refrescar usuario COMPLETO para mostrar bien saldo y pendientes
+          //  Refrescar usuario COMPLETO para mostrar bien saldo y pendientes
           this.authService.refreshUsuarioCompleto();
 
-          // 🔁 Volver a cargar ofertas
+          //  Volver a cargar ofertas
           this.cargarOfertas();
         },
         error: (error) => {
@@ -255,7 +255,7 @@ export class OfertasComponent implements OnInit {
   rechazarOferta(oferta: Oferta): void {
     this.ofertasService.rechazarOferta(oferta.id!).subscribe({
       next: () => {
-        console.log("✅ Oferta rechazada.");
+        
 
         // ✅ Eliminar directamente del array
         this.ofertasRecibidas = this.ofertasRecibidas.filter(o => o.id !== oferta.id);
@@ -273,13 +273,13 @@ export class OfertasComponent implements OnInit {
     this.montoOferta = 0;
     this.mensajeError = '';
 
-    // 🔹 Obtener el dinero antes de abrir el diálogo
+    //  Obtener el dinero antes de abrir el diálogo
     this.authService.refreshUsuarioCompleto();
 
-    // 🔹 Calcular la suma de todas las ofertas en curso
+    //  Calcular la suma de todas las ofertas en curso
     const totalOfertasActuales = this.ofertasEnviadas.reduce((total, oferta) => total + oferta.montoOferta, 0);
 
-    this.totalOfertasEnCurso = totalOfertasActuales;  // 🔹 Guardamos la suma
+    this.totalOfertasEnCurso = totalOfertasActuales;  //  Guardamos la suma
 
     this.mostrarDialogoOferta = true;
     this.cdr.detectChanges();
@@ -315,13 +315,13 @@ export class OfertasComponent implements OnInit {
       vendedor: { id: this.jugadorSeleccionado.propietarioId ?? 0 },
       montoOferta: monto,
       estado: 'PENDIENTE',
-      liga: { id: ligaId } // 👈 Se añade la liga
+      liga: { id: ligaId } //  Se añade la liga
     };
 
 
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
-        console.log("✅ Oferta enviada correctamente.");
+        
 
         // ✅ Actualizar dinero desde backend inmediatamente
         this.authService.refreshUsuarioCompleto(); // ✅ Nuevo método global
@@ -348,7 +348,7 @@ export class OfertasComponent implements OnInit {
     this.cdr.detectChanges();
   }
   enviarContraoferta({ monto }: { monto: number }): void {
-    console.log("🔥 Método enviarContraoferta ejecutado. Monto recibido:", monto);
+    
 
     if (!this.ofertaSeleccionada || !this.ofertaSeleccionada.jugador) {
       console.error("❌ No se puede enviar la contraoferta, falta el jugador seleccionado.");
@@ -374,11 +374,11 @@ export class OfertasComponent implements OnInit {
       liga: { id: ligaId }
     };
 
-    console.log("📤 Enviando contraoferta al servicio:", nuevaOferta);
+    
 
     this.ofertasService.hacerContraofertaSimple(this.ofertaSeleccionada.id!, monto).subscribe({
       next: (respuesta) => {
-        console.log("✅ Contraoferta enviada correctamente:", respuesta);
+        
         this.mostrarDialogoContraoferta = false;
 
         const idOriginal = this.ofertaSeleccionada?.id;

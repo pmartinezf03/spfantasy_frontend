@@ -17,7 +17,7 @@ export class UsuarioService {
 
   obtenerUsuario(username: string, token: string): Observable<any> {
     if (!username || !token) {
-      console.error('⚠ Error: Falta username o token para obtener usuario.');
+      console.error(' Error: Falta username o token para obtener usuario.');
       return throwError(() => new Error('No se puede obtener el usuario sin un username y token válido.'));
     }
 
@@ -26,7 +26,7 @@ export class UsuarioService {
     });
 
     return this.http.get<any>(`${this.apiUrl}/by-username/${username}`, { headers }).pipe(
-      tap(response => console.log("📩 Datos recibidos del backend:", response)),
+      tap(response => console.log(" Datos recibidos del backend:", response)),
       catchError(error => {
         console.error('❌ Error al obtener usuario:', error);
         return throwError(() => error);
@@ -105,7 +105,7 @@ export class UsuarioService {
       {},
       {
         headers,
-        responseType: 'text' as 'json'  // <- ⚠️ Esto arregla el error del JSON parse
+        responseType: 'text' as 'json'  // <- ️ Esto arregla el error del JSON parse
       }
     );
   }
@@ -121,7 +121,7 @@ export class UsuarioService {
     });
 
     return this.http.get<Usuario[]>(`${this.apiUrl}`, { headers }).pipe(
-      tap(usuarios => console.log('📥 Usuarios cargados desde el backend:', usuarios)),
+      tap(usuarios => console.log(' Usuarios cargados desde el backend:', usuarios)),
       catchError(error => {
         console.error('❌ Error al obtener usuarios:', error);
         return throwError(() => error);

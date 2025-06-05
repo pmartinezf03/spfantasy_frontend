@@ -34,7 +34,7 @@ export class MercadoComponent implements OnInit {
   esVip: boolean = false;
 
 
-  // 🔍 Filtros
+  //  Filtros
   filtroNombre: string = '';
   filtroPosicion: string = '';
   precioMin: number | null = null;
@@ -84,7 +84,7 @@ export class MercadoComponent implements OnInit {
     this.usuarioId = user.id;
     this.username = user.username;
 
-    console.log('[ngOnInit] Usuario y liga válidos. Comienza carga...');
+    
     this.suscribirseAlDinero();
 
     Promise.all([
@@ -106,10 +106,10 @@ export class MercadoComponent implements OnInit {
         this.loaderService.hideBarraCarga();
         this.cargandoInicial = false;
 
-        console.log('[ngOnInit] Datos iniciales cargados. Vista mostrada.');
+        
         this.suscribirseAWebSocket();
 
-        // ⚠ Solo ahora están cargados los jugadores, calculamos posiciones
+        //  Solo ahora están cargados los jugadores, calculamos posiciones
         this.posicionesDisponibles = [...new Set(this.jugadores.map((j: Jugador) => j.posicion))].filter((p): p is string => !!p);
       })
       .catch(err => {
@@ -141,7 +141,7 @@ export class MercadoComponent implements OnInit {
               { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -159,7 +159,7 @@ export class MercadoComponent implements OnInit {
               { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -177,7 +177,7 @@ export class MercadoComponent implements OnInit {
               { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -195,7 +195,7 @@ export class MercadoComponent implements OnInit {
               { text: '⏭ Siguiente', action: () => this.tutorialService.manualNextStep() },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -220,7 +220,7 @@ export class MercadoComponent implements OnInit {
               },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -245,7 +245,7 @@ export class MercadoComponent implements OnInit {
               },
               { text: '❌ Cancelar', action: () => this.tutorialService.cancelarTutorial() },
               {
-                text: '🚫 Saltar tutorial',
+                text: ' Saltar tutorial',
                 action: () => {
                   this.tutorialService.finalizarTutorial(usuario.id, 'tutorial_mercado');
                   this.tutorialService.cancelarTutorial();
@@ -343,7 +343,7 @@ export class MercadoComponent implements OnInit {
 
 
   comprarJugador(jugador: Jugador): void {
-    console.log('[comprarJugador] Iniciando compra de:', jugador.nombre);
+    
 
     const token = this.authService.getToken();
     const ligaId = this.authService.getLigaId();
@@ -358,7 +358,7 @@ export class MercadoComponent implements OnInit {
       accept: () => {
         this.loaderService.showSpinner();
 
-        console.log('[comprarJugador] Compra confirmada');
+        
 
         this.usuarioService.comprarJugadorDeLiga(this.username, jugador.id, ligaId, token).subscribe({
           next: (response) => {
@@ -366,7 +366,7 @@ export class MercadoComponent implements OnInit {
 
 
             if (response?.status === 'success') {
-              console.log('[comprarJugador] Compra exitosa. Actualizando estado del usuario...');
+              
               this.usuarioDinero = response.dinero;
               this.saltarseSpinnerWs = true;
 
@@ -375,13 +375,13 @@ export class MercadoComponent implements OnInit {
 
               setTimeout(() => {
                 this.saltarseSpinnerWs = false;
-                console.log('[comprarJugador] Fin de protección de spinner WebSocket');
+                
               }, 2000);
 
               this.messageService.add({
                 severity: 'success',
                 summary: '¡Compra exitosa!',
-                detail: `🎉 Enhorabuena, compraste a ${this.obtenerNombreJugador(jugador)}. Ya está disponible en tu plantilla.`,
+                detail: ` Enhorabuena, compraste a ${this.obtenerNombreJugador(jugador)}. Ya está disponible en tu plantilla.`,
                 life: 6000
               });
             } else {
@@ -389,7 +389,7 @@ export class MercadoComponent implements OnInit {
               this.messageService.add({
                 severity: 'warn',
                 summary: 'Compra fallida',
-                detail: response.mensaje || '⚠ No se pudo completar la compra.'
+                detail: response.mensaje || ' No se pudo completar la compra.'
               });
             }
           },
@@ -399,7 +399,7 @@ export class MercadoComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: '⚠ Ocurrió un error al intentar comprar el jugador.'
+              detail: ' Ocurrió un error al intentar comprar el jugador.'
             });
           }
         });
@@ -424,7 +424,7 @@ export class MercadoComponent implements OnInit {
     this.jugadorSeleccionado = undefined;
     this.mostrarDialogo = false;
 
-    // 🔄 Refrescar usuario completo para actualizar dinero y dineroPendiente
+    //  Refrescar usuario completo para actualizar dinero y dineroPendiente
     this.authService.refreshUsuarioCompleto();
 
   }
@@ -459,7 +459,7 @@ export class MercadoComponent implements OnInit {
     this.cdr.detectChanges();
     this.loaderService.showSpinner();
 
-    // 🔁 Enviamos la oferta real al backend
+    //  Enviamos la oferta real al backend
     this.ofertasService.crearOferta(nuevaOferta).subscribe({
       next: () => {
         // ✅ Actualizar oferta real con ID desde el backend
@@ -468,7 +468,7 @@ export class MercadoComponent implements OnInit {
             if (oferta?.id) {
               this.ofertasEnCurso[jugadorId] = oferta.id;
             } else {
-              console.warn('⚠️ Oferta recibida sin ID. No se actualiza ofertasEnCurso.');
+              console.warn('️ Oferta recibida sin ID. No se actualiza ofertasEnCurso.');
             }
             this.loaderService.hideSpinner();  // ✅ SIEMPRE SE OCULTA
             this.cdr.detectChanges();
@@ -476,7 +476,7 @@ export class MercadoComponent implements OnInit {
           ,
           error: (err) => {
             if (err.status === 404) {
-              console.log('ℹ️ No hay ofertas previas para este jugador (aún).');
+              
             } else {
               console.error('❌ Error al obtener última oferta:', err);
             }
@@ -492,7 +492,7 @@ export class MercadoComponent implements OnInit {
         console.error('❌ Error al enviar oferta:', err);
         delete this.ofertasEnCurso[jugadorId];
         this.cdr.detectChanges();
-        this.loaderService.hideSpinner(); // 👈 AÑADE ESTO
+        this.loaderService.hideSpinner(); //  AÑADE ESTO
       }
 
     });
@@ -506,13 +506,13 @@ export class MercadoComponent implements OnInit {
 
     // ✅ Ocultar botón al instante
     delete this.ofertasEnCurso[jugadorId];
-    this.cdr.detectChanges(); // 🔄 Refrescar vista para que aparezca "Hacer Oferta"
+    this.cdr.detectChanges(); //  Refrescar vista para que aparezca "Hacer Oferta"
     this.loaderService.showSpinner();
 
-    // 🔁 Confirmar cancelación en el backend
+    //  Confirmar cancelación en el backend
     this.ofertasService.retirarOferta(ofertaId).subscribe(() => {
       this.authService.refreshUsuarioCompleto(); // ✅
-      this.loaderService.hideSpinner();          // 👈 AÑADE ESTO AQUÍ
+      this.loaderService.hideSpinner();          //  AÑADE ESTO AQUÍ
     }, error => {
       console.error('❌ Error al cancelar oferta:', error);
       this.ofertasEnCurso[jugadorId] = ofertaId;
@@ -533,12 +533,12 @@ export class MercadoComponent implements OnInit {
 
 
   private suscribirseAWebSocket(): void {
-    console.log('[WebSocket] Suscribiéndose a ofertas en vivo...');
+    
 
     this.webSocketService.subscribeToOfertas(this.usuarioId);
 
     this.webSocketService.getOfertas().subscribe((oferta: Oferta) => {
-      console.log('[WebSocket] Nueva oferta detectada:', oferta);
+      
 
       const jugadorId = oferta.jugador?.id;
       const ofertaId = oferta.id;
@@ -549,7 +549,7 @@ export class MercadoComponent implements OnInit {
         if (!ligaId) return;
 
         const mostrarSpinner = !this.saltarseSpinnerWs;
-        console.log('[WebSocket] Recargando jugadores. mostrarSpinner:', mostrarSpinner);
+        
 
         this.cargarJugadores(ligaId, mostrarSpinner);
 
@@ -561,10 +561,10 @@ export class MercadoComponent implements OnInit {
 
   irAScouting(): void {
     if (this.authService.esVip()) {
-      console.log('✅ Usuario VIP, redirigiendo a /scouting');
+      
       this.router.navigate(['/scouting']);
     } else {
-      console.log('🚫 Usuario NO VIP, redirigiendo a /vip');
+      
       this.router.navigate(['/vip']);
     }
   }

@@ -163,7 +163,7 @@
   transition: background-color 0.3s ease;
 }
 
-/* 📱 Responsive Móvil */
+/*  Responsive Móvil */
 @media (max-width: 768px) {
   .ofertas-container {
     padding: 1.5rem 1rem;

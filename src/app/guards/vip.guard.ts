@@ -13,17 +13,17 @@ export class VipGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    console.log('🚀 [VipGuard] Ejecutando canActivate');
+    
 
     return this.authService.usuarioCompleto$.pipe(
       map(usuario => {
-        console.log('👤 Usuario completo recibido en VipGuard:', usuario);
+        
 
         const vipHasta = usuario?.vipHasta;
-        console.log('🧪 VIP hasta (guard):', vipHasta);
+        
 
         if (!vipHasta) {
-          console.warn('🚫 Usuario no es VIP. Redirigiendo a /inicio');
+          console.warn(' Usuario no es VIP. Redirigiendo a /inicio');
           this.router.navigate(['/inicio']);
           return false;
         }
@@ -32,10 +32,10 @@ export class VipGuard implements CanActivate {
         const ahora = new Date();
         const esVip = expiracion > ahora;
 
-        console.log('🔎 VIP válido?', esVip);
+        
 
         if (!esVip) {
-          console.warn('🚫 Usuario no es VIP vigente. Redirigiendo a /inicio');
+          console.warn(' Usuario no es VIP vigente. Redirigiendo a /inicio');
           this.router.navigate(['/inicio']);
           return false;
         }

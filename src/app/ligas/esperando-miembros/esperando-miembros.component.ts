@@ -32,7 +32,7 @@ export class EsperandoMiembrosComponent implements OnInit, OnChanges {
 
   cargarMiembros(): void {
     if (!this.ligaId) {
-      console.warn("⚠ No se puede cargar miembros, ligaId es undefined.");
+      console.warn(" No se puede cargar miembros, ligaId es undefined.");
       return;
     }
 

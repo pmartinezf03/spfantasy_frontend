@@ -81,7 +81,6 @@ export class ChatComponent implements OnInit, OnChanges {
       this.http.get<GrupoChat>(`${environment.apiUrl}/api/grupos/liga/${user.id}`, { headers }).subscribe(grupo => {
         const canal = this.webSocketService.getCanalGrupo(grupo.id);
         this.webSocketService.subscribeToChannel(canal);
-        console.log("📡 Subscrito SOLO al canal de grupo del usuario:", canal);
         this.gruposUsuario = [grupo];
       });
 
@@ -97,7 +96,6 @@ export class ChatComponent implements OnInit, OnChanges {
 
       // 4. Escuchar mensajes entrantes
       this.webSocketService.getMessages().subscribe((message: Message) => {
-        console.log("📥 Mensaje capturado en ChatComponent:", message);
 
         const clave = this.getClaveConversacion(message);
         const claveActual = this.getClaveActual();
@@ -136,7 +134,7 @@ export class ChatComponent implements OnInit, OnChanges {
         {
           id: 'paso1-contactos',
           attachTo: { element: '#paso-contactos', on: 'right' },
-          title: '👥 Contactos',
+          title: ' Contactos',
           text: 'Aquí puedes ver todos los usuarios disponibles. Pulsa sobre uno para abrir una conversación privada.',
           buttons: [
             {
@@ -148,7 +146,7 @@ export class ChatComponent implements OnInit, OnChanges {
               action: () => this.tutorialService.cancelarTutorial()
             },
             {
-              text: '🚫 Saltar tutorial',
+              text: ' Saltar tutorial',
               action: () => {
                 this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
                 this.tutorialService.cancelarTutorial();
@@ -161,7 +159,7 @@ export class ChatComponent implements OnInit, OnChanges {
         {
           id: 'paso2-grupos',
           attachTo: { element: '#paso-grupos', on: 'right' },
-          title: '💬 Chat de Grupo',
+          title: ' Chat de Grupo',
           text: 'También puedes hablar con todos en tu grupo de liga. Pulsa para ver el chat grupal.',
           buttons: [
             {
@@ -173,7 +171,7 @@ export class ChatComponent implements OnInit, OnChanges {
               action: () => this.tutorialService.cancelarTutorial()
             },
             {
-              text: '🚫 Saltar tutorial',
+              text: ' Saltar tutorial',
               action: () => {
                 this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
                 this.tutorialService.cancelarTutorial();
@@ -198,7 +196,7 @@ export class ChatComponent implements OnInit, OnChanges {
               action: () => this.tutorialService.cancelarTutorial()
             },
             {
-              text: '🚫 Saltar tutorial',
+              text: ' Saltar tutorial',
               action: () => {
                 this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
                 this.tutorialService.cancelarTutorial();
@@ -226,7 +224,7 @@ export class ChatComponent implements OnInit, OnChanges {
               action: () => this.tutorialService.cancelarTutorial()
             },
             {
-              text: '🚫 Saltar tutorial',
+              text: ' Saltar tutorial',
               action: () => {
                 this.tutorialService.finalizarTutorial(this.currentUser!.id, 'tutorial_chat');
                 this.tutorialService.cancelarTutorial();
@@ -343,7 +341,7 @@ export class ChatComponent implements OnInit, OnChanges {
       !this.currentUser ||
       (!this.selectedGroupId && !this.selectedUserId)
     ) {
-      console.warn('⛔ No hay destinatario seleccionado para el mensaje.');
+      console.warn(' No hay destinatario seleccionado para el mensaje.');
       return;
     }
 

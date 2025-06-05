@@ -17,7 +17,7 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* 💻 Mostrar tabla solo en escritorio */
+/*  Mostrar tabla solo en escritorio */
 .tabla-escritorio {
   display: block;
 }
@@ -26,7 +26,7 @@ body {
   display: none;
 }
 
-/* 📱 Ajustes SOLO para móviles */
+/*  Ajustes SOLO para móviles */
 @media screen and (max-width: 768px) {
   body {
     font-size: 14px;
@@ -132,7 +132,7 @@ body {
     gap: 0.5rem;
   }
 
-  /* 🧼 Ajustes tabla PrimeNG */
+  /*  Ajustes tabla PrimeNG */
   ::ng-deep .p-datatable {
     font-size: 12px;
     overflow-x: auto;
@@ -172,7 +172,7 @@ body {
     padding: 0.35rem 0.75rem;
   }
 
-  /* 💡 Ocultar columnas menos importantes en tabla */
+  /*  Ocultar columnas menos importantes en tabla */
   ::ng-deep th:nth-child(5),
   ::ng-deep td:nth-child(5),
   ::ng-deep th:nth-child(6),
@@ -200,7 +200,7 @@ body {
     @apply bg-red-500 hover:bg-red-400 shadow hover:shadow-red-300/40;
   }
 }
-/* 🧼 Limpieza de estilos inline generados por intro.js */
+/*  Limpieza de estilos inline generados por intro.js */
 .introjs-button,
 .introjs-skipbutton {
   all: unset !important;
@@ -208,7 +208,7 @@ body {
   font-family: "Segoe UI", sans-serif !important;
 }
 
-/* 🧭 Tooltip principal */
+/*  Tooltip principal */
 .introjs-tooltip {
   background-color: #0f172a !important;
   color: #f1f5f9 !important;
@@ -220,12 +220,12 @@ body {
   line-height: 1.6 !important;
 }
 
-/* 📌 Flecha del tooltip */
+/*  Flecha del tooltip */
 .introjs-arrow {
   border-color: #0f172a !important;
 }
 
-/* 🔹 Título */
+/*  Título */
 .introjs-tooltip-title {
   color: #93c5fd !important;
   font-weight: bold !important;
@@ -233,7 +233,7 @@ body {
   margin-bottom: 10px !important;
 }
 
-/* 🔘 Botones de navegación */
+/*  Botones de navegación */
 .introjs-button {
   background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
   color: white !important;
@@ -274,13 +274,13 @@ body {
   box-shadow: 0 0 6px #64748b !important;
 }
 
-/* 🧼 Limpia todo lo anterior de intro.js */
+/*  Limpia todo lo anterior de intro.js */
 .introjs-progressbar,
 .introjs-progress {
   all: unset !important;
 }
 
-/* 📊 Barra externa (contenedor) */
+/*  Barra externa (contenedor) */
 .introjs-progressbar {
   width: 100% !important;
   height: 8px !important;
@@ -292,7 +292,7 @@ body {
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* 📈 Barra interna (relleno dinámico) */
+/*  Barra interna (relleno dinámico) */
 .introjs-progress {
   display: block !important;
   height: 100% !important;

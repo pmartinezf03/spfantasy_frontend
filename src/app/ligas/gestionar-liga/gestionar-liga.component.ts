@@ -35,7 +35,7 @@ export class GestionarLigaComponent implements OnInit {
         error: err => console.error("Error al cargar miembros:", err)
       });
     } else {
-      console.warn("⚠️ Liga no definida al iniciar el componente");
+      console.warn("️ Liga no definida al iniciar el componente");
     }
   }
   

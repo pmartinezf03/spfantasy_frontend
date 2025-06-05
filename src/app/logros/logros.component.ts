@@ -33,7 +33,7 @@ export class LogrosComponent implements OnInit {
     const usuarioId = usuario?.id;
 
     if (!usuarioId) {
-      console.error('⚠️ Usuario no logueado o ID no disponible.');
+      console.error('️ Usuario no logueado o ID no disponible.');
       return;
     }
 

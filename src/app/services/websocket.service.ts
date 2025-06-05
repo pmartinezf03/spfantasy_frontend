@@ -28,10 +28,10 @@ export class WebSocketService {
     });
 
     this.stompClient.onConnect = () => {
-      console.log('🟢 Conectado al WebSocket');
+      
     };
 
-    this.stompClient.onWebSocketClose = () => console.log('🔴 WebSocket desconectado');
+    this.stompClient.onWebSocketClose = () => 
     this.stompClient.activate();
   }
 
@@ -52,7 +52,7 @@ export class WebSocketService {
   subscribeToOfertas(usuarioId: number): void {
     this.stompClient.subscribe(`/chat/ofertas/${usuarioId}`, (message) => {
       const oferta = JSON.parse(message.body);
-      console.log('🟢 Nueva oferta recibida por WebSocket:', oferta);
+      
       this.ofertasSubject.next(oferta);
     });
   }
@@ -62,22 +62,22 @@ export class WebSocketService {
   }
 
 
-  // 🔔 Generalizado para escuchar un canal concreto
+  //  Generalizado para escuchar un canal concreto
   subscribeToChannel(channel: string): void {
     if (this.canalesSuscritos.has(channel)) {
-      console.log(`⚠️ Canal ya suscrito: ${channel}`);
+      
       return;
     }
 
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.subscribe(channel, (message) => {
         const msg = JSON.parse(message.body);
-        console.log(`📨 MENSAJE RECIBIDO en canal ${channel}:`, msg);
+        
         this.messageSubject.next(msg);
       });
 
       this.canalesSuscritos.add(channel);
-      console.log(`📡 Subscrito a canal: ${channel}`);
+      
       this.reintentosPorCanal.delete(channel); // ✅ limpiar si conecta
     } else {
       const intentos = this.reintentosPorCanal.get(channel) ?? 0;
@@ -97,14 +97,14 @@ export class WebSocketService {
 
 
 
-  // 🧠 Canal entre alias
+  //  Canal entre alias
   getCanalPrivadoPorId(id1: number, id2: number): string {
     const ordenado = [id1, id2].sort((a, b) => a - b);
     return `/chat/privado/${ordenado[0]}-${ordenado[1]}`;
   }
 
 
-  // 🎯 Canal de grupo de liga
+  //  Canal de grupo de liga
   getCanalGrupo(grupoId: number): string {
     return `/chat/liga/${grupoId}`;
   }

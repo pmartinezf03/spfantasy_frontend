@@ -4,13 +4,15 @@
   <input [(ngModel)]="codigo" type="text" placeholder="Introduce tu código" />
 
   <button (click)="canjear()">Verificar Código</button>
-
-  <div class="mensaje"
-       [ngClass]="{
-         'success': mensaje.startsWith('✅'),
-         'error': mensaje.startsWith('❌'),
-         'warning': mensaje.startsWith('⚠️')
-       }">
+  <div
+    class="mensaje"
+    [ngClass]="{
+      success: mensaje.startsWith('✅'),
+      error: mensaje.startsWith('❌'),
+      warning: mensaje.startsWith('⚠️')
+    }"
+    *ngIf="mensaje"
+  >
     {{ mensaje }}
   </div>
 
@@ -18,7 +20,5 @@
     <p><strong>Código:</strong> {{ resultado.codigo }}</p>
     <p><strong>Producto ID:</strong> {{ resultado.producto_id }}</p>
     <p><strong>Pedido ID:</strong> {{ resultado.pedido_id }}</p>
-    <!-- Añade más info si quieres -->
   </div>
 </div>
-  

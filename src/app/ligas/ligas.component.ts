@@ -77,31 +77,31 @@ export class LigasComponent implements OnInit {
         this.tutorialService.lanzarTutorial(user, 'tutorial_ligas', [
           {
             id: 'liga-actual',
-            title: '🏆 Liga actual',
+            title: ' Liga actual',
             text: 'Aquí puedes ver la liga activa, salir de ella o gestionarla.',
             attachTo: { element: '.liga-activa-card', on: 'bottom' }
           },
           {
             id: 'ranking',
-            title: '📊 Clasificación',
+            title: ' Clasificación',
             text: 'Consulta la posición de los miembros según sus puntos.',
             attachTo: { element: '.tabla-ranking', on: 'top' }
           },
           {
             id: 'grafico',
-            title: '📈 Gráfico',
+            title: ' Gráfico',
             text: 'Este gráfico muestra la evolución de puntos semanales.',
             attachTo: { element: '.grafico-header', on: 'top' }
           },
           {
             id: 'miembros',
-            title: '👥 Miembros',
+            title: ' Miembros',
             text: 'Aquí puedes ver quién forma parte de la liga.',
             attachTo: { element: '.miembros-grid', on: 'top' }
           },
           {
             id: 'actividad',
-            title: '📅 Actividad',
+            title: ' Actividad',
             text: 'Actividad reciente de los jugadores en la liga.',
             attachTo: { element: '.actividad-list', on: 'top' }
           }

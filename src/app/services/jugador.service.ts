@@ -39,8 +39,8 @@ export class JugadorService {
       }
     }).pipe(
       tap(jugadores => {
-        console.log("📦 [SERVICE] Jugadores recibidos desde el backend:");
-        console.table(jugadores); // 🔍 esto te mostrará si vienen 'rendimiento' y 'puntosTotales'
+        
+        console.table(jugadores); //  esto te mostrará si vienen 'rendimiento' y 'puntosTotales'
       })
     );
   }
@@ -50,7 +50,7 @@ export class JugadorService {
       params: { ligaId: ligaId.toString() }
     }).pipe(
       tap(jugadores => {
-        console.log('📊 [SERVICE] Jugadores por liga cargados para el comparador:');
+        
         console.table(jugadores);
       })
     );

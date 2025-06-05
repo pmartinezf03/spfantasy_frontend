@@ -1,4 +1,4 @@
-/* 🔵 Pantalla de carga inicial con barra y logo */
+/*  Pantalla de carga inicial con barra y logo */
 .barra-inicial {
   position: fixed;
   z-index: 9999;
@@ -36,7 +36,7 @@
 }
 
 
-/* 🔄 Spinner flotante superpuesto */
+/*  Spinner flotante superpuesto */
 .spinner-overlay {
   position: fixed;
   z-index: 9998;
@@ -84,7 +84,7 @@
 }
 
 
-/* 🔁 Animaciones */
+/*  Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
