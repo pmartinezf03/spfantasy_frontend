@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://52.54.248.252:8080' // <-- tu IP local
+  apiUrl: 'http://3.86.92.239:8080' // <-- tu IP local
 
 };
 

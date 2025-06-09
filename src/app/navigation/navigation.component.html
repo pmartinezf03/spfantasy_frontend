@@ -1,90 +1,202 @@
 <nav
-  class="w-full sticky top-0 z-50 bg-gradient-to-r from-fantasyDark via-black to-fantasyDark shadow-md px-4 py-3 flex items-center justify-between">
+  class="w-full sticky top-0 z-50 bg-gradient-to-r from-fantasyDark via-black to-fantasyDark shadow-md px-4 py-3 flex flex-wrap items-center justify-between gap-y-3"
+>
   <!-- Logo -->
-  <div id="nav-logo" class="flex items-center gap-3 logo-navbar">
+  <div
+    id="nav-logo"
+    class="flex items-center gap-3 logo-navbar"
+    (click)="router.navigate(['/'])"
+  >
     <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-10 w-auto" />
     <span class="text-xl text-white font-futuristic">SP Fantasy</span>
   </div>
 
   <!-- Botón hamburguesa -->
-  <button class="md:hidden text-white text-3xl" (click)="menuAbierto = !menuAbierto">
+  <button
+    class="md:hidden text-white text-3xl"
+    (click)="menuAbierto = !menuAbierto"
+  >
     ☰
   </button>
 
   <!-- Menú principal (escritorio) -->
-  <ul class="hidden md:flex gap-5 text-white font-semibold text-sm uppercase tracking-wide">
-    <li id="nav-inicio" class="menu-item-inicio">
-      <a routerLink="/" routerLinkActive="text-fantasyGold" [routerLinkActiveOptions]="{ exact: true }">🏠 Inicio</a>
-    </li>
-    <li id="nav-estadisticas"><a routerLink="/estadisticas-liga" routerLinkActive="text-fantasyGold">📊 Estadísticas</a>
-    </li>
-    <li id="nav-noticias"><a routerLink="/noticias" routerLinkActive="text-fantasyGold">📰 Noticias</a></li>
-    <li *ngIf="isUserLoggedIn" id="nav-mercado"><a routerLink="/mercado" routerLinkActive="text-fantasyGold">🛒
-        Mercado</a></li>
-    <li *ngIf="isUserLoggedIn" id="nav-plantilla" class="menu-item-plantilla"><a routerLink="/plantilla"
-        routerLinkActive="text-fantasyGold">🏀 Mi Plantilla</a></li>
-    <li *ngIf="isUserLoggedIn" id="nav-ligas"><a routerLink="/ligas" routerLinkActive="text-fantasyGold">🏆 Ligas</a>
-    </li>
-    <li *ngIf="isUserLoggedIn" id="nav-chat"><a routerLink="/chat" routerLinkActive="text-fantasyGold">💬 Chat</a></li>
-    <li *ngIf="isUserLoggedIn" id="nav-ofertas" class="menu-item-ofertas">
-      <a routerLink="/ofertas" routerLinkActive="text-fantasyGold">📩 Ofertas <span
-          *ngIf="tieneOfertasNuevas">🔴</span></a>
-    </li>
-    <li *ngIf="isUserLoggedIn" id="nav-comparador"><a routerLink="/comparador" routerLinkActive="text-fantasyGold">📈
-        Comparador</a></li>
-    <li *ngIf="isUserLoggedIn" id="nav-canjear">
-      <a routerLink="/canjear-codigo" routerLinkActive="text-fantasyGold">🎁 Canjear Código</a>
-    </li>
-
+  <ul class="navbar-links">
+    <ng-container *ngIf="isUserLoggedIn; else menuPublico">
+      <!-- Menú completo si está logueado -->
+      <li id="nav-inicio" class="menu-item-inicio">
+        <a
+          routerLink="/"
+          routerLinkActive="text-fantasyGold"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >🏠 Inicio</a
+        >
+      </li>
+      <li id="nav-estadisticas">
+        <a routerLink="/estadisticas-liga" routerLinkActive="text-fantasyGold"
+          >📊 Estadísticas</a
+        >
+      </li>
+      <li id="nav-noticias">
+        <a routerLink="/noticias" routerLinkActive="text-fantasyGold"
+          >📰 Noticias</a
+        >
+      </li>
+      <li id="nav-mercado">
+        <a routerLink="/mercado" routerLinkActive="text-fantasyGold"
+          >🛒 Mercado</a
+        >
+      </li>
+      <li id="nav-plantilla" class="menu-item-plantilla">
+        <a routerLink="/plantilla" routerLinkActive="text-fantasyGold"
+          >🏀 Mi Plantilla</a
+        >
+      </li>
+      <li id="nav-ligas">
+        <a routerLink="/ligas" routerLinkActive="text-fantasyGold">🏆 Ligas</a>
+      </li>
+      <li id="nav-chat">
+        <a routerLink="/chat" routerLinkActive="text-fantasyGold">💬 Chat</a>
+      </li>
+      <li id="nav-ofertas" class="menu-item-ofertas">
+        <a routerLink="/ofertas" routerLinkActive="text-fantasyGold"
+          >📩 Ofertas <span *ngIf="tieneOfertasNuevas">🔴</span></a
+        >
+      </li>
+      <li id="nav-comparador">
+        <a routerLink="/comparador" routerLinkActive="text-fantasyGold"
+          >📈 Comparador</a
+        >
+      </li>
+      <li id="nav-canjear">
+        <a routerLink="/canjear-codigo" routerLinkActive="text-fantasyGold"
+          >🎁 Canjear
+        </a>
+      </li>
+    </ng-container>
   </ul>
 
+  <ng-template #menuPublico>
+    <div class="flex gap-2">
+      <button
+        (click)="reiniciarSesion()"
+        class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
+      >
+        Iniciar Sesión
+      </button>
+      <button
+        (click)="router.navigate(['/auth/register'])"
+        class="text-white font-bold px-4 py-1 bg-fantasyGold hover:bg-fantasyBlue rounded-md shadow transition-all"
+      >
+        Registrarse
+      </button>
+    </div>
+  </ng-template>
+
   <!-- Menú móvil -->
-  <div *ngIf="menuAbierto"
-    class="absolute top-full left-0 w-full bg-black text-white p-4 flex flex-col gap-2 font-semibold uppercase text-sm md:hidden transition-all duration-300">
-    <a class="menu-item-inicio" routerLink="/" (click)="menuAbierto = false">🏠 Inicio</a>
-    <a routerLink="/estadisticas-liga" (click)="menuAbierto = false">📊 Estadísticas</a>
-    <a routerLink="/noticias" (click)="menuAbierto = false">📰 Noticias</a>
-    <a *ngIf="isUserLoggedIn" routerLink="/mercado" (click)="menuAbierto = false">🛒 Mercado</a>
-    <a *ngIf="isUserLoggedIn" class="menu-item-plantilla" routerLink="/plantilla" (click)="menuAbierto = false">🏀 Mi
-      Plantilla</a>
-    <a *ngIf="isUserLoggedIn" routerLink="/ligas" (click)="menuAbierto = false">🏆 Ligas</a>
-    <a *ngIf="isUserLoggedIn" routerLink="/chat" (click)="menuAbierto = false">💬 Chat</a>
-    <a *ngIf="isUserLoggedIn" class="menu-item-ofertas" routerLink="/ofertas" (click)="menuAbierto = false">
-      {{ tieneOfertasNuevas ? "📩 Ofertas 🔴" : "📩 Ofertas" }}
-    </a>
-    <a *ngIf="isUserLoggedIn" routerLink="/comparador" (click)="menuAbierto = false">📈 Comparador</a>
-    <a *ngIf="isUserLoggedIn" routerLink="/canjear-codigo" (click)="menuAbierto = false">🎁 Canjear Código</a>
+  <div *ngIf="menuAbierto" class="mobile-menu md:hidden">
+    <ng-container *ngIf="isUserLoggedIn; else menuMovilPublico">
+      <a class="menu-item-inicio" routerLink="/" (click)="menuAbierto = false"
+        >🏠 Inicio</a
+      >
+      <a routerLink="/estadisticas-liga" (click)="menuAbierto = false"
+        >📊 Estadísticas</a
+      >
+      <a routerLink="/noticias" (click)="menuAbierto = false">📰 Noticias</a>
+      <a routerLink="/mercado" (click)="menuAbierto = false">🛒 Mercado</a>
+      <a
+        class="menu-item-plantilla"
+        routerLink="/plantilla"
+        (click)="menuAbierto = false"
+        >🏀 Mi Plantilla</a
+      >
+      <a routerLink="/ligas" (click)="menuAbierto = false">🏆 Ligas</a>
+      <a routerLink="/chat" (click)="menuAbierto = false">💬 Chat</a>
+      <a
+        class="menu-item-ofertas"
+        routerLink="/ofertas"
+        (click)="menuAbierto = false"
+      >
+        {{ tieneOfertasNuevas ? "📩 Ofertas 🔴" : "📩 Ofertas" }}
+      </a>
+      <a routerLink="/comparador" (click)="menuAbierto = false"
+        >📈 Comparador</a
+      >
+      <a routerLink="/canjear-codigo" (click)="menuAbierto = false"
+        >🎁 Canjear Código</a
+      >
+      <a routerLink="/perfil" (click)="menuAbierto = false">👤 Mi Perfil</a>
 
-    <a *ngIf="isUserLoggedIn" routerLink="/perfil" (click)="menuAbierto = false">👤 Mi Perfil</a>
+      <button
+        (click)="logout(); menuAbierto = false"
+        class="bg-red-600 hover:bg-red-400 text-white font-bold py-2 px-4 rounded-md shadow mt-2"
+      >
+        Cerrar Sesión
+      </button>
+    </ng-container>
 
-    <button *ngIf="!isUserLoggedIn" (click)="reiniciarSesion(); menuAbierto = false"
-      class="bg-fantasyBlue hover:bg-fantasyGold text-white font-bold py-2 px-4 rounded-md shadow mt-2">Iniciar
-      Sesión</button>
+<ng-template #menuMovilPublico>
+  <div class="flex flex-col items-center gap-2 w-full">
+    <button
+      (click)="reiniciarSesion(); menuAbierto = false"
+      class="btn-login"
+    >
+      Iniciar Sesión
+    </button>
+    <button
+      (click)="router.navigate(['/auth/register']); menuAbierto = false"
+      class="btn-register"
+    >
+      Registrarse
+    </button>
+  </div>
+</ng-template>
 
-    <button *ngIf="isUserLoggedIn" (click)="logout(); menuAbierto = false"
-      class="bg-red-600 hover:bg-red-400 text-white font-bold py-2 px-4 rounded-md shadow mt-2">Cerrar Sesión</button>
   </div>
 
   <!-- Usuario o Login (escritorio) -->
-  <div *ngIf="isUserLoggedIn && usuarioLogueado"
-    class="hidden md:flex flex-col text-right text-white text-sm font-semibold items-end">
-    <div id="nav-avatar" class="flex items-center gap-2 cursor-pointer hover:underline"
-      (click)="router.navigate(['/perfil'])">
-      <div class="avatar-navbar"
-        [ngStyle]="{ 'background-image': 'url(' + (avatarBase64 || 'assets/default-avatar.png') + ')' }">
-      </div>
+  <div
+    *ngIf="isUserLoggedIn && usuarioLogueado"
+    class="hidden md:flex flex-col text-right text-white text-sm font-semibold items-end"
+  >
+    <div
+      id="nav-avatar"
+      class="flex items-center gap-2 cursor-pointer hover:underline"
+      (click)="router.navigate(['/perfil'])"
+    >
+      <div
+        class="avatar-navbar"
+        [ngStyle]="{
+          'background-image':
+            'url(' + (avatarBase64 || 'assets/default-avatar.png') + ')'
+        }"
+      ></div>
       <span>{{ usuarioLogueado }}</span>
     </div>
-    <div class="text-fantasyGold">💰 {{ usuarioDinero | currency : 'EUR' }}</div>
-    <div class="text-xs text-red-400">({{ usuarioDineroPendiente | currency : 'EUR' }} pendientes)</div>
-    <div *ngIf="esVip()" class="vip-badge animate__animated animate__pulse animate__infinite">🌟 VIP</div>
-    <button (click)="logout()" class="mt-1 text-xs text-fantasyRed underline hover:text-red-300 transition-all">Cerrar
-      sesión</button>
+    <div class="text-fantasyGold">
+      💰 {{ usuarioDinero | currency : "EUR" }}
+    </div>
+    <div class="text-xs text-red-400">
+      ({{ usuarioDineroPendiente | currency : "EUR" }} pendientes)
+    </div>
+    <div
+      *ngIf="esVip()"
+      class="vip-badge animate__animated animate__pulse animate__infinite"
+    >
+      🌟 VIP
+    </div>
+    <button
+      (click)="logout()"
+      class="mt-1 text-xs text-fantasyRed underline hover:text-red-300 transition-all"
+    >
+      Cerrar sesión
+    </button>
   </div>
 
   <div *ngIf="!isUserLoggedIn" class="hidden md:block">
-    <button (click)="reiniciarSesion()"
-      class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all">
+    <button
+      (click)="reiniciarSesion()"
+      class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
+    >
       Iniciar Sesión
     </button>
   </div>

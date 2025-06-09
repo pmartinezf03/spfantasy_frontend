@@ -17,7 +17,8 @@ import { RedirigirSiLogueadoGuard } from './guards/redirigir-si-logueado.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { NoLigaGuard } from './guards/noliga.guard';
 import { ComparadorJugadoresComponent } from './comparador/comparador-jugadores/comparador-jugadores.component';
-import { ScoutingComponent } from './scouting/scouting.component'; import { VipGuard } from './guards/vip.guard';
+import { ScoutingComponent } from './scouting/scouting.component'; // 👈 Asegúrate de que esto es correcto
+import { VipGuard } from './guards/vip.guard';
 import { VipComponent } from './VipComponent/vip/vip.component';
 import { CanjearCodigoComponent } from './canjear-codigo/canjear-codigo.component';
 
