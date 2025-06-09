@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-vip',
@@ -21,23 +22,17 @@ export class VipComponent {
         return;
       }
 
-      
-
       this.authService.marcarComoVip(userId).subscribe({
         next: (res) => {
-          
           alert(' ¡Ya eres VIP!');
 
           this.authService.refreshUsuarioCompleto().subscribe((usuarioActualizado) => {
             if (usuarioActualizado) {
-              //  AÑADE AQUÍ
-
               this.router.navigate(['/scouting']);
             } else {
               alert('❌ No se pudo actualizar el estado VIP del usuario.');
             }
           });
-
         },
         error: (err) => {
           console.error('❌ Error al hacer VIP:', err);
@@ -45,5 +40,9 @@ export class VipComponent {
         }
       });
     }, 1500);
+  }
+
+  irAOdoo(): void {
+    window.open(environment.odooVipUrl, '_blank');
   }
 }
