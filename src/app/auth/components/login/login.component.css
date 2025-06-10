@@ -37,11 +37,11 @@
   position: relative; /* Asegura que el formulario quede encima del fondo */
 }
 
-/* Logo o icono de baloncesto */
-/* .auth-logo {
+
+.auth-logo {
   width: 100px;
   margin-bottom: 1rem;
-} */
+}
 
 /* Título */
 .auth-box h2 {

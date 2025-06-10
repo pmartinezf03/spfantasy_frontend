@@ -7,7 +7,7 @@
     class="flex items-center gap-3 logo-navbar"
     (click)="router.navigate(['/'])"
   >
-    <img src="https://i.imgur.com/YLu7obR.png" alt="Logo" class="h-10 w-auto" />
+    <img src="https://i.imgur.com/YNo7zAj.png" alt="Logo" class="h-20 w-auto" />
     <span class="text-xl text-white font-futuristic">SP Fantasy</span>
   </div>
 
@@ -76,16 +76,17 @@
   </ul>
 
   <ng-template #menuPublico>
-    <div class="flex gap-2">
+    <div class="flex gap-4 items-center ml-auto">
+      <!-- ml-auto empuja a la derecha -->
       <button
         (click)="reiniciarSesion()"
-        class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
+        class="text-white font-bold px-6 py-2 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all hover:scale-105 transform"
       >
         Iniciar Sesión
       </button>
       <button
         (click)="router.navigate(['/auth/register'])"
-        class="text-white font-bold px-4 py-1 bg-fantasyGold hover:bg-fantasyBlue rounded-md shadow transition-all"
+        class="text-white font-bold px-6 py-2 bg-fantasyGold hover:bg-fantasyBlue rounded-md shadow transition-all hover:scale-105 transform"
       >
         Registrarse
       </button>
@@ -134,23 +135,22 @@
       </button>
     </ng-container>
 
-<ng-template #menuMovilPublico>
-  <div class="flex flex-col items-center gap-2 w-full">
-    <button
-      (click)="reiniciarSesion(); menuAbierto = false"
-      class="btn-login"
-    >
-      Iniciar Sesión
-    </button>
-    <button
-      (click)="router.navigate(['/auth/register']); menuAbierto = false"
-      class="btn-register"
-    >
-      Registrarse
-    </button>
-  </div>
-</ng-template>
-
+    <ng-template #menuMovilPublico>
+      <div class="flex flex-col items-center gap-2 w-full">
+        <button
+          (click)="reiniciarSesion(); menuAbierto = false"
+          class="btn-login"
+        >
+          Iniciar Sesión
+        </button>
+        <button
+          (click)="router.navigate(['/auth/register']); menuAbierto = false"
+          class="btn-register"
+        >
+          Registrarse
+        </button>
+      </div>
+    </ng-template>
   </div>
 
   <!-- Usuario o Login (escritorio) -->
@@ -189,15 +189,6 @@
       class="mt-1 text-xs text-fantasyRed underline hover:text-red-300 transition-all"
     >
       Cerrar sesión
-    </button>
-  </div>
-
-  <div *ngIf="!isUserLoggedIn" class="hidden md:block">
-    <button
-      (click)="reiniciarSesion()"
-      class="text-white font-bold px-4 py-1 bg-fantasyBlue hover:bg-fantasyGold rounded-md shadow transition-all"
-    >
-      Iniciar Sesión
     </button>
   </div>
 </nav>
