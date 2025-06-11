@@ -37,7 +37,16 @@ export class CanjearCodigoComponent {
             this.mensaje = '️ Este código ya fue usado.';
           } else {
             this.resultado = res;
-            this.mensaje = '✅ Código válido. ¡Recompensa disponible!';
+            this.http.post<any>(`${environment.apiUrl}/api/codigos/canjear/${this.codigo}`, {}, { headers })
+              .subscribe({
+                next: (_) => {
+                  this.mensaje = `🎁 Has canjeado: ${res.producto_id?.[1] || 'Recompensa desconocida'}`;
+                },
+                error: (_) => {
+                  this.mensaje = '❌ No se pudo marcar como usado. Intenta más tarde.';
+                }
+              });
+
           }
         },
         error: (err) => {

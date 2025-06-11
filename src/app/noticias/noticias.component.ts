@@ -20,14 +20,14 @@ export class NoticiasComponent implements OnInit {
 
     this.http.get<any>(url).subscribe(response => {
       this.noticias = response.articles;
-      
+
     }, error => {
       console.error('❌ Error al cargar noticias:', error);
     });
   }
 
   darLike(titulo: string) {
-    
+
   }
 
   abrirNoticia(url: string) {
